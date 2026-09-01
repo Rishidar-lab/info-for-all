@@ -1,10 +1,16 @@
-name: Deploy static site to GitHub Pages
+name: Ingest live feeds & deploy to GitHub Pages
 
 on:
   push:
     branches: [main]
+  schedule:
+    # Every 15 minutes. GitHub may delay scheduled runs under load.
+    - cron: "*/15 * * * *"
   workflow_dispatch:
 
+# Least privilege: no repo writes. The generated JSON is never committed —
+# it is produced in the runner, carried between runs via actions/cache, and
+# deployed as part of the static build artifact.
 permissions:
   contents: read
   pages: write
@@ -31,10 +37,32 @@ jobs:
 
       - run: npm ci
 
+      # Restore the previous run's snapshot so a feed that fails today keeps
+      # its last-known-good items instead of vanishing.
+      - name: Restore last-known-good feed snapshot
+        uses: actions/cache/restore@v4
+        with:
+          path: src/data/generated/live-feed.json
+          key: live-feed-${{ github.run_id }}
+          restore-keys: |
+            live-feed-
+
+      - name: Ingest feeds
+        run: npm run ingest
+
+      - name: Validate generated feed
+        run: npx tsx scripts/validate-feed.ts
+
+      - name: Save feed snapshot for the next run
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: src/data/generated/live-feed.json
+          key: live-feed-${{ github.run_id }}
+
       - name: Build static export
         run: npm run build
         env:
-          # e.g. "/info-for-all" for a project site; empty for a user/custom-domain site
           PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}
 
       - uses: actions/upload-pages-artifact@v3

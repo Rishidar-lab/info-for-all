@@ -1,149 +1,117 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { DemoNotice } from "@/components/ifa/demo-notice";
+import { dataset, istTimestamp } from "@/lib/live/dataset";
 
 export const metadata: Metadata = {
   title: "About & Methodology",
   description:
-    "Why IFA exists, how the comparison model works, and the limitations of classifying coverage.",
+    "How IFA's crisis-first India / Tamil Nadu edition ingests, classifies, ranks and clusters public feeds — and what its limits are.",
 };
-
-const PIPELINE = [
-  ["Articles", "Reporting on an event is collected from many publications."],
-  ["Normalization", "Text, metadata and timestamps are put into a common shape."],
-  ["Story clustering", "Reports about the same underlying event are grouped."],
-  ["Claim comparison", "Shared factual points and differences in framing are identified."],
-  ["Source metadata", "Each publication carries perspective and reliability, kept separate."],
-  ["Transparent synthesis", "The comparison is presented with its assumptions visible."],
-];
 
 export default function AboutPage() {
   return (
-    <div className="prose-measure flex flex-col gap-10">
+    <div className="prose-measure flex flex-col gap-9">
       <header className="border-b border-rule-strong pb-5">
         <p className="label">About &amp; Methodology</p>
-        <h1 className="mt-2 font-serif text-[32px] leading-tight tracking-tight sm:text-[38px]">
-          Information abundance does not automatically create understanding.
+        <h1 className="mt-2 font-serif text-[30px] leading-tight tracking-tight sm:text-[36px]">
+          A crisis-first, evidence-oriented news comparison platform for Tamil Nadu and India.
         </h1>
-        <p className="mt-3 text-[16px] leading-relaxed text-ink-2">
-          Reading more articles does not necessarily produce a clearer picture. IFA is built
-          around comparison, provenance, source diversity, evidence visibility and epistemic
-          transparency — the parts of news that a single article, and a single feed, tend to
-          hide.
+        <p className="mt-3 text-[15.5px] leading-relaxed text-ink-2">
+          Information abundance does not automatically create understanding. IFA groups public
+          alerts and reporting around the same event so a reader can see what the official alert
+          says, which independent sources confirm or contextualise it, what remains uncertain,
+          and when the information was last refreshed.
         </p>
       </header>
 
-      <DemoNotice />
-
       <section>
-        <h2 className="font-serif text-[22px] font-semibold">What IFA is designed around</h2>
-        <ul className="mt-3 flex flex-col gap-2 text-[15px] leading-relaxed text-ink-2">
-          <li>
-            <strong className="text-ink">Comparison.</strong> One event, placed next to the
-            several newsrooms covering it.
-          </li>
-          <li>
-            <strong className="text-ink">Provenance.</strong> Every claim links back to a
-            publication; every publication carries visible metadata.
-          </li>
-          <li>
-            <strong className="text-ink">Source diversity.</strong> Coverage is shown across
-            editorial perspectives rather than collapsed into one voice.
-          </li>
-          <li>
-            <strong className="text-ink">Evidence visibility.</strong> What is agreed, what
-            differs, and what is still uncertain are kept distinct.
-          </li>
-          <li>
-            <strong className="text-ink">Epistemic transparency.</strong> The method and its
-            assumptions are stated, and are meant to be revised.
-          </li>
-        </ul>
-
-        <blockquote className="mt-5 border-l-2 border-accent pl-4 font-serif text-[17px] leading-relaxed text-ink">
-          Neutrality is not the absence of perspective. Transparency means knowing where
-          information came from, what evidence supports it, and how alternative reporting
-          differs.
-        </blockquote>
-      </section>
-
-      <section>
-        <h2 className="font-serif text-[22px] font-semibold">
-          Perspective and reliability are separate
-        </h2>
-        <p className="mt-3 text-[15px] leading-relaxed text-ink-2">
-          IFA uses a deliberately coarse perspective scale — <strong>Left</strong>,{" "}
-          <strong>Center</strong>, <strong>Right</strong> — to describe the broad editorial
-          orientation of a publication. It says nothing about whether a given report is
-          accurate. Reliability is tracked as a separate dimension —{" "}
-          <strong>High</strong>, <strong>Mixed</strong>, <strong>Unknown</strong> — and a
-          centrist outlet is not treated as more truthful for being centrist. Both dimensions in
-          this build are demonstration metadata, not audited scores.
+        <h2 className="font-serif text-[20px] font-semibold">Scope</h2>
+        <p className="mt-2 text-[14.5px] leading-relaxed text-ink-2">
+          <strong>Primary:</strong> Tamil Nadu. <strong>Secondary:</strong> India-wide events that
+          materially affect Tamil Nadu or carry major national public importance. IFA deliberately
+          excludes generic international news, entertainment feeds, and foreign politics without a
+          direct India / Tamil Nadu consequence.
         </p>
       </section>
 
       <section>
-        <h2 className="font-serif text-[22px] font-semibold">The intended pipeline</h2>
-        <p className="mt-3 text-[15px] leading-relaxed text-ink-2">
-          This MVP runs on a fixed demonstration dataset. The pipeline it is designed to grow
-          into:
-        </p>
-        <ol className="mt-4 flex flex-col gap-0 overflow-hidden rounded-[3px] border border-rule">
-          {PIPELINE.map(([name, desc], i) => (
-            <li
-              key={name}
-              className="grid grid-cols-1 gap-1 border-b border-rule px-4 py-3 last:border-b-0 sm:grid-cols-[200px_1fr] sm:gap-4"
-            >
+        <h2 className="font-serif text-[20px] font-semibold">The pipeline</h2>
+        <ol className="mt-3 flex flex-col gap-0 overflow-hidden rounded-[3px] border border-rule">
+          {[
+            ["Fetch", "Configured RSS / Atom / CAP feeds are fetched with a 15-second timeout and an identifying user agent. One feed failing never aborts the run."],
+            ["Normalise & sanitise", "Every externally sourced string is stripped of markup, decoded, cleaned of control characters and length-clamped. Items without a valid source URL or a parseable date are rejected."],
+            ["Deduplicate", "By canonical URL and by normalised-headline tokens within a source."],
+            ["Geo-classify", "A rule-based Tamil Nadu dictionary (38 districts + state terms + Tamil-script tokens) assigns scope: tamil-nadu / india / india-relevant / excluded. Every classification carries the terms that matched and a reason."],
+            ["Crisis-classify", "Deterministic matchers detect priority incident types (cyclone, flood, dam warning, coastal warning, earthquake, landslide, heatwave, industrial accident, and more). CAP disaster-type from an official alert is trusted directly."],
+            ["Rank", "A reproducible 0–100 priority from: official-alert status, crisis-type weight, CAP severity/urgency/certainty (preserved verbatim), Tamil Nadu match, affected district count, recency, corroborating source count and primary documentation. Expired and all-clear alerts are scored down and kept out of the active banner."],
+            ["Cluster", "Two reports join a cluster only when time window, event type and geography all align and headline tokens overlap — or an official alert's key terms are contained in a report about the same districts. Unrelated events are not merged just because both mention rain."],
+          ].map(([name, desc], i) => (
+            <li key={name} className="grid grid-cols-1 gap-1 border-b border-rule px-4 py-3 last:border-b-0 sm:grid-cols-[160px_1fr] sm:gap-4">
               <span className="ui text-[13px] font-semibold text-ink">
-                <span className="mono text-ink-3">{String(i + 1).padStart(2, "0")}</span>{" "}
-                {name}
+                <span className="mono text-ink-3">{String(i + 1).padStart(2, "0")}</span> {name}
               </span>
-              <span className="text-[14px] leading-relaxed text-ink-2">{desc}</span>
+              <span className="text-[13.5px] leading-relaxed text-ink-2">{desc}</span>
             </li>
           ))}
         </ol>
-        <p className="mt-4 text-[14px] leading-relaxed text-ink-3">
-          Any automated system in that pipeline must expose uncertainty rather than pretend that
-          classification is objective. A confidence figure, a dissent, an unresolved cluster and
-          a contested label are all outputs worth showing.
-        </p>
       </section>
 
       <section>
-        <h2 className="font-serif text-[22px] font-semibold">Limitations</h2>
-        <ul className="mt-3 flex flex-col gap-2 text-[15px] leading-relaxed text-ink-2">
-          <li>Classifications are contestable and will not match every reader&rsquo;s judgement.</li>
-          <li>Neutral synopses and agreement summaries can omit real nuance.</li>
-          <li>Story clustering can group things that do not belong together, or split what does.</li>
-          <li>
-            Political orientation and factual reliability are different questions; treating them
-            as one produces bad conclusions.
-          </li>
-          <li>
-            IFA is a starting point. The primary and original sources remain the thing to read.
-          </li>
-          <li>The methodology should be transparent, versioned and open to correction.</li>
+        <h2 className="font-serif text-[20px] font-semibold">Labels</h2>
+        <p className="mt-2 text-[14.5px] leading-relaxed text-ink-2">
+          This edition does <strong>not</strong> apply Left / Center / Right political-orientation
+          ratings to Indian publications. Each report instead carries an <strong>evidence role</strong>:
+        </p>
+        <ul className="mt-2 flex flex-wrap gap-2">
+          {["Official alert", "Primary document", "Government statement", "On-ground report", "Independent report", "Expert analysis", "Developing / unverified"].map((r) => (
+            <li key={r} className="pill text-ink-2">{r}</li>
+          ))}
+        </ul>
+        <p className="mt-3 text-[14.5px] leading-relaxed text-ink-2">
+          Reliability is expressed as <strong>evidence status</strong> — how well corroborated a
+          claim is, not an ideological judgement:
+        </p>
+        <ul className="mt-2 flex flex-wrap gap-2">
+          {["Official primary source", "Independently corroborated", "Single-source report", "Developing", "Disputed", "Unverified"].map((r) => (
+            <li key={r} className="pill text-ink-2">{r}</li>
+          ))}
+        </ul>
+      </section>
+
+      <section>
+        <h2 className="font-serif text-[20px] font-semibold">Copyright &amp; provenance</h2>
+        <ul className="mt-2 flex flex-col gap-2 text-[14px] leading-relaxed text-ink-2">
+          <li>IFA stores only the headline, source name, canonical URL, publication timestamp, a feed-provided short excerpt, and structured alert metadata.</li>
+          <li>It never copies full article bodies, removes attribution, or circumvents a paywall.</li>
+          <li>Every item links to the original publisher for the full report.</li>
+          <li>IFA summaries are never presented as the publisher&rsquo;s own wording.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 className="font-serif text-[20px] font-semibold">Limitations</h2>
+        <ul className="mt-2 flex flex-col gap-2 text-[14px] leading-relaxed text-ink-2">
+          <li>IFA does not claim algorithmic neutrality. Clustering and geo-classification are rule-based and can err.</li>
+          <li>Common ground is only shown when derivable from explicit shared official facts; otherwise it is marked pending review.</li>
+          <li>Metadata differences between reports are not claims of contradiction.</li>
+          <li>Feeds go down. When they do, IFA keeps the last known good snapshot, marks it stale, and never shows &ldquo;LIVE&rdquo;.</li>
+          <li><strong>IFA is not an emergency service.</strong> For any emergency, follow the issuing authority&rsquo;s own instructions.</li>
         </ul>
       </section>
 
       <section className="card bg-surface-2 p-5">
-        <h2 className="font-serif text-[18px] font-semibold">Data status</h2>
-        <p className="mt-2 text-[14px] leading-relaxed text-ink-2">
-          Every publication, quote, figure, person and event in this instance is synthetic.
-          Publication links point to <span className="mono">.example</span> domains, which cannot
-          resolve to a real site. Demonstration stories are written to be realistic and
-          non-time-sensitive; they are not claims about current events.
+        <h2 className="font-serif text-[17px] font-semibold">Refresh &amp; data status</h2>
+        <p className="mt-2 text-[13.5px] leading-relaxed text-ink-2">
+          The live feed is regenerated on a schedule by a GitHub Actions workflow that runs the
+          ingestion, validates the output, rebuilds the static site and redeploys it. The last
+          snapshot in this build was generated {istTimestamp(dataset.generatedAt)} with{" "}
+          {dataset.counts.workingFeeds} of {dataset.feeds.length} feeds responding.
         </p>
-        <p className="mt-3 text-[13px] text-ink-3">
-          Start from the{" "}
-          <Link href="/" className="text-accent hover:underline">
-            story clusters
-          </Link>{" "}
-          or the{" "}
-          <Link href="/sources" className="text-accent hover:underline">
-            source directory
-          </Link>
-          .
+        <p className="mt-3 ui text-[12.5px] text-ink-3">
+          See the <Link href="/sources" className="text-accent hover:underline">source directory</Link> for
+          per-feed status, or the{" "}
+          <Link href="/methodology/examples" className="text-accent hover:underline">methodology demonstrations</Link>{" "}
+          for synthetic worked examples of the comparison model.
         </p>
       </section>
     </div>

@@ -1,120 +1,103 @@
-# Info For All (IFA)
+# Info For All (IFA) — India & Tamil Nadu live edition
 
 ## What it is
 
-IFA is an experimental news-comparison interface designed to show how multiple
-sources cover the same underlying event. The central screen is not a list of
-articles — it is a single event broken down into:
+A **crisis-first, evidence-oriented news comparison platform for Tamil Nadu and India.**
+The first screen answers: is there an active emergency, where, what does the official alert
+say, which independent sources confirm or contextualise it, what remains uncertain, and when
+was the information last refreshed.
 
-- **what the sources agree on** (common ground)
-- **where their coverage differs** (emphasis and framing, aspect by aspect)
-- **source provenance** (editorial perspective and reliability, shown separately,
-  with a link out to each publication)
+Scope is exclusive — **primary: Tamil Nadu; secondary: India-wide events that materially
+affect Tamil Nadu or carry major national importance.** Generic international news,
+entertainment feeds and foreign politics without an India / Tamil Nadu consequence are
+filtered out.
 
 ## Why
 
-Reading more articles does not necessarily create understanding. IFA emphasizes
-comparison, provenance and visible differences in framing rather than volume.
-Neutrality is treated as impossible to claim; transparency — knowing where
-information came from, what evidence supports it, and how alternative reporting
-differs — is the achievable goal.
+Reading more articles does not create understanding. IFA groups public alerts and reporting
+around the same event so a reader can compare them, see where each claim came from, and see
+what is still unknown.
 
 ## Current MVP
 
-A production-ready static site with four routes:
+Static Next.js 16 site (no server, no database). Four sections, in editorial order:
 
-| Route          | Purpose                                                              |
-| -------------- | ------------------------------------------------------------------- |
-| `/`            | Homepage — hero, demo notice, story-cluster cards with coverage bars |
-| `/story/:slug` | The product page — coverage overview, common ground, where coverage differs, per-source reporting, methodology & limitations |
-| `/sources`     | Source directory — publication, perspective, reliability, region, description, website |
-| `/about`       | About & methodology — the thesis, the perspective/reliability split, the intended pipeline, limitations |
+1. **Active alerts** — official alerts currently in effect (expired / all-clear excluded).
+2. **Tamil Nadu now**
+3. **India — major developments**
+4. **Coverage comparisons** — clusters with two or more sources.
 
-Coverage model: `left` / `center` / `right` for broad editorial orientation,
-kept strictly separate from reliability (`high` / `mixed` / `unknown`). A larger
-centre share is never presented as "more accurate".
+Language (All / தமிழ் / English), geography (Tamil Nadu / India) and district filters. A
+status bar shows LIVE / DEGRADED / STALE, the last successful refresh in IST, and which
+feeds failed.
 
-Every screen carries the demonstration-data disclosure. Unknown story slugs
-return a real 404.
+Routes: `/`, `/story/[slug]` (per-cluster comparison), `/sources`, `/about` (methodology),
+`/methodology/examples[/…]` (synthetic worked examples, kept fully separate from the live
+feed).
+
+## Live ingestion
+
+`scripts/ingest-feeds.ts` → `src/data/generated/live-feed.json`. It:
+
+- fetches configured RSS / Atom / CAP feeds with a 15 s timeout and an identifying UA;
+- normalises + sanitises every external string; rejects items without a valid URL or date;
+- deduplicates by canonical URL and normalised headline;
+- geo-classifies (explainable Tamil Nadu dictionary — 38 districts + state terms + Tamil
+  tokens + IMD abbreviations) into `tamil-nadu` / `india` / `india-relevant` / `excluded`;
+- detects crisis type deterministically and preserves CAP severity / urgency / certainty
+  verbatim;
+- ranks 0–100 with a reproducible formula (no opaque AI score);
+- clusters deterministically (title tokens + geography + event type + time window);
+- retains last-known-good items when a feed fails, and never claims LIVE after a failed run;
+- uses **no LLM and no paid API**.
+
+Sources checked reachable from this environment (2026-09-01): NDMA SACHET (CAP JSON + RSS),
+ReliefWeb India (UN OCHA), The Hindu (Tamil Nadu + National), NDTV India, Times of India.
+PIB is configured but disabled — it returned HTTP 403 (Akamai) here; enable it where
+`pib.gov.in` is reachable.
+
+### Evidence labels (no political-orientation ratings)
+
+Role: Official alert · Primary document · Government statement · On-ground report ·
+Independent report · Expert analysis · Developing / unverified.
+Status: Official primary source · Independently corroborated · Single-source report ·
+Developing · Disputed · Unverified.
 
 ## Data status
 
-**DEMONSTRATION DATA.** Every publication, headline, quote, figure, person and
-event is synthetic. Publication links point to `.example` domains, which cannot
-resolve to a real site. Demonstration stories are written to be realistic and
-non-time-sensitive; they are not claims about current events. The dataset lives
-in `src/data/demo.ts` and has no dependency on components, so it can be replaced
-by a real ingestion/API backend without UI changes.
-
-## Architecture
-
-- **Next.js 16** (App Router, React Server Components, Turbopack) + **TypeScript**
-- **Tailwind CSS v4** with a small hand-written design system in
-  `src/app/globals.css` ("newsprint × research terminal": editorial serif,
-  humanist sans for chrome, mono for metrics; restrained palette; hairline rules)
-- Fully static output — the whole site prerenders at build time
-  (`○` static + `●` SSG). No database, no runtime services, no API routes.
-
-```
-src/
-  app/                 # routes: / , /story/[slug] , /sources , /about
-  components/
-    ifa/               # CoverageBar, StoryClusterCard, badges, DemoNotice
-    site-header.tsx    # Info For All · IFA — Home / Sources / Methodology
-    site-footer.tsx
-  data/demo.ts         # the demonstration dataset + the data model
-  lib/
-    ifa.ts             # presentation helpers (labels, colours, coverage math)
-    format.ts          # cn() + date helpers
-tests/unit/demo.test.ts  # dataset-integrity + helper tests (Vitest)
-```
-
-### Data model
-
-```ts
-type Perspective = "left" | "center" | "right";
-type Reliability = "high" | "mixed" | "unknown";
-
-interface Article { id; publication; headline; url; publishedAt; perspective; reliability; excerpt }
-interface CoverageDifference { topic; observations: { publication; emphasis }[] }
-interface StoryCluster { id; slug; title; summary; category; publishedAt; updatedAt;
-  coverage: { left; center; right }; commonFacts: string[];
-  coverageDifferences: CoverageDifference[]; articles: Article[] }
-interface Source { id; publication; website; perspective; reliability; region; description }
-```
+The live sections are built from **public feeds** at the timestamp in the status bar. The
+`/methodology/examples` stories are **synthetic** and are never shown as current.
 
 ## Run locally
 
 ```bash
-npm run dev        # http://localhost:3000
-npm run build      # production build (static export-ready)
-npm start          # serve the production build
+npm run ingest          # fetch feeds -> src/data/generated/live-feed.json
+npm run validate:feed   # sanity-check the generated JSON
+npm run build           # static export -> out/
+npm run dev             # http://localhost:3000
 
-npm run lint       # eslint
-npm run typecheck  # tsc --noEmit
-npm test           # vitest
-npm run verify     # lint + typecheck + test + build
+npm run verify          # lint + typecheck + vitest + build
 ```
 
-No environment variables are required.
+## Deployment
+
+`.github/workflows/deploy-pages.yml` runs every 15 minutes (and on push /
+`workflow_dispatch`): restore last-known-good snapshot from cache → ingest → validate →
+build static export → deploy to GitHub Pages. The generated JSON is **not** committed; it is
+carried between runs via `actions/cache`. Permissions: `contents: read`, `pages: write`,
+`id-token: write`.
+
+Live: https://rishidar-lab.github.io/info-for-all/
 
 ## Roadmap
 
-1. Legitimate RSS/API ingestion
-2. Automated story clustering
-3. Claim extraction
-4. Provenance / evidence graph
-5. Transparent source-classification methodology
-6. Classification disputes / corrections
-7. Human review
-8. Production deployment
+1. Add PIB and state-agency feeds where reachable; Tamil-language feeds.
+2. CAP polygon / district-centroid mapping.
+3. Claim extraction and richer common-ground derivation (human-reviewed).
+4. Provenance / evidence graph.
+5. A published, versioned, disputable source-classification methodology.
 
-Any automated component added along this path must expose uncertainty
-(confidence, dissent, unresolved clusters, contested labels) rather than present
-classification as objective.
+## Not built
 
-## Note on scope
-
-This MVP intentionally excludes accounts, comments, recommendations, analytics,
-databases and any ML/LLM pipeline. The comparison interface and its honest
-framing are the product; the pipeline behind it is future work.
+Accounts, comments, recommendations, analytics, databases, and any ML / LLM pipeline. The
+comparison interface and its honest framing are the product.

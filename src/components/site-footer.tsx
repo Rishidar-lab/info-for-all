@@ -10,24 +10,26 @@ export function SiteFooter() {
               Info For All <span className="label align-middle">IFA</span>
             </p>
             <p className="mt-1 leading-relaxed">
-              An evidence-oriented news-comparison interface. IFA groups reporting around one
-              event so you can inspect what sources agree on, where framing differs, and where
-              each claim came from.
+              A crisis-first, evidence-oriented news comparison platform for Tamil Nadu and
+              India. Official alerts and independent reporting, grouped by event, with source
+              provenance and remaining uncertainty made visible.
             </p>
           </div>
           <nav className="flex gap-10">
             <div className="flex flex-col gap-1">
               <span className="label">Navigate</span>
-              <Link href="/" className="link-quiet">Home</Link>
+              <Link href="/" className="link-quiet">Live feed</Link>
               <Link href="/sources" className="link-quiet">Sources</Link>
               <Link href="/about" className="link-quiet">Methodology</Link>
+              <Link href="/methodology/examples" className="link-quiet">Demonstrations</Link>
             </div>
           </nav>
         </div>
         <p className="mt-8 border-t border-rule pt-4 text-[12px] leading-relaxed">
-          Demonstration dataset — every publication, quote, figure and event on this instance is
-          synthetic and is provided only to demonstrate IFA&rsquo;s comparison model. Nothing here
-          is live reporting.
+          IFA aggregates publicly available RSS / CAP feeds and always links to the original
+          publisher. It stores only headlines, timestamps, short feed excerpts and structured
+          alert metadata — never full articles. <strong>IFA is not an emergency service;</strong>{" "}
+          for any emergency, follow the issuing authority&rsquo;s own instructions.
         </p>
       </div>
     </footer>
