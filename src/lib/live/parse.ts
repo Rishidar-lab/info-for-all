@@ -45,12 +45,12 @@ function arr<T>(v: T | T[] | undefined): T[] {
 
 function text(v: unknown): string | undefined {
   if (v == null) return undefined;
-  if (typeof v === "string") return v;
+  if (typeof v === "string") return v.trim() || undefined;
   if (typeof v === "number") return String(v);
   if (typeof v === "object") {
     const o = v as Record<string, unknown>;
-    if (typeof o["#text"] === "string") return o["#text"] as string;
-    if (typeof o["@_href"] === "string") return o["@_href"] as string;
+    if (typeof o["#text"] === "string") return o["#text"].trim() || undefined;
+    if (typeof o["@_href"] === "string") return o["@_href"].trim() || undefined;
   }
   return undefined;
 }

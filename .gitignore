@@ -57,3 +57,7 @@ next-env.d.ts
 # keep the template
 !.env.example
 qa-prod/
+
+# Stale artefacts from the pre-comparison-MVP architecture (never tracked)
+/artifacts/
+/config/

@@ -138,7 +138,9 @@ function dedupe(articles: LiveArticle[]): LiveArticle[] {
   const keep: LiveArticle[] = [];
   for (const a of articles.sort((x, y) => Date.parse(y.publishedAt) - Date.parse(x.publishedAt))) {
     const urlKey = a.url.replace(/\/$/, "").toLowerCase();
-    const titleKey = a.sourceId + "|" + normalisedTitleKey(a.title);
+    // Same publisher + same normalised headline = the same article syndicated
+    // across that publisher's desks (e.g. The Hindu National vs The Hindu TN).
+    const titleKey = a.publisher + "|" + normalisedTitleKey(a.title);
     if (byUrl.has(urlKey)) continue;
     if (a.title.length > 12 && byTitleKey.has(titleKey)) continue;
     byUrl.set(urlKey, a);
@@ -155,11 +157,14 @@ function finaliseCrisisPriority(articles: LiveArticle[], now: number): LiveArtic
     const peers = crisisArticles.filter(
       (b) =>
         b.id !== a.id &&
+        b.publisher !== a.publisher &&
         (b.crisisType || null) === (a.crisisType || null) &&
-        (b.districts.some((d) => a.districts.includes(d)) || (a.districts.length === 0 && b.districts.length === 0 && a.scope === b.scope)) &&
-        Math.abs(Date.parse(b.publishedAt) - Date.parse(a.publishedAt)) < 36 * 3600 * 1000,
+        // Real district overlap only — "both India-scope, no district" is not corroboration.
+        (b.districts.some((d) => a.districts.includes(d)) ||
+          (a.scope === "tamil-nadu" && b.scope === "tamil-nadu" && a.districts.length === 0 && b.districts.length === 0)) &&
+        Math.abs(Date.parse(b.publishedAt) - Date.parse(a.publishedAt)) < 30 * 3600 * 1000,
     );
-    const corroborating = new Set(peers.map((p) => p.sourceId)).size;
+    const corroborating = new Set(peers.map((p) => p.publisher)).size;
     const hasOfficial = a.evidenceRole === "official-alert" || peers.some((p) => p.evidenceRole === "official-alert");
     a.crisisPriority = crisisPriority({
       isOfficialAlert: a.evidenceRole === "official-alert",
@@ -230,7 +235,7 @@ async function main() {
   articles = finaliseCrisisPriority(articles, now);
   articles.sort((a, b) => b.crisisPriority - a.crisisPriority || Date.parse(b.publishedAt) - Date.parse(a.publishedAt));
 
-  const clusters = clusterArticles(articles, now);
+  const { clusters, weakMatchesRejected } = clusterArticles(articles, now);
 
   const lastSuccessTimes = feeds.map((f) => f.lastSuccessAt).filter(Boolean).sort() as string[];
   const lastSuccessAt = lastSuccessTimes.length ? lastSuccessTimes[lastSuccessTimes.length - 1] : null;
@@ -252,7 +257,10 @@ async function main() {
       activeCrisis: activeCrisisClusters.length,
       tamilNadu: articles.filter((a) => a.scope === "tamil-nadu").length,
       india: articles.filter((a) => a.scope === "india" || a.scope === "india-relevant").length,
-      comparisons: clusters.filter((c) => c.sourceCount >= 2).length,
+      comparisons: clusters.filter((c) => c.isVerifiedComparison).length,
+      singleReports: clusters.filter((c) => !c.isVerifiedComparison).length,
+      weakMatchesRejected,
+      distinctPublishers: new Set(articles.map((a) => a.publisher)).size,
       workingFeeds: feeds.filter((f) => f.status === "ok").length,
       failedFeeds: feeds.filter((f) => f.status !== "ok").length,
     },
@@ -264,7 +272,8 @@ async function main() {
   console.log(
     `\nWrote ${OUT}\n  health=${dataset.health}  articles=${articles.length}  clusters=${clusters.length}  ` +
       `active-crisis=${dataset.counts.activeCrisis}  TN=${dataset.counts.tamilNadu}  India=${dataset.counts.india}  ` +
-      `comparisons=${dataset.counts.comparisons}  feeds ok=${dataset.counts.workingFeeds}/${feeds.length}`,
+      `publishers=${dataset.counts.distinctPublishers}  verified-comparisons=${dataset.counts.comparisons}  ` +
+      `weak-rejected=${dataset.counts.weakMatchesRejected}  feeds ok=${dataset.counts.workingFeeds}/${feeds.length}`,
   );
 
   // Never fail the run just because some feeds failed — that is expected and handled.

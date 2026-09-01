@@ -71,17 +71,23 @@ export interface ClusterLabel {
 }
 
 /**
- * A single article is not a meaningful "coverage comparison" — label clusters
- * by what their source count actually supports.
+ * A single article — or a weak cross-publisher match — is not a meaningful
+ * "coverage comparison". Label a cluster by what its evidence actually supports.
  */
-export function clusterLabel(cluster: Pick<LiveCluster, "sourceCount" | "officialCount" | "independentCount">): ClusterLabel {
-  if (cluster.sourceCount <= 1) {
-    return { kind: "single-report", tag: "Single report", cta: "Inspect report" };
-  }
-  if (cluster.independentCount >= 1) {
+export function clusterLabel(
+  cluster: Pick<
+    LiveCluster,
+    "distinctPublishers" | "officialCount" | "independentCount" | "isVerifiedComparison" | "isCrisis" | "articleIds"
+  >,
+): ClusterLabel {
+  if (cluster.isVerifiedComparison) {
     return { kind: "coverage-comparison", tag: "Coverage comparison", cta: "Compare coverage" };
   }
-  return { kind: "official-alert", tag: "Official alert", cta: "View source context" };
+  const officialOnly = cluster.officialCount >= 1 && cluster.independentCount === 0;
+  if (officialOnly) {
+    return { kind: "official-alert", tag: "Official alert", cta: "View official alert" };
+  }
+  return { kind: "single-report", tag: "Single report", cta: "Inspect report" };
 }
 
 export function articleById(id: string): LiveArticle | undefined {
@@ -117,7 +123,12 @@ export function recentlyClearedClusters(): LiveCluster[] {
 
 export function tamilNaduClusters(limit = 12): LiveCluster[] {
   return dataset.clusters
-    .filter((c) => c.scope === "tamil-nadu" && !(c.isCrisis && activeStates.includes(c.lifecycle)))
+    .filter(
+      (c) =>
+        c.scope === "tamil-nadu" &&
+        !c.isVerifiedComparison &&
+        !(c.isCrisis && activeStates.includes(c.lifecycle)),
+    )
     .sort((a, b) => b.crisisPriority - a.crisisPriority || Date.parse(b.updatedAt) - Date.parse(a.updatedAt))
     .slice(0, limit);
 }
@@ -127,20 +138,40 @@ export function indiaClusters(limit = 12): LiveCluster[] {
     .filter(
       (c) =>
         (c.scope === "india" || c.scope === "india-relevant") &&
+        !c.isVerifiedComparison &&
         !(c.isCrisis && activeStates.includes(c.lifecycle)),
     )
     .sort((a, b) => b.crisisPriority - a.crisisPriority || Date.parse(b.updatedAt) - Date.parse(a.updatedAt))
     .slice(0, limit);
 }
 
-export function comparisonClusters(limit = 10): LiveCluster[] {
+/** Verified multi-source comparisons only: 2+ distinct publishers, strong/probable confidence. */
+export function comparisonClusters(limit = 12): LiveCluster[] {
   return dataset.clusters
-    .filter((c) => c.sourceCount >= 2)
-    .sort((a, b) => b.sourceCount - a.sourceCount || b.crisisPriority - a.crisisPriority)
+    .filter((c) => c.isVerifiedComparison)
+    .sort(
+      (a, b) =>
+        b.distinctPublishers - a.distinctPublishers ||
+        (a.confidence === b.confidence ? 0 : a.confidence === "strong" ? -1 : 1) ||
+        b.crisisPriority - a.crisisPriority,
+    )
     .slice(0, limit);
 }
 
-/** All clusters that get their own static page (crisis + multi-source + top TN/India). */
+/** Everything that is NOT an active alert and NOT a verified comparison. */
+export function singleReportClusters(limit = 30): LiveCluster[] {
+  return dataset.clusters
+    .filter(
+      (c) =>
+        !c.isVerifiedComparison &&
+        !(c.isCrisis && activeStates.includes(c.lifecycle)) &&
+        c.lifecycle !== "developing",
+    )
+    .sort((a, b) => b.crisisPriority - a.crisisPriority || Date.parse(b.updatedAt) - Date.parse(a.updatedAt))
+    .slice(0, limit);
+}
+
+/** All clusters that get their own static page. */
 export function routableClusters(): LiveCluster[] {
   const wanted = new Set<string>();
   for (const c of [
@@ -150,6 +181,7 @@ export function routableClusters(): LiveCluster[] {
     ...tamilNaduClusters(20),
     ...indiaClusters(20),
     ...comparisonClusters(20),
+    ...singleReportClusters(30),
   ]) {
     wanted.add(c.slug);
   }

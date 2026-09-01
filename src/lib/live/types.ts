@@ -92,6 +92,9 @@ export interface LiveArticle {
   url: string;
   sourceId: string;
   sourceName: string;
+  /** Organisation, so "distinct sources" counts publishers, not feeds. */
+  publisher: string;
+  role: "official" | "independent" | "specialist";
   sourceUrl: string;
   publishedAt: string;
   fetchedAt: string;
@@ -126,6 +129,9 @@ export interface ClusterDifferenceRow {
   observations: { sourceName: string; value: string }[];
 }
 
+/** How sure IFA is that a multi-article cluster is really one event. */
+export type ClusterConfidence = "strong" | "probable" | "weak";
+
 export interface LiveCluster {
   id: string;
   slug: string;
@@ -140,10 +146,19 @@ export interface LiveCluster {
   updatedAt: string;
   languages: ("ta" | "en" | "unknown")[];
   articleIds: string[];
+  /** Distinct publishers in this cluster (the number that matters for comparison). */
+  distinctPublishers: number;
+  publishers: string[];
+  /** Kept for continuity; equals distinctPublishers. */
   sourceCount: number;
   officialCount: number;
   independentCount: number;
   verificationStatus: VerificationStatus;
+  confidence: ClusterConfidence;
+  /** Human-readable justification for why these articles are one cluster. */
+  reason: string;
+  /** True when 2+ distinct publishers AND confidence is strong/probable. */
+  isVerifiedComparison: boolean;
   /** Only explicit shared structured facts. Empty ⇒ show the "pending review" note. */
   commonGround: string[];
   commonGroundPending: boolean;
@@ -167,7 +182,12 @@ export interface LiveDataset {
     activeCrisis: number;
     tamilNadu: number;
     india: number;
+    /** Verified multi-source comparisons only (2+ publishers, strong/probable). */
     comparisons: number;
+    singleReports: number;
+    /** Multi-article pairings that did NOT meet the comparison bar. */
+    weakMatchesRejected: number;
+    distinctPublishers: number;
     workingFeeds: number;
     failedFeeds: number;
   };

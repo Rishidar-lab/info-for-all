@@ -4,10 +4,10 @@ import { LiveFeed } from "@/components/live/live-feed";
 import {
   activeCrisisClusters,
   developingCrisisClusters,
-  recentlyClearedClusters,
   tamilNaduClusters,
   indiaClusters,
   comparisonClusters,
+  singleReportClusters,
   allDistricts,
   dataset,
 } from "@/lib/live/dataset";
@@ -35,11 +35,20 @@ export default function HomePage() {
       <LiveFeed
         active={active}
         developing={developing}
-        cleared={recentlyClearedClusters()}
         tamilNadu={tamilNaduClusters(15)}
         india={indiaClusters(15)}
         comparisons={comparisonClusters(12)}
+        singleReports={singleReportClusters(24)}
         districts={allDistricts()}
+        counts={{
+          activeCrisis: dataset.counts.activeCrisis,
+          comparisons: dataset.counts.comparisons,
+          singleReports: dataset.counts.singleReports,
+          weakMatchesRejected: dataset.counts.weakMatchesRejected,
+          distinctPublishers: dataset.counts.distinctPublishers,
+          workingFeeds: dataset.counts.workingFeeds,
+          failedFeeds: dataset.counts.failedFeeds,
+        }}
       />
 
       <section className="card bg-surface-2 p-5">

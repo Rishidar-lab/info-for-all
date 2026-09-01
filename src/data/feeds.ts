@@ -3,15 +3,16 @@ import type { EvidenceRole } from "@/lib/live/types";
 /**
  * IFA live-feed registry — India / Tamil Nadu.
  *
- * Every entry is a publicly accessible RSS/Atom document or a public structured
- * endpoint. IFA stores only the feed's own headline, timestamp, short excerpt
- * and canonical URL, always attributes the publisher, and always links out to
- * the original report. It never copies full article bodies or bypasses access
- * controls.
+ * Every enabled entry was validated by `scripts/validate-sources.ts` (see
+ * `docs/source-registry.md` for the last run: HTTP status, item count, newest
+ * item, canonical-link coverage, redirects). IFA stores only the feed's own
+ * headline, timestamp, short excerpt and canonical URL, always attributes the
+ * publisher, and always links out to the original report. It never copies full
+ * article bodies or bypasses access controls.
  *
- * Reachability from this environment was checked on 2026-09-01. Feeds that were
- * blocked here (e.g. PIB via Akamai) are listed as `enabled: false` with a note
- * so they can be turned on in an environment that can reach them.
+ * `publisher` groups multiple feeds from one organisation (e.g. The Hindu's
+ * several desks) so that a "coverage comparison" genuinely means *distinct
+ * publishers*, not distinct feeds.
  */
 
 export type FeedKind = "rss" | "atom" | "sachet-json";
@@ -19,37 +20,35 @@ export type FeedKind = "rss" | "atom" | "sachet-json";
 export interface FeedSource {
   id: string;
   name: string;
-  /** Publisher homepage — shown as attribution, never a fabricated article URL. */
+  /** Organisation this feed belongs to — the unit of "distinct source". */
+  publisher: string;
+  /** Publisher homepage — attribution only, never a fabricated article URL. */
   homepage: string;
   url: string;
   kind: FeedKind;
-  /** Default evidence role for items from this feed (may be refined per-item). */
   defaultEvidenceRole: EvidenceRole;
-  /** Is this an official / primary authority? */
+  /** Is this an official / primary authority (vs independent journalism)? */
   official: boolean;
   language: "ta" | "en" | "mixed";
-  /** Editorial region focus, used only to help geo-classification, never displayed as a rating. */
   focus: "tamil-nadu" | "india" | "india-disaster";
+  role: "official" | "independent" | "specialist";
   enabled: boolean;
-  note?: string;
   /**
-   * When an item names no India/Tamil Nadu location at all, may its scope
-   * still be trusted from the feed's own focus? True for feeds whose entire
-   * output is India-specific by construction (a paper's India/TN desk, the
-   * national disaster authority). False for feeds that are filtered by a
-   * query parameter that isn't a hard guarantee (e.g. a global humanitarian
-   * digest queried for India can still return other-country or global items)
-   * — those require an explicit textual match instead of feed-focus trust.
-   * Defaults to true.
+   * May a zero-signal item still be scoped from the feed's focus alone? True
+   * for feeds that are India-specific by construction; false for feeds only
+   * filtered to India by a query parameter, or general/world feeds published
+   * in an Indian language. Defaults to true.
    */
   trustFeedScope?: boolean;
+  note?: string;
 }
 
 export const FEED_SOURCES: FeedSource[] = [
-  // ── Official / primary authorities ──────────────────────────────────────
+  // ── Official / primary authorities ─────────────────────────────────────
   {
     id: "ndma-sachet-json",
     name: "NDMA SACHET — CAP alert details",
+    publisher: "NDMA SACHET",
     homepage: "https://sachet.ndma.gov.in/",
     url: "https://sachet.ndma.gov.in/cap_public_website/FetchAllAlertDetails",
     kind: "sachet-json",
@@ -57,12 +56,14 @@ export const FEED_SOURCES: FeedSource[] = [
     official: true,
     language: "mixed",
     focus: "india-disaster",
+    role: "official",
     enabled: true,
-    note: "National Disaster Management Authority Common Alerting Protocol feed. Structured severity / effective-time / area fields are preserved verbatim.",
+    note: "National Disaster Management Authority Common Alerting Protocol feed. CAP severity / effective-time / area fields preserved verbatim.",
   },
   {
     id: "ndma-sachet-rss",
     name: "NDMA SACHET — All India CAP alerts (RSS)",
+    publisher: "NDMA SACHET",
     homepage: "https://sachet.ndma.gov.in/",
     url: "https://sachet.ndma.gov.in/cap_public_website/rss/rss_india.xml",
     kind: "rss",
@@ -70,80 +71,30 @@ export const FEED_SOURCES: FeedSource[] = [
     official: true,
     language: "mixed",
     focus: "india-disaster",
+    role: "official",
     enabled: true,
-    note: "Per-alert canonical links (FetchXMLFile) come from this feed and are merged with the JSON by identifier.",
+    note: "Per-alert canonical links (FetchXMLFile) and CWC river-gauge bulletins. Merged with the JSON by identifier.",
   },
   {
-    id: "reliefweb-india",
-    name: "ReliefWeb — India updates (UN OCHA)",
+    id: "reliefweb-india-disasters",
+    name: "ReliefWeb — India disasters (UN OCHA)",
+    publisher: "ReliefWeb (UN OCHA)",
     homepage: "https://reliefweb.int/country/india",
-    url: "https://reliefweb.int/updates/rss.xml?primary_country=IND&appname=ifa-github-io",
+    url: "https://reliefweb.int/disasters/rss.xml?primary_country=IND&appname=ifa-github-io",
     kind: "rss",
     defaultEvidenceRole: "government-statement",
     official: true,
     language: "en",
     focus: "india-disaster",
+    role: "official",
     enabled: true,
     trustFeedScope: false,
-    note: "UN Office for the Coordination of Humanitarian Affairs. Aggregates official situation reports and agency statements. The primary_country=IND query parameter is not a hard guarantee — the feed has been observed to include other-country and global thematic reports, so items are kept only when they name an India / Tamil Nadu location themselves.",
+    note: "UN OCHA disaster-page feed. The primary_country=IND filter is not a hard guarantee, so items are kept only when they name an India / Tamil Nadu location themselves. Updates less often than a news feed; last-known-good is retained on failure.",
   },
-
-  // ── Independent news — Tamil Nadu focus ────────────────────────────────
-  {
-    id: "thehindu-tn",
-    name: "The Hindu — Tamil Nadu",
-    homepage: "https://www.thehindu.com/news/national/tamil-nadu/",
-    url: "https://www.thehindu.com/news/national/tamil-nadu/feeder/default.rss",
-    kind: "rss",
-    defaultEvidenceRole: "independent-report",
-    official: false,
-    language: "en",
-    focus: "tamil-nadu",
-    enabled: true,
-  },
-
-  // ── Independent news — India ───────────────────────────────────────────
-  {
-    id: "thehindu-national",
-    name: "The Hindu — National",
-    homepage: "https://www.thehindu.com/news/national/",
-    url: "https://www.thehindu.com/news/national/feeder/default.rss",
-    kind: "rss",
-    defaultEvidenceRole: "independent-report",
-    official: false,
-    language: "en",
-    focus: "india",
-    enabled: true,
-  },
-  {
-    id: "ndtv-india",
-    name: "NDTV — India",
-    homepage: "https://www.ndtv.com/india",
-    url: "https://feeds.feedburner.com/ndtvnews-india-news",
-    kind: "rss",
-    defaultEvidenceRole: "independent-report",
-    official: false,
-    language: "en",
-    focus: "india",
-    enabled: true,
-  },
-  {
-    id: "toi-india",
-    name: "The Times of India — India",
-    homepage: "https://timesofindia.indiatimes.com/india",
-    url: "https://timesofindia.indiatimes.com/rssfeeds/-2128936835.cms",
-    kind: "rss",
-    defaultEvidenceRole: "independent-report",
-    official: false,
-    language: "en",
-    focus: "india",
-    enabled: true,
-  },
-
-  // ── Blocked from this environment — enable where reachable ─────────────
   {
     id: "pib-english",
     name: "Press Information Bureau — English",
+    publisher: "Press Information Bureau",
     homepage: "https://pib.gov.in/",
     url: "https://pib.gov.in/RssMain.aspx?ModId=6&Lang=1&Regid=1",
     kind: "rss",
@@ -151,22 +102,239 @@ export const FEED_SOURCES: FeedSource[] = [
     official: true,
     language: "en",
     focus: "india",
+    role: "official",
     enabled: false,
-    note: "Returned HTTP 403 (Akamai edge block) from the build environment on 2026-09-01. Enable where the host can reach pib.gov.in.",
+    note: "HTTP 403 (Akamai edge block) from GitHub Actions and this environment on 2026-09-01. Not retried aggressively. Enable where pib.gov.in is reachable.",
   },
   {
-    id: "pib-tamil",
-    name: "Press Information Bureau — Tamil",
-    homepage: "https://pib.gov.in/",
-    url: "https://pib.gov.in/RssMain.aspx?ModId=6&Lang=11&Regid=6",
+    id: "imd-allindia",
+    name: "India Meteorological Department — all-India weather",
+    publisher: "India Meteorological Department",
+    homepage: "https://mausam.imd.gov.in/",
+    url: "https://mausam.imd.gov.in/responsive/rss/allindiawxnews.xml",
     kind: "rss",
     defaultEvidenceRole: "government-statement",
     official: true,
+    language: "en",
+    focus: "india-disaster",
+    role: "official",
+    enabled: false,
+    note: "IMD retired its public RSS (HTTP 404); its warnings API needs a key. IMD alerts still reach IFA through the SACHET CAP feed.",
+  },
+
+  // ── Independent reporting — Tamil Nadu focus (English) ──────────────────
+  {
+    id: "thehindu-tn",
+    name: "The Hindu — Tamil Nadu",
+    publisher: "The Hindu",
+    homepage: "https://www.thehindu.com/news/national/tamil-nadu/",
+    url: "https://www.thehindu.com/news/national/tamil-nadu/feeder/default.rss",
+    kind: "rss",
+    defaultEvidenceRole: "independent-report",
+    official: false,
+    language: "en",
+    focus: "tamil-nadu",
+    role: "independent",
+    enabled: true,
+  },
+  {
+    id: "thehindu-chennai",
+    name: "The Hindu — Chennai",
+    publisher: "The Hindu",
+    homepage: "https://www.thehindu.com/news/cities/chennai/",
+    url: "https://www.thehindu.com/news/cities/chennai/feeder/default.rss",
+    kind: "rss",
+    defaultEvidenceRole: "independent-report",
+    official: false,
+    language: "en",
+    focus: "tamil-nadu",
+    role: "independent",
+    enabled: true,
+  },
+  {
+    id: "toi-chennai",
+    name: "The Times of India — Chennai",
+    publisher: "The Times of India",
+    homepage: "https://timesofindia.indiatimes.com/city/chennai",
+    url: "https://timesofindia.indiatimes.com/rssfeeds/-2128833038.cms",
+    kind: "rss",
+    defaultEvidenceRole: "independent-report",
+    official: false,
+    language: "en",
+    focus: "tamil-nadu",
+    role: "independent",
+    enabled: true,
+  },
+
+  // ── Independent reporting — India-wide (English) ───────────────────────
+  {
+    id: "thehindu-national",
+    name: "The Hindu — National",
+    publisher: "The Hindu",
+    homepage: "https://www.thehindu.com/news/national/",
+    url: "https://www.thehindu.com/news/national/feeder/default.rss",
+    kind: "rss",
+    defaultEvidenceRole: "independent-report",
+    official: false,
+    language: "en",
+    focus: "india",
+    role: "independent",
+    enabled: true,
+  },
+  {
+    id: "ndtv-india",
+    name: "NDTV — India",
+    publisher: "NDTV",
+    homepage: "https://www.ndtv.com/india",
+    url: "https://feeds.feedburner.com/ndtvnews-india-news",
+    kind: "rss",
+    defaultEvidenceRole: "independent-report",
+    official: false,
+    language: "en",
+    focus: "india",
+    role: "independent",
+    enabled: true,
+    note: "Feed reachable; individual ndtv.com article URLs have been observed to return 403 to datacenter IPs (publisher-side bot management). Not treated as an IFA defect; ordinary readers are unaffected.",
+  },
+  {
+    id: "toi-india",
+    name: "The Times of India — India",
+    publisher: "The Times of India",
+    homepage: "https://timesofindia.indiatimes.com/india",
+    url: "https://timesofindia.indiatimes.com/rssfeeds/-2128936835.cms",
+    kind: "rss",
+    defaultEvidenceRole: "independent-report",
+    official: false,
+    language: "en",
+    focus: "india",
+    role: "independent",
+    enabled: true,
+  },
+  {
+    id: "ht-india",
+    name: "Hindustan Times — India",
+    publisher: "Hindustan Times",
+    homepage: "https://www.hindustantimes.com/india-news",
+    url: "https://www.hindustantimes.com/feeds/rss/india-news/rssfeed.xml",
+    kind: "rss",
+    defaultEvidenceRole: "independent-report",
+    official: false,
+    language: "en",
+    focus: "india",
+    role: "independent",
+    enabled: true,
+  },
+  {
+    id: "indiatoday",
+    name: "India Today — India",
+    publisher: "India Today",
+    homepage: "https://www.indiatoday.in/india",
+    url: "https://www.indiatoday.in/rss/1206578",
+    kind: "rss",
+    defaultEvidenceRole: "independent-report",
+    official: false,
+    language: "en",
+    focus: "india",
+    role: "independent",
+    enabled: true,
+  },
+
+  // ── Independent reporting — Tamil-language ─────────────────────────────
+  {
+    id: "bbc-tamil",
+    name: "BBC News தமிழ்",
+    publisher: "BBC Tamil",
+    homepage: "https://www.bbc.com/tamil",
+    url: "https://feeds.bbci.co.uk/tamil/rss.xml",
+    kind: "rss",
+    defaultEvidenceRole: "independent-report",
+    official: false,
+    language: "ta",
+    focus: "india",
+    role: "independent",
+    enabled: true,
+    trustFeedScope: false,
+    note: "Tamil-language; covers India, Tamil Nadu and world/Sri Lanka. Kept only when an item names an India / Tamil Nadu location.",
+  },
+  {
+    id: "news18-tamil-tn",
+    name: "News18 தமிழ் — தமிழ்நாடு",
+    publisher: "News18 Tamil",
+    homepage: "https://tamil.news18.com/tamil-nadu/",
+    url: "https://tamil.news18.com/commonfeeds/v1/tam/rss/tamil-nadu.xml",
+    kind: "rss",
+    defaultEvidenceRole: "independent-report",
+    official: false,
     language: "ta",
     focus: "tamil-nadu",
-    enabled: false,
-    note: "Same Akamai block as the English PIB feed.",
+    role: "independent",
+    enabled: true,
+  },
+  {
+    id: "puthiyathalaimurai",
+    name: "Puthiyathalaimurai (புதிய தலைமுறை)",
+    publisher: "Puthiyathalaimurai",
+    homepage: "https://www.puthiyathalaimurai.com/",
+    url: "https://www.puthiyathalaimurai.com/stories.rss",
+    kind: "rss",
+    defaultEvidenceRole: "independent-report",
+    official: false,
+    language: "ta",
+    focus: "tamil-nadu",
+    role: "independent",
+    enabled: true,
+    trustFeedScope: false,
+    note: "Tamil-language TV news; general feed, so an item is kept only when it names an India / Tamil Nadu location.",
+  },
+
+  // ── Specialist context ────────────────────────────────────────────────
+  {
+    id: "thehindu-energy-env",
+    name: "The Hindu — Energy & Environment",
+    publisher: "The Hindu",
+    homepage: "https://www.thehindu.com/sci-tech/energy-and-environment/",
+    url: "https://www.thehindu.com/sci-tech/energy-and-environment/feeder/default.rss",
+    kind: "rss",
+    defaultEvidenceRole: "independent-report",
+    official: false,
+    language: "en",
+    focus: "india",
+    role: "specialist",
+    enabled: true,
+  },
+  {
+    id: "mongabay-india",
+    name: "Mongabay India",
+    publisher: "Mongabay India",
+    homepage: "https://india.mongabay.com/",
+    url: "https://india.mongabay.com/feed/",
+    kind: "rss",
+    defaultEvidenceRole: "expert-analysis",
+    official: false,
+    language: "en",
+    focus: "india",
+    role: "specialist",
+    enabled: true,
+    note: "Environmental / conservation reporting.",
+  },
+  {
+    id: "thehindu-kerala",
+    name: "The Hindu — Kerala",
+    publisher: "The Hindu",
+    homepage: "https://www.thehindu.com/news/national/kerala/",
+    url: "https://www.thehindu.com/news/national/kerala/feeder/default.rss",
+    kind: "rss",
+    defaultEvidenceRole: "independent-report",
+    official: false,
+    language: "en",
+    focus: "india",
+    role: "specialist",
+    enabled: true,
+    note: "Neighbouring-state coverage — relevant for cross-border weather, Cauvery/Mullaperiyar water, and fishermen issues.",
   },
 ];
 
 export const ENABLED_FEEDS = FEED_SOURCES.filter((f) => f.enabled);
+
+/** Distinct publishers among the enabled feeds. */
+export const ENABLED_PUBLISHERS = [...new Set(ENABLED_FEEDS.map((f) => f.publisher))].sort();

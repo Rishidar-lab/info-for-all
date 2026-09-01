@@ -11,11 +11,20 @@ type Geo = "all" | "tamil-nadu" | "india";
 export interface LiveFeedProps {
   active: LiveCluster[];
   developing: LiveCluster[];
-  cleared: LiveCluster[];
   tamilNadu: LiveCluster[];
   india: LiveCluster[];
   comparisons: LiveCluster[];
+  singleReports: LiveCluster[];
   districts: string[];
+  counts: {
+    activeCrisis: number;
+    comparisons: number;
+    singleReports: number;
+    weakMatchesRejected: number;
+    distinctPublishers: number;
+    workingFeeds: number;
+    failedFeeds: number;
+  };
 }
 
 function match(c: LiveCluster, lang: Lang, geo: Geo, district: string): boolean {
@@ -101,7 +110,7 @@ export function LiveFeed(props: LiveFeedProps) {
   const [geo, setGeo] = useState<Geo>("all");
   const [district, setDistrict] = useState<string>("");
 
-  const { active, developing, tamilNadu, india, comparisons } = useMemo(() => {
+  const { active, developing, tamilNadu, india, comparisons, singleReports } = useMemo(() => {
     const f = (list: LiveCluster[]) => list.filter((c) => match(c, lang, geo, district));
     return {
       active: f(props.active),
@@ -109,8 +118,9 @@ export function LiveFeed(props: LiveFeedProps) {
       tamilNadu: f(props.tamilNadu),
       india: f(props.india),
       comparisons: f(props.comparisons),
+      singleReports: f(props.singleReports),
     };
-  }, [props.active, props.developing, props.tamilNadu, props.india, props.comparisons, lang, geo, district]);
+  }, [props.active, props.developing, props.tamilNadu, props.india, props.comparisons, props.singleReports, lang, geo, district]);
 
   return (
     <div className="flex flex-col gap-8">
@@ -159,6 +169,27 @@ export function LiveFeed(props: LiveFeedProps) {
             </button>
           )}
         </div>
+        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 border-t border-rule pt-2.5 ui text-[11.5px] text-ink-3">
+          <span><strong className="mono text-ink">{props.counts.activeCrisis}</strong> active alerts</span>
+          <span className="text-rule-strong">·</span>
+          <span><strong className="mono text-ink">{props.counts.comparisons}</strong> verified multi-source comparisons</span>
+          <span className="text-rule-strong">·</span>
+          <span><strong className="mono text-ink">{props.counts.singleReports}</strong> single reports</span>
+          <span className="text-rule-strong">·</span>
+          <span><strong className="mono text-ink">{props.counts.distinctPublishers}</strong> publishers</span>
+          <span className="text-rule-strong">·</span>
+          <span>
+            <strong className="mono text-ink">{props.counts.workingFeeds}</strong>/{props.counts.workingFeeds + props.counts.failedFeeds} feeds
+          </span>
+          {props.counts.weakMatchesRejected > 0 && (
+            <>
+              <span className="text-rule-strong">·</span>
+              <span title="Cross-publisher pairings that did not meet the confidence bar for a comparison.">
+                <strong className="mono text-ink">{props.counts.weakMatchesRejected}</strong> weak matches kept separate
+              </span>
+            </>
+          )}
+        </div>
       </div>
 
       <Section
@@ -171,8 +202,7 @@ export function LiveFeed(props: LiveFeedProps) {
         emphasis
         emptyText={
           props.active.length === 0
-            ? // Exact required copy: state that none were found, never that none exist.
-              "No active official crisis alert was found in the latest successful refresh."
+            ? "No active official crisis alert was found in the latest successful refresh."
             : "No active alert matches the current filters. Alerts exist in this refresh — clear the filters above to see them."
         }
       />
@@ -211,11 +241,25 @@ export function LiveFeed(props: LiveFeedProps) {
       <Section
         id="comparisons"
         n="04"
-        label="Coverage comparisons"
-        title="Where multiple sources are reporting the same event"
-        note="Clusters with two or more sources. Differences shown are in structured metadata (locations, times, stated severity) — not semantic claims."
+        label="Verified multi-source comparisons"
+        title="Same event, reported by two or more publishers"
+        note="Only clusters with 2+ distinct publishers and strong or probable matching confidence. Differences shown are in structured metadata (locations, times, headline emphasis, stated severity) — not semantic claims."
         clusters={comparisons}
-        emptyText="No multi-source clusters matched the current filters."
+        emptyText={
+          props.counts.comparisons === 0
+            ? "No verified multi-source comparison is available in this refresh. When two or more publishers cover the same identifiable event, it will appear here."
+            : "No verified comparison matches the current filters."
+        }
+      />
+
+      <Section
+        id="single-reports"
+        n="05"
+        label="Single reports"
+        title="Reported by one publisher so far"
+        note="Not yet corroborated by a second publisher. Inspect the report and its source context."
+        clusters={singleReports}
+        emptyText="No single reports match the current filters."
       />
     </div>
   );

@@ -86,19 +86,32 @@ export function ClusterCard({ cluster, emphasis = false }: { cluster: LiveCluste
 
       <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 ui text-[11.5px] text-ink-2">
         <span>
-          <strong className="mono text-ink">{cluster.sourceCount}</strong> source{cluster.sourceCount === 1 ? "" : "s"}
+          <strong className="mono text-ink">{cluster.distinctPublishers}</strong> publisher{cluster.distinctPublishers === 1 ? "" : "s"}
         </span>
-        <span className="text-ink-3">·</span>
-        <span>
-          <strong className="mono text-ink">{cluster.officialCount}</strong> official
-        </span>
-        <span className="text-ink-3">·</span>
-        <span>
-          <strong className="mono text-ink">{cluster.independentCount}</strong> independent
-        </span>
+        {cluster.officialCount > 0 && (
+          <>
+            <span className="text-ink-3">·</span>
+            <span><strong className="mono text-ink">{cluster.officialCount}</strong> official</span>
+          </>
+        )}
+        {cluster.independentCount > 0 && (
+          <>
+            <span className="text-ink-3">·</span>
+            <span><strong className="mono text-ink">{cluster.independentCount}</strong> independent</span>
+          </>
+        )}
         <span className="text-ink-3">·</span>
         <span className="text-ink-3">{VERIFICATION_LABEL[cluster.verificationStatus]}</span>
       </div>
+
+      {cluster.isVerifiedComparison && (
+        <p className="mt-1.5 ui text-[11px] leading-snug text-ink-3">
+          <span className={cn("font-semibold", cluster.confidence === "strong" ? "text-agree" : "text-caution")}>
+            {cluster.confidence === "strong" ? "Strong match" : "Probable match"}
+          </span>{" "}
+          — {cluster.reason} {cluster.publishers.join(" · ")}
+        </p>
+      )}
 
       {cluster.cap?.severity && (
         <p className="mt-2 ui text-[11.5px] text-ink-3">

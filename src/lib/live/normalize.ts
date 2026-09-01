@@ -142,6 +142,8 @@ export function normalizeItem(feed: FeedSource, item: RawItem, fetchedAt: string
     url,
     sourceId: feed.id,
     sourceName: feed.name,
+    publisher: feed.publisher,
+    role: feed.role,
     sourceUrl: feed.homepage,
     publishedAt: publishedIso,
     fetchedAt,

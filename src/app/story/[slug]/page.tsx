@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const c = clusterBySlug(slug);
   if (!c) return { title: "Story not found" };
-  return { title: c.title, description: `${clusterLabel(c).tag} — ${c.sourceCount} source(s).` };
+  return { title: c.title, description: `${clusterLabel(c).tag} — ${c.distinctPublishers} publisher(s).` };
 }
 
 function fmtIST(iso: string): string {
@@ -92,7 +92,7 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
           {cluster.isCrisis && <LifecycleBadge lifecycle={cluster.lifecycle} />}
           <VerificationBadge status={cluster.verificationStatus} />
           <span className="ui text-[12px] text-ink-2">
-            <strong className="mono text-ink">{cluster.sourceCount}</strong> sources ·{" "}
+            <strong className="mono text-ink">{cluster.distinctPublishers}</strong> publishers ·{" "}
             <strong className="mono text-ink">{cluster.officialCount}</strong> official ·{" "}
             <strong className="mono text-ink">{cluster.independentCount}</strong> independent
           </span>
@@ -100,6 +100,16 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
 
         {cluster.districts.length > 0 && (
           <p className="mt-2 ui text-[12.5px] text-ink-2">Districts referenced: {cluster.districts.join(", ")}</p>
+        )}
+
+        {cluster.distinctPublishers > 1 && (
+          <p className="mt-2 ui text-[12px] leading-snug text-ink-3">
+            <span className={cn("font-semibold", cluster.confidence === "strong" ? "text-agree" : cluster.confidence === "probable" ? "text-caution" : "text-ink-3")}>
+              {cluster.isVerifiedComparison ? `${cluster.confidence === "strong" ? "Strong" : "Probable"} match` : "Weak match"}
+            </span>{" "}
+            — {cluster.reason}
+            {!cluster.isVerifiedComparison && " These reports are shown separately below rather than as a verified comparison."}
+          </p>
         )}
       </header>
 
@@ -132,7 +142,9 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
           </div>
           {cluster.commonGroundPending ? (
             <p className="card bg-surface-2 px-4 py-3 ui text-[13px] text-ink-2">
-              Common-ground extraction pending human review.
+              {cluster.isVerifiedComparison
+                ? "Multiple sources cover this event; detailed claim comparison awaits review."
+                : "Common-ground extraction pending human review."}
             </p>
           ) : (
             <ul className="card divide-y divide-rule">
