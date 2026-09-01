@@ -32,6 +32,17 @@ export interface FeedSource {
   focus: "tamil-nadu" | "india" | "india-disaster";
   enabled: boolean;
   note?: string;
+  /**
+   * When an item names no India/Tamil Nadu location at all, may its scope
+   * still be trusted from the feed's own focus? True for feeds whose entire
+   * output is India-specific by construction (a paper's India/TN desk, the
+   * national disaster authority). False for feeds that are filtered by a
+   * query parameter that isn't a hard guarantee (e.g. a global humanitarian
+   * digest queried for India can still return other-country or global items)
+   * — those require an explicit textual match instead of feed-focus trust.
+   * Defaults to true.
+   */
+  trustFeedScope?: boolean;
 }
 
 export const FEED_SOURCES: FeedSource[] = [
@@ -73,7 +84,8 @@ export const FEED_SOURCES: FeedSource[] = [
     language: "en",
     focus: "india-disaster",
     enabled: true,
-    note: "UN Office for the Coordination of Humanitarian Affairs. Aggregates official situation reports and agency statements.",
+    trustFeedScope: false,
+    note: "UN Office for the Coordination of Humanitarian Affairs. Aggregates official situation reports and agency statements. The primary_country=IND query parameter is not a hard guarantee — the feed has been observed to include other-country and global thematic reports, so items are kept only when they name an India / Tamil Nadu location themselves.",
   },
 
   // ── Independent news — Tamil Nadu focus ────────────────────────────────

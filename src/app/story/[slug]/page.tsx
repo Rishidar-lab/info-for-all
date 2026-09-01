@@ -6,6 +6,7 @@ import {
   clusterArticles,
   routableClusters,
   istTimestamp,
+  clusterLabel,
   EVIDENCE_ROLE_LABEL,
   LIFECYCLE_LABEL,
   VERIFICATION_LABEL,
@@ -24,7 +25,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const c = clusterBySlug(slug);
   if (!c) return { title: "Story not found" };
-  return { title: c.title, description: `Coverage comparison — ${c.sourceCount} source(s).` };
+  return { title: c.title, description: `${clusterLabel(c).tag} — ${c.sourceCount} source(s).` };
 }
 
 function fmtIST(iso: string): string {
@@ -49,6 +50,7 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
   const scopeLabel =
     cluster.scope === "tamil-nadu" ? "Tamil Nadu" : cluster.scope === "india-relevant" ? "India · Tamil Nadu-relevant" : "India";
   const kind = cluster.crisisType ? CRISIS_TYPE_LABEL[cluster.crisisType] : cluster.isCrisis ? "Public safety" : "Development";
+  const label = clusterLabel(cluster);
 
   return (
     <article className="pb-6">
@@ -75,6 +77,18 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
         </p>
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
+          <span
+            className={cn(
+              "pill",
+              label.kind === "coverage-comparison"
+                ? "text-agree bg-agree-bg"
+                : label.kind === "official-alert"
+                  ? "text-dispute bg-dispute-bg"
+                  : "text-ink-3 bg-surface-2",
+            )}
+          >
+            {label.tag}
+          </span>
           {cluster.isCrisis && <LifecycleBadge lifecycle={cluster.lifecycle} />}
           <VerificationBadge status={cluster.verificationStatus} />
           <span className="ui text-[12px] text-ink-2">

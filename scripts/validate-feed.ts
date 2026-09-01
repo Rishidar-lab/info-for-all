@@ -27,7 +27,7 @@ const req = (cond: boolean, msg: string) => {
 };
 
 req(typeof data.generatedAt === "string", "generatedAt missing");
-req(["live", "degraded", "stale"].includes(data.health as string), "health invalid");
+req(["live", "degraded", "stale", "empty"].includes(data.health as string), "health invalid");
 req(Array.isArray(data.feeds), "feeds not an array");
 req(Array.isArray(data.articles), "articles not an array");
 req(Array.isArray(data.clusters), "clusters not an array");

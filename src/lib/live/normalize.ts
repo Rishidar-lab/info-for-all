@@ -18,16 +18,21 @@ import {
   verificationFor,
 } from "./crisis";
 
-/** Refine the feed's default evidence role using the item's own signals. */
+/**
+ * Refine the feed's default evidence role using the item's own signals.
+ *
+ * Important: a headline merely NAMING a government actor ("Collector announces…",
+ * "CM Vijay opens…") is still that publication's own reporting, not a government
+ * statement. Only the feed's own official/non-official status determines whether
+ * an item can count as "official" — content-based promotion of an independent
+ * outlet's article to `government-statement` would silently inflate official
+ * source counts and contradict the per-source tallies shown to readers.
+ */
 function evidenceRole(feed: FeedSource, item: RawItem): EvidenceRole {
   if (feed.kind === "sachet-json" || feed.id === "ndma-sachet-rss") return "official-alert";
-  const author = (item.author || "").toLowerCase();
   const title = (item.title || "").toLowerCase();
   if (feed.official) {
     if (/order|notification|circular|gazette|advisory|sitrep|situation report/.test(title)) return "primary-document";
-    return "government-statement";
-  }
-  if (/imd|met department|meteorolog|ndrf|sdrf|collector|district administration|govt|government|minister|cm |chief minister/.test(author + " " + title)) {
     return "government-statement";
   }
   if (/analysis|explained|explainer|why |how |what to know/.test(title)) return "expert-analysis";
@@ -72,6 +77,7 @@ export function normalizeItem(feed: FeedSource, item: RawItem, fetchedAt: string
     excerpt,
     areaDescription: cap?.areaDescription,
     feedFocus: feed.focus === "india-disaster" ? "india" : feed.focus,
+    trustFeedScope: feed.trustFeedScope,
   });
 
   let scope = geo.scope;

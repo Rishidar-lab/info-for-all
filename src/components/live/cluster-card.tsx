@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { LiveCluster } from "@/lib/live/types";
 import { CRISIS_TYPE_LABEL } from "@/lib/live/crisis";
-import { EVIDENCE_ROLE_LABEL, LIFECYCLE_LABEL, VERIFICATION_LABEL } from "@/lib/live/dataset";
+import { EVIDENCE_ROLE_LABEL, LIFECYCLE_LABEL, VERIFICATION_LABEL, clusterLabel } from "@/lib/live/dataset";
 import { cn } from "@/lib/format";
 
 function fmtIST(iso: string): string {
@@ -25,6 +25,7 @@ export function ClusterCard({ cluster, emphasis = false }: { cluster: LiveCluste
         ? "India · TN-relevant"
         : "India";
   const kind = cluster.crisisType ? CRISIS_TYPE_LABEL[cluster.crisisType] : cluster.isCrisis ? "Public safety" : "Development";
+  const label = clusterLabel(cluster);
 
   return (
     <article
@@ -34,6 +35,18 @@ export function ClusterCard({ cluster, emphasis = false }: { cluster: LiveCluste
       )}
     >
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1 ui text-[11px]">
+        <span
+          className={cn(
+            "pill",
+            label.kind === "coverage-comparison"
+              ? "text-agree bg-agree-bg"
+              : label.kind === "official-alert"
+                ? "text-dispute bg-dispute-bg"
+                : "text-ink-3 bg-surface-2",
+          )}
+        >
+          {label.tag}
+        </span>
         <span className="label">{kind}</span>
         <span className="text-ink-3">·</span>
         <span className="text-ink-2">{scopeLabel}</span>
@@ -100,7 +113,7 @@ export function ClusterCard({ cluster, emphasis = false }: { cluster: LiveCluste
           href={`/story/${cluster.slug}`}
           className="ui inline-flex items-center gap-1 border border-rule-strong px-2.5 py-1 text-[11.5px] font-semibold text-ink transition-colors hover:border-accent hover:text-accent"
         >
-          Compare coverage <span aria-hidden>→</span>
+          {label.cta} <span aria-hidden>→</span>
         </Link>
         {cluster.commonGroundPending ? (
           <span className="ui text-[11px] text-ink-3">Common-ground extraction pending review</span>

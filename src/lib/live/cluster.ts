@@ -60,9 +60,16 @@ export function clusterArticles(articles: LiveArticle[], now = Date.now()): Live
       if (Math.abs(Date.parse(a.publishedAt) - Date.parse(b.publishedAt)) > CLUSTER_WINDOW_MS) continue;
       if ((a.crisisType || null) !== (b.crisisType || null)) continue;
 
+      // Real district overlap is the strong signal. For India-scope items with
+      // no district on either side, "both india" is NOT enough — e.g. SACHET's
+      // per-river CWC flood bulletins share heavy boilerplate wording
+      // ("River X … continues to flow in … flood situation at …") but each
+      // names a different river, district and state that "districts: []"
+      // does not capture; matching on scope alone previously merged a dozen
+      // unrelated river bulletins into one cluster. Only Tamil Nadu — a
+      // single state — keeps the narrower zero-district fallback.
       const geoOk =
         districtOverlap(a.districts, b.districts) ||
-        (a.districts.length === 0 && b.districts.length === 0 && a.scope === b.scope) ||
         (a.scope === "tamil-nadu" && b.scope === "tamil-nadu" && a.districts.length === 0 && b.districts.length === 0);
       if (!geoOk) continue;
 
@@ -149,8 +156,12 @@ function buildCluster(members: LiveArticle[], now: number): LiveCluster {
       })
     : Math.max(...members.map((m) => m.crisisPriority));
 
+  // Use the cluster's actual dominant evidence role, not "official-alert" just
+  // because the cluster is a crisis — a crisis type can be detected from an
+  // independent report alone, and the badge must not claim official backing
+  // that the sources don't have.
   const verificationStatus = verificationFor(
-    isCrisis ? "official-alert" : byRecency[0].evidenceRole,
+    official.length > 0 ? "official-alert" : byRecency[0].evidenceRole,
     Math.max(0, distinctSources - 1),
     official.length > 0,
   );

@@ -17,14 +17,14 @@ export function StatusBanner() {
         ? "border-caution/50 bg-caution-bg text-caution"
         : "border-dispute/50 bg-dispute-bg text-dispute";
 
-  const label = health === "live" ? "LIVE" : health === "degraded" ? "DEGRADED" : "STALE";
+  const label = health === "live" ? "LIVE" : health === "degraded" ? "DEGRADED" : health === "empty" ? "EMPTY" : "STALE";
 
   return (
     <section className={cn("card px-4 py-3", tone)}>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
         <span className="ui text-[13px] font-bold tracking-wide">{label}</span>
         <span className="ui text-[12.5px] text-ink-2">
-          Last successful refresh <strong className="mono text-ink">{istTimestamp(lastSuccessAt)}</strong> ({relativeIST(lastSuccessAt)})
+          Last successfully refreshed: <strong className="mono text-ink">{istTimestamp(lastSuccessAt)}</strong> ({relativeIST(lastSuccessAt)})
         </span>
         <span className="ui text-[12.5px] text-ink-2">
           <strong className="mono text-ink">{counts.workingFeeds}</strong> / {feeds.length} feeds responding
@@ -37,9 +37,11 @@ export function StatusBanner() {
 
       {health !== "live" && (
         <p className="ui mt-2 text-[12px] leading-snug text-ink-2">
-          {health === "stale"
-            ? "The last refresh did not reach any feed. The information below is the last known good snapshot and may be out of date."
-            : `Some feeds did not respond on the last run: ${failed.map((f) => f.sourceName).join("; ")}. Items from those feeds are the last known good copy and are marked stale.`}
+          {health === "empty"
+            ? "No valid Tamil Nadu or India item was available from any feed at the last refresh. This is not evidence that nothing is happening — it means this refresh found nothing to show."
+            : health === "stale"
+              ? "The last refresh did not reach any feed. The information below is the last known good snapshot and may be out of date."
+              : `Some feeds did not respond on the last run: ${failed.map((f) => f.sourceName).join("; ")}. Items from those feeds are the last known good copy and are marked stale.`}
         </p>
       )}
 

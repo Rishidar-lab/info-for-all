@@ -178,7 +178,10 @@ function finaliseCrisisPriority(articles: LiveArticle[], now: number): LiveArtic
   return articles;
 }
 
-function health(feeds: FeedStatus[]): FeedHealth {
+function health(feeds: FeedStatus[], scopedItemCount: number): FeedHealth {
+  // No valid Tamil Nadu / India item exists at all — distinct from "feeds are
+  // failing"; this is "there is nothing to show", and must say so plainly.
+  if (scopedItemCount === 0) return "empty";
   const enabled = feeds.length;
   const ok = feeds.filter((f) => f.status === "ok").length;
   if (ok === 0) return "stale";
@@ -236,10 +239,12 @@ async function main() {
     (c) => c.isCrisis && (c.lifecycle === "active" || c.lifecycle === "update" || c.lifecycle === "developing"),
   );
 
+  const scopedItemCount = articles.filter((a) => a.scope === "tamil-nadu" || a.scope === "india" || a.scope === "india-relevant").length;
+
   const dataset: LiveDataset = {
     generatedAt: fetchedAt,
     lastSuccessAt,
-    health: health(feeds),
+    health: health(feeds, scopedItemCount),
     feeds,
     articles,
     clusters,

@@ -167,6 +167,12 @@ export interface GeoInput {
   areaDescription?: string;
   /** From the feed registry — a TN-focused feed is a supporting signal, not proof. */
   feedFocus?: "tamil-nadu" | "india" | "india-disaster";
+  /**
+   * May a zero-signal item still be scoped from feedFocus alone? False for
+   * feeds only filtered to India by a query parameter that can leak other
+   * content (see `FeedSource.trustFeedScope`). Defaults to true.
+   */
+  trustFeedScope?: boolean;
 }
 
 /**
@@ -184,7 +190,7 @@ const FOREIGN_CONTEXT = [
   "maldives", "gaza", "israel", "ukraine", "russia", "united states", "u.s.", "canada", "mexico",
   "brazil", "colombia", "venezuela", "peru", "chile", "argentina", "ecuador", "haiti",
   "united kingdom", "uk ", "france", "germany", "italy", "spain", "greece", "turkey", "turkiye",
-  "iran", "iraq", "syria", "yemen", "sudan", "somalia", "ethiopia", "kenya", "nigeria", "congo",
+  "iran", "iraq", "syria", "yemen", "sudan", "somalia", "ethiopia", "kenya", "nigeria", "congo", "lebanon",
   "egypt", "libya", "morocco", "philippines", "indonesia", "malaysia", "thailand", "vietnam",
   "japan", "south korea", "north korea", "taiwan", "australia", "new zealand", "fiji", "vanuatu",
   "papua new guinea", "europe", "africa", "latin america", "caribbean", "middle east", "sahel",
@@ -294,16 +300,28 @@ export function classifyGeo(input: GeoInput): GeoClassification {
         reason: `References ${foreignHits.slice(0, 3).join(", ")} and no India / Tamil Nadu term. Excluded from the India feed.`,
       };
     }
-    if (indiaTerms.length > 0 || otherStates.length > 0 || (input.feedFocus !== undefined && foreignHits.length === 0)) {
+    if (indiaTerms.length > 0 || otherStates.length > 0) {
       return {
         scope: "india",
         districts: [],
         matchedTerms: [...indiaTerms, ...otherStates],
-        confidence: indiaTerms.length + otherStates.length > 0 ? "medium" : "low",
-        reason:
-          indiaTerms.length + otherStates.length > 0
-            ? `India-scope terms: ${[...indiaTerms, ...otherStates].slice(0, 4).join(", ")}.`
-            : `From an India-focused source feed; no state-level detail.`,
+        confidence: "medium",
+        reason: `India-scope terms: ${[...indiaTerms, ...otherStates].slice(0, 4).join(", ")}.`,
+      };
+    }
+    // Zero textual India/TN signal. A feed that is India-specific BY
+    // CONSTRUCTION (a paper's own India/TN desk, the national disaster
+    // authority) may still be trusted here. A feed that is merely filtered to
+    // India by a query parameter (trustFeedScope: false) may not — some such
+    // feeds have been observed to include other-country or global thematic
+    // items despite the filter, so those are excluded rather than assumed.
+    if (input.feedFocus !== undefined && input.trustFeedScope !== false) {
+      return {
+        scope: "india",
+        districts: [],
+        matchedTerms: [],
+        confidence: "low",
+        reason: "From an India-focused source feed; no state-level detail in the text itself.",
       };
     }
     return {
@@ -311,7 +329,10 @@ export function classifyGeo(input: GeoInput): GeoClassification {
       districts: [],
       matchedTerms: [],
       confidence: "low",
-      reason: "No recognisable India or Tamil Nadu reference.",
+      reason:
+        input.feedFocus !== undefined
+          ? "From a feed filtered to India by a query parameter, but the item itself names no India or Tamil Nadu location — excluded rather than assumed."
+          : "No recognisable India or Tamil Nadu reference.",
     };
   }
 

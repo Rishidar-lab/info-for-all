@@ -152,7 +152,7 @@ export interface LiveCluster {
   cap?: CapMeta;
 }
 
-export type FeedHealth = "live" | "degraded" | "stale";
+export type FeedHealth = "live" | "degraded" | "stale" | "empty";
 
 export interface LiveDataset {
   /** ISO timestamp of the run that produced this file. */

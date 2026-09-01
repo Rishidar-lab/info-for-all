@@ -169,7 +169,12 @@ export function LiveFeed(props: LiveFeedProps) {
         note="Official alerts currently in effect. Expired and all-clear notices are not shown here."
         clusters={active}
         emphasis
-        emptyText="No active official crisis alert matched the current filters in the latest successful refresh."
+        emptyText={
+          props.active.length === 0
+            ? // Exact required copy: state that none were found, never that none exist.
+              "No active official crisis alert was found in the latest successful refresh."
+            : "No active alert matches the current filters. Alerts exist in this refresh — clear the filters above to see them."
+        }
       />
 
       {developing.length > 0 && (

@@ -60,6 +60,30 @@ export const VERIFICATION_STYLE: Record<VerificationStatus, { text: string; bg: 
 
 const activeStates: AlertLifecycle[] = ["active", "update"];
 
+export type ClusterKind = "single-report" | "official-alert" | "coverage-comparison";
+
+export interface ClusterLabel {
+  kind: ClusterKind;
+  /** Short badge text. */
+  tag: string;
+  /** Call-to-action text for the card / detail link. A single report is not a comparison. */
+  cta: string;
+}
+
+/**
+ * A single article is not a meaningful "coverage comparison" — label clusters
+ * by what their source count actually supports.
+ */
+export function clusterLabel(cluster: Pick<LiveCluster, "sourceCount" | "officialCount" | "independentCount">): ClusterLabel {
+  if (cluster.sourceCount <= 1) {
+    return { kind: "single-report", tag: "Single report", cta: "Inspect report" };
+  }
+  if (cluster.independentCount >= 1) {
+    return { kind: "coverage-comparison", tag: "Coverage comparison", cta: "Compare coverage" };
+  }
+  return { kind: "official-alert", tag: "Official alert", cta: "View source context" };
+}
+
 export function articleById(id: string): LiveArticle | undefined {
   return dataset.articles.find((a) => a.id === id);
 }
