@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { LiveCluster } from "@/lib/live/types";
 import { CRISIS_TYPE_LABEL } from "@/lib/live/crisis";
 import { EVIDENCE_ROLE_LABEL, LIFECYCLE_LABEL, VERIFICATION_LABEL, clusterLabel } from "@/lib/live/dataset";
+import { epistemicView } from "@/lib/claims/present";
 import { cn } from "@/lib/format";
 
 function fmtIST(iso: string): string {
@@ -121,6 +122,8 @@ export function ClusterCard({ cluster, emphasis = false }: { cluster: LiveCluste
         </p>
       )}
 
+      {cluster.claims && <ClaimSummary cluster={cluster} />}
+
       <div className="mt-3 flex items-center gap-3 pt-1">
         <Link
           href={`/story/${cluster.slug}`}
@@ -128,15 +131,35 @@ export function ClusterCard({ cluster, emphasis = false }: { cluster: LiveCluste
         >
           {label.cta} <span aria-hidden>→</span>
         </Link>
-        {cluster.commonGroundPending ? (
-          <span className="ui text-[11px] text-ink-3">Common-ground extraction pending review</span>
-        ) : (
-          <span className="ui text-[11px] text-agree">
-            {cluster.commonGround.length} shared official fact{cluster.commonGround.length === 1 ? "" : "s"}
-          </span>
-        )}
+        {!cluster.claims &&
+          (cluster.commonGroundPending ? (
+            <span className="ui text-[11px] text-ink-3">Common-ground extraction pending review</span>
+          ) : (
+            <span className="ui text-[11px] text-agree">
+              {cluster.commonGround.length} shared official fact{cluster.commonGround.length === 1 ? "" : "s"}
+            </span>
+          ))}
       </div>
     </article>
+  );
+}
+
+function ClaimSummary({ cluster }: { cluster: LiveCluster }) {
+  const ec = cluster.claims!;
+  const v = epistemicView(ec);
+  const cgi = ec.cgi;
+  return (
+    <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-rule pt-2 ui text-[11px] text-ink-3">
+      {v.known.length > 0 && <span className="text-agree">{v.known.length} corroborated</span>}
+      {v.reported.length > 0 && <span className="text-caution">{v.reported.length} unverified</span>}
+      {v.disputed.length > 0 && <span className="text-dispute">{v.disputed.length} disputed</span>}
+      {ec.evidence.length > 0 && <span className="text-evidence">{ec.evidence.length} primary record{ec.evidence.length === 1 ? "" : "s"}</span>}
+      {cgi && (
+        <span title="Common Ground Index — experimental">
+          CGI <strong className="mono text-ink-2">{cgi.score}</strong>
+        </span>
+      )}
+    </div>
   );
 }
 

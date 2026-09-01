@@ -53,11 +53,51 @@ const clusters = (data.clusters ?? []) as Record<string, unknown>[];
 const slugs = clusters.map((c) => c.slug);
 if (new Set(slugs).size !== slugs.length) problems.push("duplicate cluster slugs");
 
+// v0.3 claim-layer invariants — the honesty guarantees, enforced.
+let claimCount = 0;
+for (const c of clusters) {
+  const ec = c.claims as
+    | { claims?: Record<string, unknown>[]; disputes?: unknown[]; evidence?: Record<string, unknown>[] }
+    | undefined;
+  if (!ec) continue;
+  if (!Array.isArray(ec.claims)) {
+    problems.push(`cluster ${c.slug}: claims.claims is not an array`);
+    continue;
+  }
+  for (const cl of ec.claims as Record<string, unknown>[]) {
+    claimCount++;
+    const status = cl.status as string;
+    const groups = (cl.independentSourceGroups as unknown[]) ?? [];
+    const pubs = (cl.supportingPublisherIds as unknown[]) ?? [];
+    // Never present a single-source claim as consensus.
+    if (status === "corroborated" && groups.length < 2) {
+      problems.push(`cluster ${c.slug}: claim "${String(cl.canonicalText).slice(0, 40)}" is 'corroborated' with <2 independent groups`);
+      break;
+    }
+    // An attributed statement must never silently become a bare fact.
+    if (status === "attributed" && !(cl.provenance as Record<string, unknown>[]).some((p) => p.attribution)) {
+      problems.push(`cluster ${c.slug}: 'attributed' claim has no attribution in provenance`);
+      break;
+    }
+    if ((status === "corroborated" || status === "partially-corroborated") && pubs.length < 2) {
+      problems.push(`cluster ${c.slug}: '${status}' claim has <2 supporting publishers`);
+      break;
+    }
+  }
+  // Evidence is never invented — every record must carry a URL.
+  for (const ev of (ec.evidence as Record<string, unknown>[]) ?? []) {
+    if (typeof ev.url !== "string" || !/^https?:\/\//.test(ev.url)) {
+      problems.push(`cluster ${c.slug}: evidence record has no valid URL`);
+      break;
+    }
+  }
+}
+
 if (problems.length) {
   console.error("validate-feed: FAILED\n  - " + problems.join("\n  - "));
   process.exit(1);
 }
 
 console.log(
-  `validate-feed: OK — health=${data.health} articles=${articles.length} clusters=${clusters.length} generatedAt=${data.generatedAt}`,
+  `validate-feed: OK — health=${data.health} articles=${articles.length} clusters=${clusters.length} claims=${claimCount} generatedAt=${data.generatedAt}`,
 );

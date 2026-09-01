@@ -24,6 +24,7 @@ import { FEED_SOURCES, type FeedSource } from "../src/data/feeds";
 import { parseFeed, parseSachetJson, type RawItem } from "../src/lib/live/parse";
 import { normalizeItem } from "../src/lib/live/normalize";
 import { clusterArticles } from "../src/lib/live/cluster";
+import { buildEventClaims } from "../src/lib/claims";
 import { crisisPriority, capWeight, detectCrisisType, verificationFor } from "../src/lib/live/crisis";
 import { normalisedTitleKey } from "../src/lib/live/text";
 import type { FeedStatus, LiveArticle, LiveDataset, FeedHealth } from "../src/lib/live/types";
@@ -237,6 +238,22 @@ async function main() {
 
   const { clusters, weakMatchesRejected } = clusterArticles(articles, now);
 
+  // ── v0.3: grounded claim intelligence for events where it is meaningful ──
+  const articlesById = new Map(articles.map((a) => [a.id, a]));
+  let claimEvents = 0;
+  let totalClaims = 0;
+  for (const c of clusters) {
+    const meaningful = c.articleIds.length >= 2 || c.isCrisis || !!c.cap;
+    if (!meaningful) continue;
+    const arts = c.articleIds.map((id) => articlesById.get(id)).filter((a): a is LiveArticle => !!a);
+    if (arts.length === 0) continue;
+    const ec = buildEventClaims(c, arts, now);
+    if (ec.claims.length === 0 && ec.evidence.length === 0) continue;
+    c.claims = ec;
+    claimEvents++;
+    totalClaims += ec.claims.length;
+  }
+
   const lastSuccessTimes = feeds.map((f) => f.lastSuccessAt).filter(Boolean).sort() as string[];
   const lastSuccessAt = lastSuccessTimes.length ? lastSuccessTimes[lastSuccessTimes.length - 1] : null;
 
@@ -273,7 +290,8 @@ async function main() {
     `\nWrote ${OUT}\n  health=${dataset.health}  articles=${articles.length}  clusters=${clusters.length}  ` +
       `active-crisis=${dataset.counts.activeCrisis}  TN=${dataset.counts.tamilNadu}  India=${dataset.counts.india}  ` +
       `publishers=${dataset.counts.distinctPublishers}  verified-comparisons=${dataset.counts.comparisons}  ` +
-      `weak-rejected=${dataset.counts.weakMatchesRejected}  feeds ok=${dataset.counts.workingFeeds}/${feeds.length}`,
+      `weak-rejected=${dataset.counts.weakMatchesRejected}  feeds ok=${dataset.counts.workingFeeds}/${feeds.length}\n  ` +
+      `claim-events=${claimEvents}  claims=${totalClaims}`,
   );
 
   // Never fail the run just because some feeds failed — that is expected and handled.

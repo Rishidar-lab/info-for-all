@@ -14,8 +14,64 @@ const KIND_LABEL: Record<string, string> = {
   "sachet-json": "CAP / JSON",
 };
 
+interface PublisherRow {
+  publisher: string;
+  domains: string[];
+  official: boolean;
+  languages: string[];
+  scopes: string[];
+  articleCount: number;
+  comparisonCount: number;
+  possibleSyndicated: number;
+  lastIngested: string | null;
+  feedStatuses: { name: string; status: string }[];
+}
+
+function publisherRows(): PublisherRow[] {
+  const byPublisher = new Map<string, PublisherRow>();
+  const feedsByPublisher = new Map<string, typeof FEED_SOURCES>();
+  for (const f of FEED_SOURCES) {
+    const list = feedsByPublisher.get(f.publisher) ?? [];
+    list.push(f);
+    feedsByPublisher.set(f.publisher, list);
+  }
+  const statusById = new Map(dataset.feeds.map((s) => [s.sourceId, s]));
+
+  for (const [publisher, feeds] of feedsByPublisher) {
+    const arts = dataset.articles.filter((a) => a.publisher === publisher);
+    const enabledFeeds = feeds.filter((f) => f.enabled);
+    // Only surface a publisher IFA actually ingests.
+    if (enabledFeeds.length === 0 && arts.length === 0) continue;
+    const comparisons = dataset.clusters.filter(
+      (c) => c.isVerifiedComparison && c.publishers.includes(publisher),
+    );
+    const syndicated = dataset.clusters
+      .filter((c) => c.claims && c.publishers.includes(publisher))
+      .reduce((n, c) => n + (c.claims?.independence.possibleSyndicated ?? 0), 0);
+    const lastTimes = enabledFeeds
+      .map((f) => statusById.get(f.id)?.lastSuccessAt)
+      .filter(Boolean)
+      .sort() as string[];
+
+    byPublisher.set(publisher, {
+      publisher,
+      domains: [...new Set(feeds.map((f) => new URL(f.homepage).hostname))],
+      official: feeds.some((f) => f.official),
+      languages: [...new Set(arts.map((a) => (a.language === "ta" ? "Tamil" : a.language === "en" ? "English" : "—")).filter((x) => x !== "—"))],
+      scopes: [...new Set(arts.map((a) => a.scope).filter((s) => s !== "excluded"))],
+      articleCount: arts.length,
+      comparisonCount: comparisons.length,
+      possibleSyndicated: syndicated,
+      lastIngested: lastTimes.length ? lastTimes[lastTimes.length - 1]! : null,
+      feedStatuses: enabledFeeds.map((f) => ({ name: f.name, status: statusById.get(f.id)?.status ?? "not run" })),
+    });
+  }
+  return [...byPublisher.values()].sort((a, b) => b.articleCount - a.articleCount);
+}
+
 export default function SourcesPage() {
   const statusById = new Map(dataset.feeds.map((f) => [f.sourceId, f]));
+  const publishers = publisherRows();
 
   return (
     <div className="flex flex-col gap-8">
@@ -32,6 +88,48 @@ export default function SourcesPage() {
           Feed status as of the last run — {istTimestamp(dataset.generatedAt)}.
         </p>
       </header>
+
+      <section>
+        <div className="mb-3 border-b border-rule-strong pb-2">
+          <div className="label mb-1">Publishers</div>
+          <h2 className="font-serif text-[19px] font-semibold text-ink">Who IFA ingests, and how much</h2>
+          <p className="ui mt-1 text-[12px] leading-relaxed text-ink-3">
+            Verified metadata only — article counts, languages and comparison appearances are measured
+            from the current snapshot. IFA does not record ownership or political-orientation metadata.
+          </p>
+        </div>
+        <div className="card w-full min-w-0 overflow-x-auto">
+          <table className="w-full min-w-[760px] border-collapse text-left">
+            <thead>
+              <tr className="border-b border-rule-strong bg-surface-2 ui text-[11px] uppercase tracking-wider text-ink-3">
+                <th className="px-4 py-2.5 font-semibold">Publisher</th>
+                <th className="px-4 py-2.5 font-semibold">Kind</th>
+                <th className="px-4 py-2.5 font-semibold">Languages</th>
+                <th className="px-4 py-2.5 font-semibold">Articles</th>
+                <th className="px-4 py-2.5 font-semibold">In comparisons</th>
+                <th className="px-4 py-2.5 font-semibold">Poss. syndicated</th>
+                <th className="px-4 py-2.5 font-semibold">Last ingested</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-rule">
+              {publishers.map((p) => (
+                <tr key={p.publisher} className="align-top">
+                  <td className="px-4 py-3">
+                    <div className="ui text-[13.5px] font-semibold text-ink">{p.publisher}</div>
+                    <div className="ui text-[11.5px] text-ink-3">{p.domains.join(", ")}</div>
+                  </td>
+                  <td className="px-4 py-3 ui text-[12.5px] text-ink-2">{p.official ? "Official / primary" : "Independent"}</td>
+                  <td className="px-4 py-3 ui text-[12.5px] text-ink-2">{p.languages.join(", ") || "—"}</td>
+                  <td className="px-4 py-3 mono text-[13px] text-ink">{p.articleCount}</td>
+                  <td className="px-4 py-3 mono text-[13px] text-ink">{p.comparisonCount}</td>
+                  <td className="px-4 py-3 mono text-[13px] text-ink-2">{p.possibleSyndicated}</td>
+                  <td className="px-4 py-3 ui text-[11.5px] text-ink-3">{p.lastIngested ? istTimestamp(p.lastIngested) : "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
 
       <div className="card w-full min-w-0 overflow-x-auto">
         <table className="w-full min-w-[720px] border-collapse text-left">

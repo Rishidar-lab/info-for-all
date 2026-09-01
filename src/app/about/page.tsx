@@ -79,6 +79,31 @@ export default function AboutPage() {
       </section>
 
       <section>
+        <h2 className="font-serif text-[20px] font-semibold">Grounded claims</h2>
+        <p className="mt-2 text-[14.5px] leading-relaxed text-ink-2">
+          On a multi-source event, IFA breaks the coverage into structured{" "}
+          <strong>claims</strong> and classifies each one: <em>corroborated</em> (more than one
+          independent source group), <em>single source</em>, <em>attributed</em> (something a
+          named speaker said — kept as the speaker&rsquo;s claim, never promoted to a bare fact
+          unless separate evidence supports it), <em>disputed</em>, or <em>outdated</em>. Each
+          claim carries a documented confidence score —{" "}
+          <a
+            href="https://github.com/Rishidar-lab/info-for-all/blob/main/docs/CLAIM-CONFIDENCE.md"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent hover:underline"
+          >
+            the formula is public
+          </a>
+          . Publication count is not corroboration count: several outlets running one wire report
+          count as one independent source. The extraction is deterministic and rule-based — no
+          language model, and wording may not be exact, so the original source text is always
+          linked. The Common Ground Index is experimental and describes the state of the
+          reporting, not a verdict on the event.
+        </p>
+      </section>
+
+      <section>
         <h2 className="font-serif text-[20px] font-semibold">Copyright &amp; provenance</h2>
         <ul className="mt-2 flex flex-col gap-2 text-[14px] leading-relaxed text-ink-2">
           <li>IFA stores only the headline, source name, canonical URL, publication timestamp, a feed-provided short excerpt, and structured alert metadata.</li>
@@ -91,9 +116,10 @@ export default function AboutPage() {
       <section>
         <h2 className="font-serif text-[20px] font-semibold">Limitations</h2>
         <ul className="mt-2 flex flex-col gap-2 text-[14px] leading-relaxed text-ink-2">
-          <li>IFA does not claim algorithmic neutrality. Clustering and geo-classification are rule-based and can err.</li>
-          <li>Common ground is only shown when derivable from explicit shared official facts; otherwise it is marked pending review.</li>
-          <li>Metadata differences between reports are not claims of contradiction.</li>
+          <li>IFA does not claim algorithmic neutrality. Clustering, geo-classification and claim extraction are rule-based and can err.</li>
+          <li>Claims are extracted by deterministic rules from headlines and short excerpts — the set is deliberately small, and wording may be loose. The linked source is authoritative.</li>
+          <li>&ldquo;Independent source groups&rdquo; is an estimate: near-identical headlines and shared verbatim passages are treated as one upstream source.</li>
+          <li>Metadata differences between reports are not claims of contradiction; only a genuine semantic conflict is marked &ldquo;disputed&rdquo;.</li>
           <li>Feeds go down. When they do, IFA keeps the last known good snapshot, marks it stale, and never shows &ldquo;LIVE&rdquo;.</li>
           <li><strong>IFA is not an emergency service.</strong> For any emergency, follow the issuing authority&rsquo;s own instructions.</li>
         </ul>

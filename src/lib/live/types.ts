@@ -165,6 +165,13 @@ export interface LiveCluster {
   differences: ClusterDifferenceRow[];
   unknowns: string[];
   cap?: CapMeta;
+  /**
+   * v0.3 grounded claim intelligence — structured, provenance-preserving claims
+   * derived from this event's coverage. Present only for clusters where it is
+   * meaningful (2+ articles, a crisis, or an official alert). See
+   * `src/lib/claims/`.
+   */
+  claims?: import("../claims/types").EventClaims;
 }
 
 export type FeedHealth = "live" | "degraded" | "stale" | "empty";
