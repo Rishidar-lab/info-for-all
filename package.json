@@ -1,8 +1,8 @@
 {
   "name": "ifa",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "private": true,
-  "description": "IFA — Info For All. Evidence-first news intelligence: events, sources, claims, evidence, agreement, disagreement, uncertainty.",
+  "description": "Info For All (IFA) — an evidence-oriented news-comparison interface: one event, multiple sources, what they agree on, how coverage differs, and where each claim came from.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -11,22 +11,15 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:unit": "vitest run tests/unit",
-    "test:integration": "vitest run tests/integration",
-    "test:e2e": "playwright test",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "tsx src/lib/db/migrate.ts",
-    "db:seed": "tsx src/lib/db/seed.ts",
-    "db:reset": "tsx scripts/reset-db.ts",
-    "db:setup": "npm run db:migrate && npm run db:seed",
-    "analyze": "tsx scripts/analyze-all.ts",
     "verify": "npm run lint && npm run typecheck && npm run test && npm run build"
   },
   "dependencies": {
-    "better-sqlite3": "^13.0.3",
+    "@electric-sql/pglite": "^0.5.8",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.45.2",
+    "fast-xml-parser": "^5.11.1",
     "next": "16.3.4",
+    "postgres": "^3.4.9",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "zod": "^4.5.4"
@@ -34,7 +27,6 @@
   "devDependencies": {
     "@playwright/test": "^1.62.1",
     "@tailwindcss/postcss": "^4",
-    "@types/better-sqlite3": "^7.6.11",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

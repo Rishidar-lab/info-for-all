@@ -1,30 +1,13 @@
-# IFA — development / demo compose.
+# IFA — development / demo compose. PostgreSQL is the canonical database.
 #
-#   docker compose up --build          → app on http://localhost:3000 (SQLite, auto-seeded)
-#   docker compose --profile postgres up  → also start a Postgres service for the Phase 1 path
+#   docker compose up --build        → Postgres + app (auto-migrated & seeded) on :3000
+#   docker compose up -d postgres    → just Postgres, for `npm run dev` against it
 #
-# The Postgres service is not wired to the app yet (v0.1 uses SQLite). It exists
-# so the documented migration path can be exercised. See docs/ARCHITECTURE.md.
+# For a zero-setup local run without Docker, set DATABASE_URL=pglite://./.pgdata
+# (in-process Postgres) and run `npm run db:setup && npm run dev`.
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-    ports:
-      - "3000:3000"
-    environment:
-      NODE_ENV: production
-      DATABASE_URL: file:/data/ifa.db
-      IFA_DEMO_MODE: "true"
-      AI_PROVIDER: mock
-      LOG_LEVEL: info
-    volumes:
-      - ifa_data:/data
-    restart: unless-stopped
-
   postgres:
-    profiles: ["postgres"]
     image: postgres:17-alpine
     environment:
       POSTGRES_USER: ifa
@@ -35,11 +18,28 @@ services:
     volumes:
       - ifa_pg:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ifa"]
-      interval: 10s
+      test: ["CMD-SHELL", "pg_isready -U ifa -d ifa"]
+      interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://ifa:ifa@postgres:5432/ifa
+      IFA_DEMO_MODE: "true"
+      AI_PROVIDER: mock
+      EMBEDDINGS_PROVIDER: mock
+      LOG_LEVEL: info
+    restart: unless-stopped
 
 volumes:
-  ifa_data:
   ifa_pg:
