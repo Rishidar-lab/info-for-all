@@ -1,0 +1,45 @@
+# IFA — development / demo compose.
+#
+#   docker compose up --build          → app on http://localhost:3000 (SQLite, auto-seeded)
+#   docker compose --profile postgres up  → also start a Postgres service for the Phase 1 path
+#
+# The Postgres service is not wired to the app yet (v0.1 uses SQLite). It exists
+# so the documented migration path can be exercised. See docs/ARCHITECTURE.md.
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: file:/data/ifa.db
+      IFA_DEMO_MODE: "true"
+      AI_PROVIDER: mock
+      LOG_LEVEL: info
+    volumes:
+      - ifa_data:/data
+    restart: unless-stopped
+
+  postgres:
+    profiles: ["postgres"]
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ifa
+      POSTGRES_PASSWORD: ifa
+      POSTGRES_DB: ifa
+    ports:
+      - "5432:5432"
+    volumes:
+      - ifa_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ifa"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  ifa_data:
+  ifa_pg:
