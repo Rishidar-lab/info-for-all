@@ -12,6 +12,7 @@ import {
   VERIFICATION_LABEL,
 } from "@/lib/live/dataset";
 import { CRISIS_TYPE_LABEL } from "@/lib/live/crisis";
+import { trendRoutableSlugs } from "@/lib/live/trends-view";
 import { EvidenceRoleBadge, VerificationBadge, LifecycleBadge } from "@/components/live/badges";
 import { ClaimsPanel, type ArticleRef } from "@/components/live/claims-panel";
 import { CONFIDENCE_LABEL } from "@/lib/claims/confidence";
@@ -20,7 +21,9 @@ import { cn } from "@/lib/format";
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return routableClusters().map((c) => ({ slug: c.slug }));
+  const slugs = new Set(routableClusters().map((c) => c.slug));
+  for (const s of trendRoutableSlugs()) slugs.add(s);
+  return [...slugs].map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
