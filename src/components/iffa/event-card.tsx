@@ -260,6 +260,59 @@ export function EventCard({
         </p>
       )}
 
+      {cluster.trendData?.financeEvent && (
+        <p className="mt-1.5 ui text-[11px] leading-snug text-ink-2">
+          <span className="mr-1 rounded bg-ink/5 px-1 py-px text-[10px] font-semibold uppercase tracking-wide text-ink-3">
+            {cluster.trendData.financeEvent.kind === "policy-decision"
+              ? "policy"
+              : cluster.trendData.financeEvent.kind === "market-reaction"
+                ? "market reaction"
+                : "market data"}
+          </span>
+          {cluster.trendData.financeEvent.policy && (
+            <span>
+              {cluster.trendData.financeEvent.policy.authority} {cluster.trendData.financeEvent.policy.decision}
+              {cluster.trendData.financeEvent.policy.instrument ? ` · ${cluster.trendData.financeEvent.policy.instrument}` : ""}
+              {cluster.trendData.financeEvent.policy.changeBps ? ` (${cluster.trendData.financeEvent.policy.changeBps} bps)` : ""}
+              {cluster.trendData.financeEvent.policy.effectiveFrom ? ` · effective ${cluster.trendData.financeEvent.policy.effectiveFrom}` : ""}
+            </span>
+          )}
+          {cluster.trendData.financeEvent.marketMoves.length > 0 && !cluster.trendData.financeEvent.policy && (
+            <span className="text-ink-3">
+              {cluster.trendData.financeEvent.marketMoves
+                .map((m) => `${m.instrument ?? "market"} ${m.direction} ${m.value} ${m.unit}`)
+                .slice(0, 2)
+                .join(" · ")}
+            </span>
+          )}
+        </p>
+      )}
+
+      {cluster.trendData?.sportsEvent &&
+        (cluster.trendData.sportsEvent.competition ||
+          cluster.trendData.sportsEvent.teams.length > 0 ||
+          cluster.trendData.sportsEvent.status !== "unknown") && (
+          <p className="mt-1.5 ui text-[11px] leading-snug text-ink-2">
+            {cluster.trendData.sportsEvent.status !== "unknown" && (
+              <span className="mr-1 rounded bg-ink/5 px-1 py-px text-[10px] font-semibold uppercase tracking-wide text-ink-3">
+                {cluster.trendData.sportsEvent.status}
+              </span>
+            )}
+            <span>
+              {[
+                cluster.trendData.sportsEvent.competition,
+                cluster.trendData.sportsEvent.round,
+                cluster.trendData.sportsEvent.teams.join(" v "),
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+              {cluster.trendData.sportsEvent.result?.winner
+                ? ` — ${cluster.trendData.sportsEvent.result.winner} won ${cluster.trendData.sportsEvent.result.margin ?? ""}`
+                : ""}
+            </span>
+          </p>
+        )}
+
       {showWhy && ed ? (
         <EditorialWhy cluster={cluster} />
       ) : showWhy ? (

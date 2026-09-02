@@ -27,6 +27,8 @@ import { assessNovelty, buildEventState } from "./novelty";
 import { resolveTemporal } from "@/lib/domain/temporal";
 import { assessLocalImpact } from "@/lib/domain/local-impact";
 import { detectPoliticalEvent, threadRelation, type ThreadRelation } from "@/lib/domain/politics";
+import { detectPolicyEvent, isMarketReaction, parseMarketMoves } from "@/lib/domain/finance";
+import { detectFixture } from "@/lib/domain/sports";
 import { assessSeverity } from "@/lib/domain/severity";
 import { computeEditorialPriority, buildSurfaces } from "@/lib/editorial";
 
@@ -168,6 +170,50 @@ export function enrichDataset(dataset: LiveDataset, opts: EnrichOptions = {}): E
       updatedAt: lastSeenAt !== earliest ? lastSeenAt : undefined,
     });
 
+    // v0.9 Phase O / P — structured domain event state. Finance: keep the policy
+    // decision distinct from the market's reaction to it. Sports: fixture
+    // identity + lifecycle status + result, read from the reporting only.
+    const domainBlob = `${cluster.title} · ${articles
+      .slice(0, 4)
+      .map((a) => `${a.title}. ${a.excerpt ?? ""}`)
+      .join(" · ")}`.slice(0, 900);
+    const financeEvent =
+      cat.category === "finance"
+        ? (() => {
+            const policy = detectPolicyEvent(domainBlob, { effectiveFrom: temporal.effectiveFrom?.iso });
+            const moves = parseMarketMoves(domainBlob).slice(0, 3);
+            const marketReaction = isMarketReaction(domainBlob);
+            if (!policy && moves.length === 0) return undefined;
+            return {
+              policy,
+              marketMoves: moves.map((m) => ({ instrument: m.instrument, direction: m.direction, value: m.value, unit: m.unit })),
+              /** what this atomic event primarily is */
+              kind: policy && !marketReaction ? ("policy-decision" as const) : marketReaction ? ("market-reaction" as const) : ("market-data" as const),
+            };
+          })()
+        : undefined;
+    const sportsContext =
+      /\b(match|fixture|innings|wickets?|overs?|goals?|tournament|series|trophy|cup|league|final|squad|playing xi|batting|bowling|defeat\w*|beat|beats|won|score\w*|runs|test|odi|t20|kabaddi|hockey|chess|athletic\w*|sprint\w*|medal)\b/i.test(
+        domainBlob,
+      );
+    const sportsEvent =
+      cat.category === "sports" && sportsContext
+        ? (() => {
+            const f = detectFixture(domainBlob, temporal.eventOccurredAt?.iso ?? temporal.scheduledFor?.iso);
+            if (f.teams.length === 0 && !f.competition && !f.round && f.status === "unknown") return undefined;
+            return {
+              competition: f.competition,
+              sport: f.sport,
+              teams: f.teams,
+              round: f.round,
+              status: f.status,
+              result: f.result,
+              women: f.women,
+              date: f.date,
+            };
+          })()
+        : undefined;
+
     const windows = trendWindows(articles, familyOf, now);
     const vel = velocityScore(articles, familyOf, now);
     const ageHours = (now - Date.parse(lastMeaningfulUpdateAt)) / 3_600_000;
@@ -232,6 +278,8 @@ export function enrichDataset(dataset: LiveDataset, opts: EnrichOptions = {}): E
         const li = assessLocalImpact(cluster, articles);
         return li.statements.length > 0 ? li : undefined;
       })(),
+      financeEvent,
+      sportsEvent,
     };
     cluster.trendData = trendData;
 

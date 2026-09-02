@@ -345,6 +345,38 @@ export interface ClusterTrendData {
       districts: string[];
     }[];
   };
+  /**
+   * v0.9 Phase O — finance event state. The POLICY decision is kept distinct
+   * from the MARKET REACTION to it (`kind`), though a headline can carry both.
+   */
+  financeEvent?: {
+    policy?: {
+      authority: string;
+      instrument: string;
+      decision: "cut" | "hike" | "hold" | "change" | "other";
+      changeBps?: number;
+      previousValue?: string;
+      newValue?: string;
+      effectiveFrom?: string;
+      raw: string;
+    };
+    marketMoves: { instrument?: string; direction: "up" | "down" | "flat"; value: number; unit: string }[];
+    kind: "policy-decision" | "market-reaction" | "market-data";
+  };
+  /**
+   * v0.9 Phase P — sports fixture state, read from the reporting only. Fixture
+   * identity (competition / round / teams) plus lifecycle status and result.
+   */
+  sportsEvent?: {
+    competition?: string;
+    sport?: string;
+    teams: string[];
+    round?: "final" | "semi-final" | "qualifier" | "knockout" | "group stage" | "league stage" | "series";
+    status: "scheduled" | "delayed" | "live" | "completed" | "abandoned" | "postponed" | "unknown";
+    result?: { winner?: string; margin?: string };
+    women: boolean;
+    date?: string;
+  };
   /** v0.8 — EVENT severity (how bad the event is), NOT a probability of truth. */
   severity?: {
     level: "informational" | "watch" | "significant" | "severe" | "critical";
