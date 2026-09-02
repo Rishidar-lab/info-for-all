@@ -27,6 +27,7 @@ import { assessNovelty, buildEventState } from "./novelty";
 import { resolveTemporal } from "@/lib/domain/temporal";
 import { assessLocalImpact } from "@/lib/domain/local-impact";
 import { detectPoliticalEvent, threadRelation, type ThreadRelation } from "@/lib/domain/politics";
+import { assessPoliticalCoverage } from "@/lib/domain/political-coverage";
 import { detectPolicyEvent, isMarketReaction, parseMarketMoves } from "@/lib/domain/finance";
 import { detectFixture } from "@/lib/domain/sports";
 import { assessSeverity } from "@/lib/domain/severity";
@@ -303,6 +304,13 @@ export function enrichDataset(dataset: LiveDataset, opts: EnrichOptions = {}): E
   }
 
   linkPoliticalThreads(dataset.clusters, byId);
+
+  // v0.9 Phase N — descriptive political coverage (NOT a bias score). Runs after
+  // thread-linking so it can see whether a response is on record elsewhere.
+  for (const c of dataset.clusters) {
+    if (c.trendData?.category !== "politics" || c.trendData.geoTier === "out") continue;
+    c.trendData.politicalCoverage = assessPoliticalCoverage(c, articlesOf(c, byId));
+  }
 
   const { trending, watching } = rankTrendingWatching(dataset.clusters);
   const situation = buildSituation(situationInput, dataset.generatedAt);

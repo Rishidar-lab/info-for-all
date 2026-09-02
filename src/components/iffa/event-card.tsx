@@ -313,6 +313,18 @@ export function EventCard({
           </p>
         )}
 
+      {cluster.trendData?.politicalCoverage?.unanswered && (
+        <p className="mt-1.5 ui text-[11px] leading-snug text-ink-2">
+          <span className="mr-1 rounded bg-caution/10 px-1 py-px text-[10px] font-semibold uppercase tracking-wide text-caution">
+            one-sided so far
+          </span>
+          <span className="text-ink-3">
+            {cluster.trendData.politicalCoverage.speechAct === "criticism" ? "criticism" : "allegation"} with no response on
+            record yet
+          </span>
+        </p>
+      )}
+
       {showWhy && ed ? (
         <EditorialWhy cluster={cluster} />
       ) : showWhy ? (

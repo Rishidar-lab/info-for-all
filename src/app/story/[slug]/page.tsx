@@ -136,6 +136,17 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
           </div>
         )}
 
+        {cluster.trendData?.politicalCoverage && (
+          <div className="mt-4 max-w-2xl border-l-2 border-rule-strong pl-3">
+            <div className="label mb-1">Coverage completeness</div>
+            <p className="ui text-[12.5px] text-ink-2">{cluster.trendData.politicalCoverage.note}</p>
+            <p className="ui mt-1 text-[11px] text-ink-3">
+              A description of what this event&rsquo;s coverage contains — not a judgement of any party. IFFA does not
+              score political bias.
+            </p>
+          </div>
+        )}
+
         {cluster.trendData?.localImpact && cluster.trendData.localImpact.statements.length > 0 && (
           <div className="mt-4 max-w-2xl border-l-2 border-rule-strong pl-3">
             <div className="label mb-1">On the ground</div>

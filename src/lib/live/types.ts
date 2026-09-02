@@ -377,6 +377,22 @@ export interface ClusterTrendData {
     women: boolean;
     date?: string;
   };
+  /**
+   * v0.9 Phase N — DESCRIPTIVE political coverage. NOT a bias score: no
+   * left/right or government/opposition axis. It reports whether a claim, a
+   * response, an official record and independent reporting are present — i.e.
+   * information asymmetry — and lets the reader see what is missing.
+   */
+  politicalCoverage?: {
+    actors: string[];
+    speechAct: "allegation" | "criticism" | "denial" | "response" | "announcement" | "assertion" | "order";
+    claimCount: number;
+    hasResponse: boolean;
+    hasOfficialRecord: boolean;
+    independentFamilies: number;
+    unanswered: boolean;
+    note: string;
+  };
   /** v0.8 — EVENT severity (how bad the event is), NOT a probability of truth. */
   severity?: {
     level: "informational" | "watch" | "significant" | "severe" | "critical";
