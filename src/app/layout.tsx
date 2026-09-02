@@ -3,15 +3,15 @@ import type { ReactNode } from "react";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { BRAND, BRAND_TITLE } from "@/lib/brand";
 
 export const metadata: Metadata = {
   title: {
-    default: "Info For All — IFA",
-    template: "%s · IFA",
+    default: BRAND_TITLE,
+    template: `%s · ${BRAND.name}`,
   },
-  description:
-    "A crisis-first, evidence-oriented news comparison platform for Tamil Nadu and India. Official alerts and independent reporting grouped by event, with provenance and uncertainty made visible.",
-  applicationName: "IFA",
+  description: BRAND.blurb,
+  applicationName: BRAND.name,
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

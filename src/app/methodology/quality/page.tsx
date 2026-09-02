@@ -6,7 +6,7 @@ import { cn } from "@/lib/format";
 export const metadata: Metadata = {
   title: "Claim quality",
   description:
-    "How IFA's claim engine scores against a hand-labelled gold corpus — extraction, matching, contradiction, attribution, primary evidence, and the false-corroboration rate. Weak numbers shown too.",
+    "How IFFA's claim engine scores against a hand-labelled gold corpus — extraction, matching, contradiction, attribution, primary evidence, and the false-corroboration rate. Weak numbers shown too.",
 };
 
 const d = evalData as typeof evalData;
@@ -64,7 +64,7 @@ export default function QualityDashboard() {
           How well does the claim engine actually work?
         </h1>
         <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-ink-2">
-          IFA&rsquo;s claim layer is measured against a hand-labelled{" "}
+          IFFA&rsquo;s claim layer is measured against a hand-labelled{" "}
           <strong>gold corpus</strong> of {d.totals.cases} comparison cases
           ({(d.languageBreakdown as { english: number }).english} English,{" "}
           {(d.languageBreakdown as { tamil: number }).tamil} Tamil,{" "}
@@ -93,7 +93,7 @@ export default function QualityDashboard() {
           </span>
         </p>
         <p className="mt-2 text-[13.5px] leading-relaxed text-ink-2">
-          This is the metric IFA optimises against hardest. A missed match is a
+          This is the metric IFFA optimises against hardest. A missed match is a
           shortcoming; a <em>fabricated</em> consensus is a failure of the whole
           premise. {fc.count === 0 ? "No case in the corpus produced one." : `Cases: ${fc.cases.join(", ")}.`}
         </p>
@@ -200,7 +200,7 @@ export default function QualityDashboard() {
           </table>
         </div>
         <p className="mt-2 ui text-[11.5px] leading-relaxed text-ink-3">
-          Any row below 50% is shaded. IFA deliberately prefers <em>missing</em> an
+          Any row below 50% is shaded. IFFA deliberately prefers <em>missing</em> an
           uncertain comparison over presenting a false consensus — so a low recall
           number here is a known shortcoming, never hidden, while precision and the
           false-corroboration rate are held hard.

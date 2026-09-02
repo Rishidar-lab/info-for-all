@@ -5,7 +5,7 @@ import { dataset, istTimestamp } from "@/lib/live/dataset";
 export const metadata: Metadata = {
   title: "About & Methodology",
   description:
-    "How IFA's crisis-first India / Tamil Nadu edition ingests, classifies, ranks and clusters public feeds — and what its limits are.",
+    "How IFFA's crisis-first India / Tamil Nadu edition ingests, classifies, ranks and clusters public feeds — and what its limits are.",
 };
 
 export default function AboutPage() {
@@ -17,7 +17,7 @@ export default function AboutPage() {
           A crisis-first, evidence-oriented news comparison platform for Tamil Nadu and India.
         </h1>
         <p className="mt-3 text-[15.5px] leading-relaxed text-ink-2">
-          Information abundance does not automatically create understanding. IFA groups public
+          Information abundance does not automatically create understanding. IFFA groups public
           alerts and reporting around the same event so a reader can see what the official alert
           says, which independent sources confirm or contextualise it, what remains uncertain,
           and when the information was last refreshed.
@@ -28,7 +28,7 @@ export default function AboutPage() {
         <h2 className="font-serif text-[20px] font-semibold">Scope</h2>
         <p className="mt-2 text-[14.5px] leading-relaxed text-ink-2">
           <strong>Primary:</strong> Tamil Nadu. <strong>Secondary:</strong> India-wide events that
-          materially affect Tamil Nadu or carry major national public importance. IFA deliberately
+          materially affect Tamil Nadu or carry major national public importance. IFFA deliberately
           excludes generic international news, entertainment feeds, and foreign politics without a
           direct India / Tamil Nadu consequence.
         </p>
@@ -81,7 +81,7 @@ export default function AboutPage() {
       <section>
         <h2 className="font-serif text-[20px] font-semibold">Grounded claims</h2>
         <p className="mt-2 text-[14.5px] leading-relaxed text-ink-2">
-          On a multi-source event, IFA breaks the coverage into structured{" "}
+          On a multi-source event, IFFA breaks the coverage into structured{" "}
           <strong>claims</strong> and classifies each one: <em>corroborated</em> (more than one
           independent source group), <em>single source</em>, <em>attributed</em> (something a
           named speaker said, alleged, expects or warned — kept as the speaker&rsquo;s claim,
@@ -116,23 +116,23 @@ export default function AboutPage() {
       <section>
         <h2 className="font-serif text-[20px] font-semibold">Copyright &amp; provenance</h2>
         <ul className="mt-2 flex flex-col gap-2 text-[14px] leading-relaxed text-ink-2">
-          <li>IFA stores only the headline, source name, canonical URL, publication timestamp, a feed-provided short excerpt, and structured alert metadata.</li>
+          <li>IFFA stores only the headline, source name, canonical URL, publication timestamp, a feed-provided short excerpt, and structured alert metadata.</li>
           <li>It never copies full article bodies, removes attribution, or circumvents a paywall.</li>
           <li>Every item links to the original publisher for the full report.</li>
-          <li>IFA summaries are never presented as the publisher&rsquo;s own wording.</li>
+          <li>IFFA summaries are never presented as the publisher&rsquo;s own wording.</li>
         </ul>
       </section>
 
       <section>
         <h2 className="font-serif text-[20px] font-semibold">Limitations</h2>
         <ul className="mt-2 flex flex-col gap-2 text-[14px] leading-relaxed text-ink-2">
-          <li>IFA does not claim algorithmic neutrality. Clustering, geo-classification and claim extraction are rule-based and can err.</li>
+          <li>IFFA does not claim algorithmic neutrality. Clustering, geo-classification and claim extraction are rule-based and can err.</li>
           <li>Claims are extracted by deterministic rules from headlines and short excerpts. A structured <a href="https://github.com/Rishidar-lab/info-for-all/blob/main/docs/EVENT-IDENTITY.md" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">event-identity engine</a> now recovers every same-fact pair in the labelled corpus, but on live data the engine still holds some genuine matches apart — as <em>uncertain</em> rather than risk a wrong merge. It never merges a pair it is unsure about; precision and recall on the labelled corpus are both 100%. The linked source is authoritative.</li>
           <li>&ldquo;Independent source groups&rdquo; is an estimate from publisher, wire credit, near-identical headlines and shared verbatim passages. When it cannot tell, it says so and does not count the reports as independent.</li>
           <li>Tamil is handled by a conservative suffix normaliser plus place / concept lexicons — not a full Tamil NLP system. Tamil ↔ English matches require a shared district, a compatible date and a shared entity or action; a shared &ldquo;Tamil Nadu&rdquo; alone never merges. The original Tamil text is always kept.</li>
           <li>Metadata differences between reports are not claims of contradiction; only a genuine semantic conflict is marked &ldquo;disputed&rdquo;.</li>
-          <li>Feeds go down. When they do, IFA keeps the last known good snapshot, marks it stale, and never shows &ldquo;LIVE&rdquo;.</li>
-          <li><strong>IFA is not an emergency service.</strong> For any emergency, follow the issuing authority&rsquo;s own instructions.</li>
+          <li>Feeds go down. When they do, IFFA keeps the last known good snapshot, marks it stale, and never shows &ldquo;LIVE&rdquo;.</li>
+          <li><strong>IFFA is not an emergency service.</strong> For any emergency, follow the issuing authority&rsquo;s own instructions.</li>
         </ul>
       </section>
 

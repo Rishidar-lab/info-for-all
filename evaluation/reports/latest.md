@@ -1,6 +1,6 @@
 # IFA claim-quality evaluation
 
-- generated: 2026-09-02T09:46:17.164Z
+- generated: 2026-09-02T12:37:27.963Z
 - corpus reference instant (NOW): 2026-09-02T06:00:00.000Z
 - provider mode: **rule-only**
 - cases: **223** · fully clean: **222** (99.6%)

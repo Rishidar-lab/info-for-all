@@ -84,7 +84,7 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
           {cluster.title}
         </h1>
         <p className="ui mt-2 max-w-3xl text-[13px] leading-relaxed text-ink-3">
-          Working title taken from the sources below. IFA does not write its own prose account of the event —
+          Working title taken from the sources below. IFFA does not write its own prose account of the event —
           it structures what the sources say and shows where each claim came from.
         </p>
 
@@ -143,7 +143,7 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
           <section>
             <div className="label mb-2">Claim analysis</div>
             <p className="card bg-surface-2 px-4 py-3 ui text-[13px] text-ink-2">
-              IFA did not extract a structured claim for this event — usually because it is a single
+              IFFA did not extract a structured claim for this event — usually because it is a single
               short report. The source reporting is listed below.
             </p>
           </section>
@@ -159,7 +159,7 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
               </h2>
               <p className="ui mt-1 text-[12px] leading-relaxed text-ink-3">
                 Direct evidence — not journalism about it. Only records actually retrieved are shown;
-                IFA never invents a government source.
+                IFFA never invents a government source.
               </p>
             </div>
             <ul className="flex flex-col gap-2.5">
@@ -334,7 +334,7 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
               {cluster.cap.areaDescription && <Field k="Stated area" v={cluster.cap.areaDescription} span />}
             </div>
             <p className="ui mt-2 text-[11.5px] text-ink-3">
-              These values are reproduced from the issuing authority&rsquo;s alert and are not modified by IFA.
+              These values are reproduced from the issuing authority&rsquo;s alert and are not modified by IFFA.
             </p>
           </section>
         )}
@@ -386,7 +386,7 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
         <section>
           <div className="label mb-2">Methodology &amp; limitations</div>
           <div className="card bg-surface-2 p-5 prose-measure">
-            <p className="text-[14.5px] font-semibold text-ink">IFA does not claim algorithmic neutrality.</p>
+            <p className="text-[14.5px] font-semibold text-ink">IFFA does not claim algorithmic neutrality.</p>
             <ul className="mt-3 flex flex-col gap-2 text-[13.5px] leading-relaxed text-ink-2">
               <li>Claims are extracted by deterministic rules, not a language model. Wording may not be exact — the original source text is always linked.</li>
               <li>Clustering is deterministic (entity + geography + event type + time window) and can group or split events incorrectly.</li>
@@ -394,7 +394,7 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
               <li>&ldquo;Independent source groups&rdquo; is an estimate — near-identical headlines and shared verbatim passages are treated as one upstream source.</li>
               <li>Confidence is <Link href="/about" className="text-accent hover:underline">a documented formula</Link>, reported as High / Moderate / Low with a score. It is not a truth rating.</li>
               <li>The Common Ground Index is experimental and describes the state of <em>reporting</em>, not the event.</li>
-              <li>For any emergency, the issuing authority&rsquo;s own channel is the source of record — not IFA.</li>
+              <li>For any emergency, the issuing authority&rsquo;s own channel is the source of record — not IFFA.</li>
             </ul>
           </div>
         </section>

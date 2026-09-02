@@ -351,7 +351,7 @@ export function ClaimsPanel({
       <Section
         label="What we know"
         title="Corroborated across independent sources"
-        note="Reported by more than one source group that IFA believes are independent of each other."
+        note="Reported by more than one source group that IFFA believes are independent of each other."
         claims={view.known}
         onOpen={setOpen}
         tone="agree"
@@ -367,7 +367,7 @@ export function ClaimsPanel({
       <Section
         label="Sources disagree"
         title="Genuine conflicts between reports"
-        note="A real semantic conflict — not a wording difference. IFA does not resolve it for you."
+        note="A real semantic conflict — not a wording difference. IFFA does not resolve it for you."
         claims={view.disputed}
         onOpen={setOpen}
         tone="dispute"

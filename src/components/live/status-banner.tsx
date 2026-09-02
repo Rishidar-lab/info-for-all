@@ -46,7 +46,7 @@ export function StatusBanner() {
       )}
 
       <p className="ui mt-2 border-t border-current/20 pt-2 text-[11.5px] leading-snug text-ink-2">
-        For emergencies, follow instructions from the relevant official authority. IFA aggregates
+        For emergencies, follow instructions from the relevant official authority. IFFA aggregates
         publicly available information and is not an emergency service.
       </p>
     </section>

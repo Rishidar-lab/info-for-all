@@ -7,7 +7,7 @@ import { publicationCount } from "@/lib/ifa";
 export const metadata: Metadata = {
   title: "Methodology demonstrations",
   description:
-    "Synthetic comparison stories that demonstrate IFA's model. Not current events and not live reporting.",
+    "Synthetic comparison stories that demonstrate IFFA's model. Not current events and not live reporting.",
 };
 
 export default function ExamplesIndex() {
@@ -16,7 +16,7 @@ export default function ExamplesIndex() {
       <header className="border-b border-rule-strong pb-5">
         <p className="label">Methodology demonstrations</p>
         <h1 className="mt-2 font-serif text-[30px] leading-tight tracking-tight sm:text-[36px]">
-          How IFA&rsquo;s comparison model works
+          How IFFA&rsquo;s comparison model works
         </h1>
         <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-ink-2">
           These are <strong>synthetic</strong> comparison stories. Every publication, quote,
@@ -29,7 +29,7 @@ export default function ExamplesIndex() {
       <aside className="card border-caution/40 bg-caution-bg px-3 py-2.5 ui text-[12.5px] leading-snug text-ink-2" role="note">
         <span className="label !text-caution">Demonstration dataset</span>
         <span className="mt-1 block">
-          Source metadata and story examples are synthetic and are provided to demonstrate IFA&rsquo;s
+          Source metadata and story examples are synthetic and are provided to demonstrate IFFA&rsquo;s
           comparison model. They should not be interpreted as live reporting. Publication links point
           to reserved <span className="mono">.example</span> domains.
         </span>

@@ -1,11 +1,21 @@
 import Link from "next/link";
+import { BRAND } from "@/lib/brand";
 
-const NAV = [
-  { href: "/", label: "Live feed" },
-  { href: "/sources", label: "Sources" },
-  { href: "/about", label: "Methodology" },
-  { href: "/methodology/quality", label: "Quality" },
-  { href: "/methodology/examples", label: "Examples" },
+const PRIMARY = [
+  { href: "/", label: "Right now" },
+  { href: "/crisis/", label: "Crisis" },
+  { href: "/politics/", label: "Politics" },
+  { href: "/finance/", label: "Finance" },
+  { href: "/sports/", label: "Sports" },
+  { href: "/trends/", label: "Trends" },
+] as const;
+
+const SECONDARY = [
+  { href: "/tamil-nadu/", label: "Tamil Nadu" },
+  { href: "/india/", label: "India" },
+  { href: "/sources/", label: "Sources" },
+  { href: "/about/", label: "Methodology" },
+  { href: "/methodology/quality/", label: "Quality" },
 ] as const;
 
 export function SiteHeader() {
@@ -14,19 +24,28 @@ export function SiteHeader() {
       <div className="mx-auto max-w-[var(--maxw)] px-4">
         <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 py-3">
           <Link href="/" className="link-quiet flex items-baseline gap-2.5">
-            <span className="font-serif text-[21px] font-semibold tracking-tight text-ink">Info For All</span>
-            <span className="label rounded-[2px] border border-rule-strong px-1.5 py-0.5">IFA</span>
-            <span className="ui hidden text-[11px] text-ink-3 sm:inline">Tamil Nadu &amp; India</span>
+            <span className="font-serif text-[21px] font-semibold tracking-tight text-ink">{BRAND.name}</span>
+            <span className="label hidden rounded-[2px] border border-rule-strong px-1.5 py-0.5 sm:inline">
+              {BRAND.full}
+            </span>
+            <span className="ui hidden text-[11px] text-ink-3 md:inline">{BRAND.region}</span>
           </Link>
 
-          <nav className="ui flex items-center gap-x-4 gap-y-1 text-[13px]">
-            {NAV.map((item) => (
+          <nav className="ui flex items-center gap-x-3.5 gap-y-1 text-[13px]">
+            {PRIMARY.map((item) => (
               <Link key={item.href} href={item.href} className="link-quiet text-ink-2 hover:text-accent">
                 {item.label}
               </Link>
             ))}
           </nav>
         </div>
+        <nav className="ui flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-rule pb-2 pt-1.5 text-[12px] text-ink-3">
+          {SECONDARY.map((item) => (
+            <Link key={item.href} href={item.href} className="link-quiet hover:text-accent">
+              {item.label}
+            </Link>
+          ))}
+        </nav>
       </div>
     </header>
   );

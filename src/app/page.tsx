@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BRAND } from "@/lib/brand";
 import { StatusBanner } from "@/components/live/status-banner";
 import { LiveFeed } from "@/components/live/live-feed";
 import {
@@ -19,14 +20,15 @@ export default function HomePage() {
   return (
     <div className="flex flex-col gap-8">
       <section className="border-b border-rule-strong pb-6">
-        <p className="label">Info For All · IFA</p>
+        <p className="label">{BRAND.name} · {BRAND.full}</p>
         <h1 className="mt-2 max-w-3xl font-serif text-[30px] leading-[1.14] tracking-tight sm:text-[38px]">
-          Live India and Tamil Nadu public-information feed
+          Current events without the noise
         </h1>
         <p className="mt-3 max-w-2xl text-[15.5px] leading-relaxed text-ink-2">
-          Crisis-first, evidence-oriented. IFA groups official alerts and independent reporting
-          around the same event so you can see what the alert says, which sources confirm it,
-          what remains uncertain, and when the information was last refreshed.
+          {BRAND.tagline} {BRAND.name} groups reporting into events, ranks them by what is
+          actually changing, and shows which sources independently confirm each claim, what
+          remains uncertain, and how Tamil and English coverage describe the same story.
+          Tamil&nbsp;Nadu first; crisis, politics, finance and sports before anything else.
         </p>
       </section>
 
@@ -55,7 +57,7 @@ export default function HomePage() {
         <div className="label mb-2">Not live reporting</div>
         <p className="ui text-[13px] leading-relaxed text-ink-2">
           The sections above are built from public RSS / CAP feeds at the timestamp shown in the
-          status bar. Separately, IFA keeps a set of{" "}
+          status bar. Separately, {BRAND.name} keeps a set of{" "}
           <Link href="/methodology/examples" className="text-accent hover:underline">
             methodology demonstrations
           </Link>{" "}

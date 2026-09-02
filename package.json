@@ -1,8 +1,8 @@
 {
-  "name": "ifa",
-  "version": "0.3.0",
+  "name": "iffa",
+  "version": "0.7.0",
   "private": true,
-  "description": "Info For All (IFA) — an evidence-oriented news-comparison interface: one event, multiple sources, what they agree on, how coverage differs, and where each claim came from.",
+  "description": "IFFA — Info Free For All. A Tamil Nadu-first, India-aware real-time news and current-trend intelligence platform: reporting grouped into events, ranked by what is actually changing, with source independence, claim provenance and Tamil↔English semantics made visible.",
   "scripts": {
     "prepare-data": "tsx scripts/prepare-data.ts",
     "predev": "tsx scripts/prepare-data.ts",

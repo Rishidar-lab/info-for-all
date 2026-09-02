@@ -43,7 +43,7 @@ export default async function ExampleStory({ params }: { params: Promise<{ slug:
         <span className="label !text-caution">Demonstration — not live reporting</span>
         <span className="mt-1 block">
           This is a synthetic comparison story. Publications, quotes and figures are invented to
-          demonstrate IFA&rsquo;s model. It is not a current event.
+          demonstrate IFFA&rsquo;s model. It is not a current event.
         </span>
       </aside>
 

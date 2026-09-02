@@ -5,7 +5,7 @@ import { dataset, istTimestamp } from "@/lib/live/dataset";
 
 export const metadata: Metadata = {
   title: "Sources",
-  description: "The public RSS / CAP feeds IFA ingests for the India / Tamil Nadu live edition, with their current status.",
+  description: "The public RSS / CAP feeds IFFA ingests for the India / Tamil Nadu live edition, with their current status.",
 };
 
 const KIND_LABEL: Record<string, string> = {
@@ -40,7 +40,7 @@ function publisherRows(): PublisherRow[] {
   for (const [publisher, feeds] of feedsByPublisher) {
     const arts = dataset.articles.filter((a) => a.publisher === publisher);
     const enabledFeeds = feeds.filter((f) => f.enabled);
-    // Only surface a publisher IFA actually ingests.
+    // Only surface a publisher IFFA actually ingests.
     if (enabledFeeds.length === 0 && arts.length === 0) continue;
     const comparisons = dataset.clusters.filter(
       (c) => c.isVerifiedComparison && c.publishers.includes(publisher),
@@ -79,7 +79,7 @@ export default function SourcesPage() {
         <p className="label">Directory</p>
         <h1 className="mt-2 font-serif text-[30px] leading-tight tracking-tight sm:text-[36px]">Sources</h1>
         <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-ink-2">
-          IFA ingests publicly accessible RSS / Atom / CAP feeds. It stores only the feed&rsquo;s
+          IFFA ingests publicly accessible RSS / Atom / CAP feeds. It stores only the feed&rsquo;s
           own headline, timestamp, short excerpt, canonical URL and structured alert metadata,
           always attributes the publisher, and always links out to the original report. It does
           not copy full articles or bypass access controls.
@@ -92,10 +92,10 @@ export default function SourcesPage() {
       <section>
         <div className="mb-3 border-b border-rule-strong pb-2">
           <div className="label mb-1">Publishers</div>
-          <h2 className="font-serif text-[19px] font-semibold text-ink">Who IFA ingests, and how much</h2>
+          <h2 className="font-serif text-[19px] font-semibold text-ink">Who IFFA ingests, and how much</h2>
           <p className="ui mt-1 text-[12px] leading-relaxed text-ink-3">
             Verified metadata only — article counts, languages and comparison appearances are measured
-            from the current snapshot. IFA does not record ownership or political-orientation metadata.
+            from the current snapshot. IFFA does not record ownership or political-orientation metadata.
           </p>
         </div>
         <div className="card w-full min-w-0 overflow-x-auto">
