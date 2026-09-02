@@ -34,12 +34,14 @@ import type { FeedStatus, LiveArticle, LiveDataset, FeedHealth } from "../src/li
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = resolve(ROOT, "src/data/generated/live-feed.json");
 const USER_AGENT =
-  "IFA-ingest/0.4 (+https://github.com/Rishidar-lab/info-for-all; Tamil Nadu / India public-safety aggregation; contact via repo issues)";
-const FETCH_TIMEOUT_MS = 15_000;
+  "IFFA-ingest/0.8 (+https://github.com/Rishidar-lab/info-for-all; Tamil Nadu / India public-safety aggregation; contact via repo issues)";
+const FETCH_TIMEOUT_MS = 20_000;
+/** One retry for a slow / transiently-failing feed. */
+const FETCH_RETRIES = 1;
 const MAX_ITEMS_PER_FEED = 60;
 const MAX_ARTICLE_AGE_DAYS = 7;
 
-async function fetchText(url: string): Promise<string> {
+async function fetchOnce(url: string): Promise<{ body: string; httpState: string }> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
   try {
@@ -54,10 +56,22 @@ async function fetchText(url: string): Promise<string> {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const body = await res.text();
     if (body.length < 20) throw new Error("empty response body");
-    return body;
+    return { body, httpState: `HTTP ${res.status}` };
   } finally {
     clearTimeout(timer);
   }
+}
+
+async function fetchText(url: string): Promise<{ body: string; httpState: string }> {
+  let lastErr: unknown;
+  for (let attempt = 0; attempt <= FETCH_RETRIES; attempt++) {
+    try {
+      return await fetchOnce(url);
+    } catch (err) {
+      lastErr = err;
+    }
+  }
+  throw lastErr;
 }
 
 function loadPrevious(): LiveDataset | null {
@@ -76,34 +90,52 @@ async function ingestFeed(feed: FeedSource, fetchedAt: string, now: number): Pro
     lastAttemptAt: fetchedAt,
     status: "failed",
     itemCount: 0,
+    itemsSeen: 0,
+    itemsAccepted: 0,
+    itemsRejected: 0,
   };
   try {
-    const body = await fetchText(feed.url);
+    const { body, httpState } = await fetchText(feed.url);
+    status.httpState = httpState;
     let raw: RawItem[];
     if (feed.kind === "sachet-json") raw = parseSachetJson(body);
     else raw = parseFeed(body).items;
 
+    status.itemsSeen = raw.length;
     const articles: LiveArticle[] = [];
     let rejected = 0;
+    const lags: number[] = [];
+    let newestItem = "";
     for (const item of raw.slice(0, MAX_ITEMS_PER_FEED)) {
       const { article } = normalizeItem(feed, item, fetchedAt, now);
       if (!article) {
         rejected++;
         continue;
       }
+      if (article.publishedAt > newestItem) newestItem = article.publishedAt;
       if (article.scope === "excluded") continue;
-      const ageDays = (now - Date.parse(article.publishedAt)) / 86_400_000;
-      if (ageDays > MAX_ARTICLE_AGE_DAYS) continue;
+      const ageMs = now - Date.parse(article.publishedAt);
+      if (ageMs / 86_400_000 > MAX_ARTICLE_AGE_DAYS) continue;
+      if (ageMs >= 0) lags.push(ageMs / 60_000);
       articles.push(article);
     }
 
     status.status = "ok";
     status.lastSuccessAt = fetchedAt;
     status.itemCount = articles.length;
+    status.itemsAccepted = articles.length;
+    status.itemsRejected = rejected;
+    status.consecutiveFailures = 0;
+    if (newestItem) status.lastItemAt = newestItem;
+    if (lags.length) {
+      const sorted = [...lags].sort((a, b) => a - b);
+      status.medianLagMinutes = Math.round(sorted[Math.floor(sorted.length / 2)]);
+    }
     if (rejected > 0) status.error = `${rejected} malformed item(s) rejected`;
     return { status, articles };
   } catch (err) {
     status.error = err instanceof Error ? err.message : String(err);
+    status.httpState = status.error.startsWith("HTTP ") ? status.error : "network/timeout";
     return { status, articles: [] };
   }
 }
@@ -186,15 +218,38 @@ function finaliseCrisisPriority(articles: LiveArticle[], now: number): LiveArtic
   return articles;
 }
 
-function health(feeds: FeedStatus[], scopedItemCount: number): FeedHealth {
+/** Feeds whose failure genuinely degrades the whole picture. */
+const CRITICAL_FEED_IDS = new Set(["ndma-sachet-json", "ndma-sachet-rss"]);
+
+function health(allFeeds: FeedStatus[], scopedItemCount: number): FeedHealth {
   // No valid Tamil Nadu / India item exists at all — distinct from "feeds are
   // failing"; this is "there is nothing to show", and must say so plainly.
   if (scopedItemCount === 0) return "empty";
+  const feeds = allFeeds.filter((f) => f.health !== "disabled");
   const enabled = feeds.length;
   const ok = feeds.filter((f) => f.status === "ok").length;
+  const failed = feeds.filter((f) => f.status === "failed"); // no last-known-good either
+  const criticalDown = feeds.some((f) => CRITICAL_FEED_IDS.has(f.sourceId) && f.status !== "ok");
+
   if (ok === 0) return "stale";
-  if (ok < enabled) return "degraded";
+  // A couple of flaky low-priority feeds should not read as "degraded" —
+  // last-known-good already covers a temporary failure. Degrade only when a
+  // critical feed is down, or more than ~20% of feeds are hard-failing, or
+  // fewer than 70% are OK.
+  if (criticalDown || failed.length > Math.max(2, enabled * 0.2) || ok < enabled * 0.7) return "degraded";
   return "live";
+}
+
+/** Roll up a feed's condition into the v0.8 5-state health label. */
+function feedHealth(s: FeedStatus, disabled: boolean, now: number): FeedStatus["health"] {
+  if (disabled) return "disabled";
+  if (s.status === "failed") return "failed";
+  if (s.status === "stale") return (s.consecutiveFailures ?? 0) >= 4 ? "failed" : "stale";
+  // ok — but is the newest item very old? (a 200 with only ancient items)
+  const newest = s.lastItemAt ? Date.parse(s.lastItemAt) : NaN;
+  if (Number.isFinite(newest) && now - newest > 3 * 86_400_000) return "stale";
+  if ((s.itemsRejected ?? 0) > 0 && (s.itemsAccepted ?? 0) === 0) return "degraded";
+  return "healthy";
 }
 
 async function main() {
@@ -215,22 +270,40 @@ async function main() {
     const { status, articles: fresh } = results[i];
 
     if (status.status === "ok") {
+      status.health = feedHealth(status, false, now);
       feeds.push(status);
       articles.push(...fresh);
-      console.log(`  ok    ${feed.id.padEnd(20)} ${fresh.length} item(s)${status.error ? `  (${status.error})` : ""}`);
+      console.log(`  ok    ${feed.id.padEnd(22)} ${fresh.length} item(s)${status.error ? `  (${status.error})` : ""}`);
     } else {
       // last-known-good: reuse previous items for this feed, mark stale
       const prevForFeed = previous?.articles.filter((a) => a.sourceId === feed.id) ?? [];
-      const prevSuccess = previous?.feeds.find((f) => f.sourceId === feed.id)?.lastSuccessAt;
-      feeds.push({
+      const prevStatus = previous?.feeds.find((f) => f.sourceId === feed.id);
+      const merged: FeedStatus = {
         ...status,
         status: prevForFeed.length ? "stale" : "failed",
-        lastSuccessAt: prevSuccess,
+        lastSuccessAt: prevStatus?.lastSuccessAt,
+        lastItemAt: prevStatus?.lastItemAt,
         itemCount: prevForFeed.length,
-      });
+        consecutiveFailures: (prevStatus?.consecutiveFailures ?? 0) + 1,
+      };
+      merged.health = feedHealth(merged, false, now);
+      feeds.push(merged);
       articles.push(...prevForFeed);
-      console.log(`  FAIL  ${feed.id.padEnd(20)} ${status.error} — retained ${prevForFeed.length} last-known-good item(s)`);
+      console.log(`  FAIL  ${feed.id.padEnd(22)} ${status.error} — retained ${prevForFeed.length} last-known-good item(s) (fail #${merged.consecutiveFailures})`);
     }
+  }
+
+  // Record DISABLED feeds so /sources and /diagnostics show the full registry.
+  for (const feed of FEED_SOURCES.filter((f) => !f.enabled)) {
+    feeds.push({
+      sourceId: feed.id,
+      sourceName: feed.name,
+      lastAttemptAt: fetchedAt,
+      status: "failed",
+      health: "disabled",
+      itemCount: 0,
+      error: feed.note,
+    });
   }
 
   articles = mergeSachetLinks(articles);
@@ -281,7 +354,7 @@ async function main() {
       weakMatchesRejected,
       distinctPublishers: new Set(articles.map((a) => a.publisher)).size,
       workingFeeds: feeds.filter((f) => f.status === "ok").length,
-      failedFeeds: feeds.filter((f) => f.status !== "ok").length,
+      failedFeeds: feeds.filter((f) => f.status !== "ok" && f.health !== "disabled").length,
     },
   };
 

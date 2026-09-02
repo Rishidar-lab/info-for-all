@@ -122,6 +122,24 @@ export interface FeedStatus {
   status: "ok" | "stale" | "failed";
   itemCount: number;
   error?: string;
+
+  // ── v0.8 source-health detail ──
+  /** HEALTHY | DEGRADED | STALE | FAILED | DISABLED — a richer view than `status`. */
+  health?: "healthy" | "degraded" | "stale" | "failed" | "disabled";
+  /** HTTP status of the last fetch, or a short error class. */
+  httpState?: string;
+  /** Raw items the parser saw. */
+  itemsSeen?: number;
+  /** Items that passed normalisation. */
+  itemsAccepted?: number;
+  /** Items rejected by normalisation (bad URL / date / too short). */
+  itemsRejected?: number;
+  /** Publication time of the newest item this feed has ever produced. */
+  lastItemAt?: string;
+  /** Median minutes between an item's publication and IFFA fetching it, if measurable. */
+  medianLagMinutes?: number;
+  /** Consecutive failed runs (carried across runs). */
+  consecutiveFailures?: number;
 }
 
 export interface ClusterDifferenceRow {

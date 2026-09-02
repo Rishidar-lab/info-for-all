@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { dataset, istTimestamp } from "@/lib/live/dataset";
+import { dataset, istTimestamp, FEED_HEALTH_LABEL, FEED_HEALTH_TONE } from "@/lib/live/dataset";
 import { categoryCounts, hasTrendData, situation } from "@/lib/live/trends-view";
 import { CATEGORY_LABEL, type CategoryId } from "@/lib/domain/categories";
 import { DESCRIBED_FEEDS } from "@/data/feeds";
@@ -95,36 +95,47 @@ export default function DiagnosticsPage() {
       </section>
 
       <section>
-        <div className="label mb-2">Feed status ({d.feeds.length})</div>
+        <div className="label mb-2">Source health ({d.feeds.length} feeds)</div>
         <div className="card overflow-x-auto">
-          <table className="w-full min-w-[560px] border-collapse text-left">
+          <table className="w-full min-w-[720px] border-collapse text-left">
             <thead>
               <tr className="border-b border-rule-strong bg-surface-2 ui text-[11px] uppercase tracking-wider text-ink-3">
                 <th className="px-3 py-2 font-semibold">Feed</th>
-                <th className="px-3 py-2 font-semibold">Status</th>
-                <th className="px-3 py-2 font-semibold">Items</th>
-                <th className="px-3 py-2 font-semibold">Last success</th>
+                <th className="px-3 py-2 font-semibold">Health</th>
+                <th className="px-3 py-2 font-semibold">HTTP</th>
+                <th className="px-3 py-2 font-semibold">Seen / kept / rej.</th>
+                <th className="px-3 py-2 font-semibold">Lag</th>
+                <th className="px-3 py-2 font-semibold">Last item</th>
                 <th className="px-3 py-2 font-semibold">Note</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-rule">
-              {d.feeds.map((f) => (
-                <tr key={f.sourceId}>
-                  <td className="px-3 py-2 ui text-[12px] text-ink">{f.sourceName}</td>
-                  <td className={`px-3 py-2 ui text-[12px] font-semibold ${f.status === "ok" ? "text-agree" : f.status === "stale" ? "text-caution" : "text-dispute"}`}>
-                    {f.status}
-                  </td>
-                  <td className="px-3 py-2 mono text-[12px] text-ink-2">{f.itemCount}</td>
-                  <td className="px-3 py-2 ui text-[11px] text-ink-3">{f.lastSuccessAt ? istTimestamp(f.lastSuccessAt) : "—"}</td>
-                  <td className="px-3 py-2 ui text-[11px] text-ink-3">{f.error ?? ""}</td>
-                </tr>
-              ))}
+              {[...d.feeds].sort((a, b) => (a.health === "disabled" ? 1 : 0) - (b.health === "disabled" ? 1 : 0)).map((f) => {
+                const h = f.health ?? (f.status === "ok" ? "healthy" : f.status === "stale" ? "stale" : "failed");
+                return (
+                  <tr key={f.sourceId}>
+                    <td className="px-3 py-2 ui text-[12px] text-ink">{f.sourceName}</td>
+                    <td className={`px-3 py-2 ui text-[12px] font-semibold ${FEED_HEALTH_TONE[h] ?? "text-ink-3"}`}>
+                      {FEED_HEALTH_LABEL[h] ?? h}
+                      {(f.consecutiveFailures ?? 0) > 0 && <span className="ml-1 text-ink-3">×{f.consecutiveFailures}</span>}
+                    </td>
+                    <td className="px-3 py-2 mono text-[11px] text-ink-3">{f.httpState ?? "—"}</td>
+                    <td className="px-3 py-2 mono text-[11px] text-ink-2">
+                      {f.itemsSeen ?? "—"} / {f.itemsAccepted ?? f.itemCount} / {f.itemsRejected ?? 0}
+                    </td>
+                    <td className="px-3 py-2 mono text-[11px] text-ink-3">{f.medianLagMinutes != null ? `${f.medianLagMinutes}m` : "—"}</td>
+                    <td className="px-3 py-2 ui text-[10.5px] text-ink-3">{f.lastItemAt ? istTimestamp(f.lastItemAt) : "—"}</td>
+                    <td className="px-3 py-2 ui text-[10.5px] text-ink-3">{(f.error ?? "").slice(0, 90)}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
         <p className="ui mt-2 text-[11.5px] text-ink-3">
-          {feedFail.length === 0 ? "All feeds responded on the last run." : `${feedFail.length} feed(s) did not respond: ${feedFail.map((f) => f.sourceName).join("; ")}.`}
-          {malformed.length > 0 && ` Parser rejected some items from: ${malformed.map((f) => f.sourceName).join("; ")}.`}
+          A feed that returned 200 with no new article is <strong>healthy</strong>, not failed.
+          &ldquo;Stale&rdquo; = last-known-good is being served after a fetch failure or the newest
+          item is &gt; 3 days old. {feedFail.length === 0 ? "All feeds responded on the last run." : `${feedFail.length} feed(s) did not respond: ${feedFail.map((f) => f.sourceName).join("; ")}.`}
         </p>
       </section>
 

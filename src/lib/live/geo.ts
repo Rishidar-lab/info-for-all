@@ -145,6 +145,29 @@ const INDIA_TERMS = [
   "national centre for seismology",
   "indian railways",
   "southern railway",
+  "sebi",
+  "nifty",
+  "sensex",
+  "bse",
+  "nse",
+  // national sport bodies / competitions — so a cricket/football feed item is
+  // scoped India rather than excluded when it is about an Indian team / league
+  "bcci",
+  "team india",
+  "indian cricket",
+  "ranji trophy",
+  "duleep trophy",
+  "irani cup",
+  "vijay hazare",
+  "syed mushtaq ali",
+  "ipl",
+  "indian premier league",
+  "isl",
+  "indian super league",
+  "i-league",
+  "pro kabaddi",
+  "indian football",
+  "hockey india",
 ];
 
 function norm(s: string): string {

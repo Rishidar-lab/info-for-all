@@ -30,6 +30,22 @@ export const VERIFICATION_LABEL: Record<VerificationStatus, string> = {
   unverified: "Unverified",
 };
 
+/** v0.8 source-health 5-state → label + tone. */
+export const FEED_HEALTH_LABEL: Record<string, string> = {
+  healthy: "Healthy",
+  degraded: "Degraded",
+  stale: "Stale",
+  failed: "Failed",
+  disabled: "Disabled",
+};
+export const FEED_HEALTH_TONE: Record<string, string> = {
+  healthy: "text-agree",
+  degraded: "text-caution",
+  stale: "text-caution",
+  failed: "text-dispute",
+  disabled: "text-ink-3",
+};
+
 export const LIFECYCLE_LABEL: Record<AlertLifecycle, string> = {
   active: "Active",
   update: "Update",

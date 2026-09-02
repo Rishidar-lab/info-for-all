@@ -57,7 +57,24 @@ describe("IFFA source registry (Phase D)", () => {
   it("candidate feeds are all http(s) and carry a status", () => {
     for (const c of CANDIDATE_FEEDS) {
       expect(c.url).toMatch(/^https?:\/\//);
-      expect(["to-validate", "blocked", "no-feed-found"]).toContain(c.status);
+      expect(["to-validate", "blocked", "no-feed-found", "enabled"]).toContain(c.status);
     }
+  });
+
+  it("v0.8 added finance and sports feeds", () => {
+    const cats = new Set(DESCRIBED_FEEDS.filter((f) => f.enabled).flatMap((f) => f.categorySupport));
+    expect(cats.has("finance")).toBe(true);
+    expect(cats.has("sports")).toBe(true);
+    const fin = DESCRIBED_FEEDS.filter((f) => f.enabled && f.categorySupport.includes("finance") && f.categorySupport.length <= 3);
+    const spo = DESCRIBED_FEEDS.filter((f) => f.enabled && f.categorySupport.includes("sports"));
+    expect(fin.length).toBeGreaterThanOrEqual(3);
+    expect(spo.length).toBeGreaterThanOrEqual(3);
+  });
+
+  it("ownership groups are recorded for same-owner publications", () => {
+    const bl = FEED_SOURCES.find((f) => f.id === "thehindu-businessline");
+    const ss = FEED_SOURCES.find((f) => f.id === "sportstar");
+    expect(bl?.ownershipGroup).toBe("Kasturi & Sons");
+    expect(ss?.ownershipGroup).toBe("Kasturi & Sons");
   });
 });
