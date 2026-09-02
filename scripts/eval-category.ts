@@ -102,7 +102,11 @@ const mdOut = md.join("\n") + "\n";
 writeFileSync(resolve(ROOT, "evaluation/reports/category-latest.md"), mdOut);
 writeFileSync(
   resolve(ROOT, "evaluation/reports/category-latest.json"),
-  JSON.stringify({ accuracy, macroF1, perCat, confusion, misses, secondaryHit, secondaryTotal, generatedAt: new Date().toISOString() }, null, 2) + "\n",
+  JSON.stringify(
+    { corpusSize: CATEGORY_CORPUS.length, accuracy, macroF1, perCat, confusion, misses, secondaryHit, secondaryTotal },
+    null,
+    2,
+  ) + "\n",
 );
 
 if (!quiet) console.log(mdOut);

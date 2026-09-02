@@ -1,6 +1,6 @@
 # IFFA category-classifier evaluation
 
-- generated: 2026-09-02T14:32:48.923Z
+- generated: 2026-09-02T14:33:46.387Z
 - corpus: 114 hand-labelled real headlines
 - **accuracy 100.0% · macro-F1 100.0%**
 - secondary-category recall: 15.4% (2/13)

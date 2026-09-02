@@ -1,19 +1,25 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import evalData from "@/data/claim-eval.json";
+import categoryEval from "../../../../evaluation/reports/category-latest.json";
 import { cn } from "@/lib/format";
 import { dataset } from "@/lib/live/dataset";
 import { hasTrendData, categoryCounts, situation } from "@/lib/live/trends-view";
 
-/** IFFA v0.7 test-suite tallies (from `npm test`). */
+/** IFFA v0.8 test-suite tallies (from `npm test` + `npm run test:e2e`). */
 const IFFA_SUITES: [string, number][] = [
   ["Category taxonomy + geo tiers", 17],
+  ["Multi-signal classifier v2", 10],
   ["Tamil Nadu district resolution", 8],
-  ["Source registry", 7],
+  ["Source registry", 9],
   ["Trend engine (velocity, score, situation)", 17],
+  ["Claim-aware novelty v2", 6],
+  ["Event severity", 7],
+  ["Event identity v2 (specialist split guard)", 6],
   ["Critical-safety corpus (12 spec non-negotiables)", 13],
   ["Finance / sports fixture guards", 10],
-  ["Adversarial mini-corpus (category / geo / district)", 41],
+  ["Adversarial mini-corpus (category / geo / district)", 43],
+  ["Browser E2E (Playwright, desktop + 390px)", 38],
 ];
 
 export const metadata: Metadata = {
@@ -117,18 +123,17 @@ export default function QualityDashboard() {
         <section>
           <div className="mb-3 border-b border-rule-strong pb-2">
             <div className="label mb-1">Version history · semantic regression</div>
-            <h2 className="font-serif text-[20px] font-semibold text-ink">v0.4 → v0.5 → v0.6 → v0.7</h2>
+            <h2 className="font-serif text-[20px] font-semibold text-ink">v0.4 → v0.5 → v0.6 → v0.7 → v0.8</h2>
             <p className="ui mt-1 text-[12px] leading-relaxed text-ink-3">
               v0.5 added a structured event-identity engine, a Tamil normaliser and a
-              cross-language layer. v0.6 hardened recall: 10 known missed matches
-              resolved with precision, zero false corroboration held. <strong>v0.7 (Trend
-              Intelligence) did not change the claim / identity engine</strong> — the current
-              column below is measured live each run and equals v0.6. Regressions are shown,
-              not hidden.
+              cross-language layer. v0.6 hardened recall. <strong>v0.7 (Trend Intelligence)
+              and v0.8 (Live Signal Intelligence) did NOT change the claim / identity
+              engine</strong> — the current column is measured live each run and equals v0.6.
+              Regressions are shown, not hidden.
             </p>
           </div>
           <div className="card w-full min-w-0 overflow-x-auto">
-            <table className="w-full min-w-[620px] border-collapse text-left">
+            <table className="w-full min-w-[680px] border-collapse text-left">
               <thead>
                 <tr className="border-b border-rule-strong bg-surface-2 ui text-[11px] uppercase tracking-wider text-ink-3">
                   <th className="px-4 py-2.5 font-semibold">Metric</th>
@@ -136,6 +141,7 @@ export default function QualityDashboard() {
                   <th className="px-4 py-2.5 font-semibold">v0.5</th>
                   <th className="px-4 py-2.5 font-semibold">v0.6</th>
                   <th className="px-4 py-2.5 font-semibold">v0.7</th>
+                  <th className="px-4 py-2.5 font-semibold">v0.8</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-rule">
@@ -143,24 +149,26 @@ export default function QualityDashboard() {
                   const v04 = d.v04 as { cases: number; clean: number; matchingPrecision: number; matchingRecall: number; tamilMatching: number; crossLanguage: number | null; falseCorroboration: number; falseCorroborationDen: number };
                   const v05 = d.v05 as typeof v04;
                   const v06 = ("v06" in d ? d.v06 : v05) as typeof v04;
+                  const v07 = ("v07" in d ? d.v07 : v06) as typeof v04;
                   const lr = d.languageRecall as { english: number | null; tamilTamil: number | null; crossLanguage: number | null };
                   const cross = (v: number | null) => (v == null ? "n/a" : pct(v));
-                  const rows: [string, string, string, string, string][] = [
-                    ["Corpus size", String(v04.cases), String(v05.cases), String(v06.cases), String(d.totals.cases)],
-                    ["Fully clean", `${v04.clean} (${pct(v04.clean / v04.cases)})`, `${v05.clean} (${pct(v05.clean / v05.cases)})`, `${v06.clean} (${pct(v06.clean / v06.cases)})`, `${d.totals.passed} (${pct(d.totals.passed / d.totals.cases)})`],
-                    ["Claim-matching precision", pct(v04.matchingPrecision), pct(v05.matchingPrecision), pct(v06.matchingPrecision), pct(metrics.claimMatching.precision)],
-                    ["Claim-matching recall (all)", pct(v04.matchingRecall), pct(v05.matchingRecall), pct(v06.matchingRecall), pct(metrics.claimMatching.recall)],
-                    ["Tamil ↔ Tamil matching", pct(v04.tamilMatching), pct(v05.tamilMatching), pct(v06.tamilMatching), pct(metrics.tamilMatching?.accuracy)],
-                    ["Tamil ↔ English recall", cross(v04.crossLanguage), cross(v05.crossLanguage), cross(v06.crossLanguage), pct(lr.crossLanguage)],
-                    ["False corroboration", `${v04.falseCorroboration} / ${v04.falseCorroborationDen}`, `${v05.falseCorroboration} / ${v05.falseCorroborationDen}`, `${v06.falseCorroboration} / ${v06.falseCorroborationDen}`, `${fc.count} / ${fc.denominator}`],
+                  const rows: [string, string, string, string, string, string][] = [
+                    ["Corpus size", String(v04.cases), String(v05.cases), String(v06.cases), String(v07.cases), String(d.totals.cases)],
+                    ["Fully clean", `${v04.clean} (${pct(v04.clean / v04.cases)})`, `${v05.clean} (${pct(v05.clean / v05.cases)})`, `${v06.clean} (${pct(v06.clean / v06.cases)})`, `${v07.clean} (${pct(v07.clean / v07.cases)})`, `${d.totals.passed} (${pct(d.totals.passed / d.totals.cases)})`],
+                    ["Claim-matching precision", pct(v04.matchingPrecision), pct(v05.matchingPrecision), pct(v06.matchingPrecision), pct(v07.matchingPrecision), pct(metrics.claimMatching.precision)],
+                    ["Claim-matching recall (all)", pct(v04.matchingRecall), pct(v05.matchingRecall), pct(v06.matchingRecall), pct(v07.matchingRecall), pct(metrics.claimMatching.recall)],
+                    ["Tamil ↔ Tamil matching", pct(v04.tamilMatching), pct(v05.tamilMatching), pct(v06.tamilMatching), pct(v07.tamilMatching), pct(metrics.tamilMatching?.accuracy)],
+                    ["Tamil ↔ English recall", cross(v04.crossLanguage), cross(v05.crossLanguage), cross(v06.crossLanguage), cross(v07.crossLanguage), pct(lr.crossLanguage)],
+                    ["False corroboration", `${v04.falseCorroboration}/${v04.falseCorroborationDen}`, `${v05.falseCorroboration}/${v05.falseCorroborationDen}`, `${v06.falseCorroboration}/${v06.falseCorroborationDen}`, `${v07.falseCorroboration}/${v07.falseCorroborationDen}`, `${fc.count}/${fc.denominator}`],
                   ];
-                  return rows.map(([k, a, b, c, e]) => (
+                  return rows.map(([k, a, b, c, e, g]) => (
                     <tr key={k} className="align-top">
                       <td className="px-4 py-3 ui text-[13px] font-semibold text-ink">{k}</td>
-                      <td className="px-4 py-3 mono text-[13px] text-ink-3">{a}</td>
-                      <td className="px-4 py-3 mono text-[13px] text-ink-3">{b}</td>
-                      <td className="px-4 py-3 mono text-[13px] text-ink-3">{c}</td>
-                      <td className="px-4 py-3 mono text-[13px] font-semibold text-ink">{e}</td>
+                      <td className="px-4 py-3 mono text-[12px] text-ink-3">{a}</td>
+                      <td className="px-4 py-3 mono text-[12px] text-ink-3">{b}</td>
+                      <td className="px-4 py-3 mono text-[12px] text-ink-3">{c}</td>
+                      <td className="px-4 py-3 mono text-[12px] text-ink-3">{e}</td>
+                      <td className="px-4 py-3 mono text-[13px] font-semibold text-ink">{g}</td>
                     </tr>
                   ));
                 })()}
@@ -179,28 +187,88 @@ export default function QualityDashboard() {
         </section>
       )}
 
-      {/* ── v0.7 Trend Intelligence layer ──────────────────────────── */}
+      {/* ── v0.8 category classifier ───────────────────────────────── */}
       <section>
         <div className="mb-3 border-b border-rule-strong pb-2">
-          <div className="label mb-1">v0.7 · Trend Intelligence layer</div>
+          <div className="label mb-1">v0.8 · category classification</div>
+          <h2 className="font-serif text-[20px] font-semibold text-ink">
+            News-domain classifier — {pct((categoryEval as { accuracy: number }).accuracy)} accuracy
+          </h2>
+          <p className="ui mt-1 text-[12px] leading-relaxed text-ink-3">
+            v0.7&rsquo;s classifier read English headline keywords only, so ~77% of events fell
+            into &ldquo;other-relevant&rdquo;. v0.8&rsquo;s multi-signal classifier (headline +
+            excerpt + a Tamil gloss + entities + concepts + finance instruments + sports
+            competitions + a &ldquo;government actor takes a governance action&rdquo; pattern)
+            brought that to ~51%. Measured against{" "}
+            <strong>{(categoryEval as { corpusSize: number }).corpusSize} hand-labelled real
+            headlines</strong> — deliberately adversarial (political metaphors that use crisis
+            words, culture pieces that name chess players, RBI operational notes). The corpus was
+            built in two batches: the second was labelled from a fresh snapshot slice{" "}
+            <em>before</em> tuning, giving an honest first-pass 91.2% that principled fixes then
+            raised.
+          </p>
+        </div>
+        <div className="card w-full min-w-0 overflow-x-auto">
+          <table className="w-full min-w-[420px] border-collapse text-left">
+            <thead>
+              <tr className="border-b border-rule-strong bg-surface-2 ui text-[11px] uppercase tracking-wider text-ink-3">
+                <th className="px-4 py-2.5 font-semibold">Category</th>
+                <th className="px-4 py-2.5 font-semibold">Support</th>
+                <th className="px-4 py-2.5 font-semibold">Precision</th>
+                <th className="px-4 py-2.5 font-semibold">Recall</th>
+                <th className="px-4 py-2.5 font-semibold">F1</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-rule">
+              {(categoryEval as { perCat: { cat: string; support: number; precision: number | null; recall: number | null; f1: number | null }[] }).perCat.map((r) => (
+                <tr key={r.cat}>
+                  <td className="px-4 py-2.5 ui text-[13px] font-semibold text-ink">{r.cat}</td>
+                  <td className="px-4 py-2.5 mono text-[12.5px] text-ink-2">{r.support}</td>
+                  <td className="px-4 py-2.5 mono text-[12.5px] text-ink-2">{pct(r.precision)}</td>
+                  <td className="px-4 py-2.5 mono text-[12.5px] text-ink-2">{pct(r.recall)}</td>
+                  <td className="px-4 py-2.5 mono text-[12.5px] font-semibold text-ink">{pct(r.f1)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-2 ui text-[11.5px] leading-relaxed text-ink-3">
+          Confusion matrix and every misclassification:{" "}
+          <a href="https://github.com/Rishidar-lab/info-for-all/blob/main/evaluation/reports/category-latest.md" className="text-accent hover:underline" target="_blank" rel="noopener noreferrer">category-latest.md</a>.
+          A lower &ldquo;other-relevant&rdquo; count is not a win if precision collapses — it did not
+          (all classified categories ≥ 90% precision on the corpus). <strong>Secondary-category
+          recall is still weak (~15%)</strong> — a v0.9 target. Entertainment / celebrity are
+          classified and kept off the default feed.
+        </p>
+      </section>
+
+      {/* ── v0.8 Live Signal Intelligence layer ────────────────────── */}
+      <section>
+        <div className="mb-3 border-b border-rule-strong pb-2">
+          <div className="label mb-1">v0.8 · Live Signal Intelligence layer</div>
           <h2 className="font-serif text-[20px] font-semibold text-ink">Ingestion, clustering, trend detection</h2>
           <p className="ui mt-1 text-[12px] leading-relaxed text-ink-3">
-            The trend engine is an additive layer over the frozen claim / identity engine. These
-            numbers are measured from the current static snapshot ({new Date(dataset.generatedAt).toISOString().slice(0, 16).replace("T", " ")}Z)
-            plus the v0.7 unit suites.
+            The trend / novelty / severity engines are an additive layer over the frozen claim /
+            identity engine. Measured from the current static snapshot
+            ({new Date(dataset.generatedAt).toISOString().slice(0, 16).replace("T", " ")}Z) plus
+            the unit + E2E suites.
           </p>
         </div>
 
         <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
           {[
-            ["Feeds responding", `${dataset.counts.workingFeeds}/${dataset.feeds.length}`],
+            ["Feeds healthy", `${dataset.feeds.filter((f) => f.health === "healthy").length}/${dataset.feeds.filter((f) => f.health !== "disabled").length}`],
             ["Articles ingested", String(dataset.articles.length)],
             ["Events (clusters)", String(dataset.clusters.length)],
             ["Distinct publishers", String(dataset.counts.distinctPublishers)],
-            ["Verified comparisons", String(dataset.counts.comparisons)],
+            ["Independent families (Σ)", String(dataset.clusters.reduce((n, c) => n + (c.trendData?.independence?.families ?? 0), 0))],
             ["Weak matches kept apart", String(dataset.counts.weakMatchesRejected)],
             ["Trending / watching", hasTrendData() ? `${dataset.trending?.length ?? 0} / ${dataset.watching?.length ?? 0}` : "—"],
             ["Situation TN / India", situation() ? `${situation()!.tamilNadu} / ${situation()!.india}` : "—"],
+            ["Meaningful updates", String(dataset.clusters.filter((c) => c.trendData?.novelty && !["duplicate", "rephrasing"].includes(c.trendData.novelty.updateKind)).length)],
+            ["Severe / critical events", String(dataset.clusters.filter((c) => ["severe", "critical"].includes(c.trendData?.severity?.level ?? "")).length)],
+            ["Tamil-only events", String(dataset.clusters.filter((c) => c.languages.includes("ta") && !c.languages.includes("en")).length)],
+            ["Category share (other)", `${Math.round(100 * (categoryCounts()["other-relevant"] ?? 0) / dataset.clusters.length)}%`],
           ].map(([k, v]) => (
             <div key={k} className="card p-3">
               <div className="label text-[10px]">{k}</div>
@@ -213,7 +281,7 @@ export default function QualityDashboard() {
           <table className="w-full min-w-[420px] border-collapse text-left">
             <thead>
               <tr className="border-b border-rule-strong bg-surface-2 ui text-[11px] uppercase tracking-wider text-ink-3">
-                <th className="px-4 py-2.5 font-semibold">v0.7 unit suite</th>
+                <th className="px-4 py-2.5 font-semibold">IFFA suite</th>
                 <th className="px-4 py-2.5 font-semibold">Tests</th>
                 <th className="px-4 py-2.5 font-semibold">Status</th>
               </tr>
@@ -227,8 +295,8 @@ export default function QualityDashboard() {
                 </tr>
               ))}
               <tr className="bg-surface-2">
-                <td className="px-4 py-2.5 ui text-[13px] font-semibold text-ink">Total (v0.6 baseline 200 + v0.7)</td>
-                <td className="px-4 py-2.5 mono text-[13px] font-semibold text-ink">313</td>
+                <td className="px-4 py-2.5 ui text-[13px] font-semibold text-ink">Total (v0.6 baseline 200 unit + IFFA unit + E2E)</td>
+                <td className="px-4 py-2.5 mono text-[13px] font-semibold text-ink">344 + 38</td>
                 <td className="px-4 py-2.5 ui text-[12px] font-semibold text-agree">pass</td>
               </tr>
             </tbody>

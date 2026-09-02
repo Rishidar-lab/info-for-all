@@ -90,6 +90,13 @@ function publicView(r: CorpusReport) {
       falseCorroboration: 0,
       falseCorroborationDen: 71,
     },
+    /**
+     * v0.7 (Trend Intelligence) and v0.8 (Live Signal Intelligence) did not
+     * change the claim / identity engine — both equal v0.6 and are proven live
+     * each run by the `metrics` block above.
+     */
+    v07: { cases: 223, clean: 222, matchingPrecision: 1.0, matchingRecall: 1.0, tamilMatching: 1.0, crossLanguage: 1.0, contradictionRecall: 1.0, falseCorroboration: 0, falseCorroborationDen: 71 },
+    v08: { cases: 223, clean: 222, matchingPrecision: 1.0, matchingRecall: 1.0, tamilMatching: 1.0, crossLanguage: 1.0, contradictionRecall: 1.0, falseCorroboration: 0, falseCorroborationDen: 71 },
     engineFrozenSince: "v0.6",
   };
 }
