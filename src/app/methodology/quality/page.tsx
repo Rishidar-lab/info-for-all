@@ -26,7 +26,7 @@ const IFFA_SUITES: [string, number][] = [
   ["v0.9 · local-impact model", 8],
   ["v0.9 · political coverage description", 5],
   ["Adversarial mini-corpus (category / geo / district)", 43],
-  ["Browser E2E (Playwright, desktop + 390px)", 38],
+  ["Browser E2E (Playwright, desktop + 390px)", 50],
 ];
 
 export const metadata: Metadata = {
@@ -303,7 +303,7 @@ export default function QualityDashboard() {
               ))}
               <tr className="bg-surface-2">
                 <td className="px-4 py-2.5 ui text-[13px] font-semibold text-ink">Total (v0.6 baseline 200 unit + IFFA unit + E2E)</td>
-                <td className="px-4 py-2.5 mono text-[13px] font-semibold text-ink">411 + 38</td>
+                <td className="px-4 py-2.5 mono text-[13px] font-semibold text-ink">411 + 50</td>
                 <td className="px-4 py-2.5 ui text-[12px] font-semibold text-agree">pass</td>
               </tr>
             </tbody>

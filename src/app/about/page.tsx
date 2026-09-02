@@ -58,6 +58,36 @@ export default function AboutPage() {
       </section>
 
       <section>
+        <h2 className="font-serif text-[20px] font-semibold">Editorial priority (v0.9)</h2>
+        <p className="mt-2 text-[14.5px] leading-relaxed text-ink-2">
+          IFFA ingests broadly but <strong>displays selectively</strong>. On top of the trend
+          score sits an <strong>editorial priority</strong> — a ranking score that decides how
+          much prominence an event gets on the home page. It is a weighted mean of eight
+          interpretable factors (geographic relevance, consequence, information gain, category,
+          corroboration, meaningful recency, local impact, velocity), minus named penalties for
+          churn, staleness, syndication and thin evidence. Every factor and penalty is shown on
+          the card and on the{" "}
+          <Link href="/methodology/quality" className="text-accent hover:underline">
+            quality dashboard
+          </Link>
+          . The score is a <strong>ranking</strong>, not a probability of truth. A gruesome
+          single-victim crime is capped below the front strip however vivid its wording;
+          general-interest news is de-emphasised editorially rather than reclassified; and
+          political coverage is <em>described</em> (claim / response / official record / source
+          families), never scored on a left–right axis. Full method:{" "}
+          <a
+            href="https://github.com/Rishidar-lab/info-for-all/blob/main/docs/EDITORIAL-MODEL.md"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent hover:underline"
+          >
+            docs/EDITORIAL-MODEL.md
+          </a>
+          .
+        </p>
+      </section>
+
+      <section>
         <h2 className="font-serif text-[20px] font-semibold">Trend ranking (v0.7)</h2>
         <p className="mt-2 text-[14.5px] leading-relaxed text-ink-2">
           IFFA ranks <strong>events</strong>, not articles, and by <strong>what is changing</strong>,

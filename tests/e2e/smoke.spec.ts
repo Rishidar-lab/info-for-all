@@ -46,11 +46,11 @@ test.describe("IFFA production build — every route", () => {
 });
 
 test.describe("IFFA branding + version", () => {
-  test("home shows IFFA / Info Free For All and v0.8", async ({ page }) => {
+  test("home shows IFFA / Info Free For All and v0.9", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByRole("banner")).toContainText("IFFA");
     await expect(page.getByRole("contentinfo")).toContainText(/Info Free For All/i);
-    await expect(page.getByRole("contentinfo")).toContainText(/v0\.8/);
+    await expect(page.getByRole("contentinfo")).toContainText(/v0\.9/);
   });
 });
 
@@ -98,5 +98,63 @@ test.describe("IFFA quality + diagnostics", () => {
     await page.goto("/diagnostics/");
     await expect(page.getByText(/Source health/i)).toBeVisible();
     await expect(page.getByText(/Pipeline diagnostics/i)).toBeVisible();
+  });
+});
+
+test.describe("IFFA v0.9 — editorial intelligence", () => {
+  test("home shows the editorial hierarchy: Right now, Background/more", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.getByRole("heading", { name: /What matters right now/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Relevant, but not currently developing/i })).toBeVisible();
+    await expect(page.getByText("Background / more")).toBeVisible();
+  });
+
+  test("an event's 'why prominent' breakdown lists interpretable factors", async ({ page }) => {
+    await page.goto("/");
+    const why = page.locator("details summary", { hasText: /score/i }).first();
+    await why.click();
+    const panel = why.locator("..");
+    await expect(
+      panel.locator("text=/relevance|consequence|independent|new information|recency|Priority domain/i").first(),
+    ).toBeVisible();
+  });
+
+  test("footer carries the v0.9 label; the page links the editorial model", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.getByRole("contentinfo")).toContainText(/v0\.9/);
+    await expect(page.getByRole("link", { name: /editorial model/i }).first()).toHaveAttribute(
+      "href",
+      /EDITORIAL-MODEL\.md/,
+    );
+    // the score is described as a ranking, not a probability of truth
+    await expect(page.getByText(/ranking/i).first()).toBeVisible();
+  });
+
+  test("quality dashboard shows the v0.9 editorial layer with a top-events table", async ({ page }) => {
+    await page.goto("/methodology/quality/");
+    await expect(page.getByText(/v0\.9 . Editorial Intelligence layer/i)).toBeVisible();
+    await expect(page.getByText(/Top 10 events by editorial score/i)).toBeVisible();
+    await expect(page.getByText(/Editorial bands/i).first()).toBeVisible();
+  });
+
+  test("offline shows an unmistakable OFFLINE — NOT LIVE banner", async ({ page, context }) => {
+    await page.goto("/");
+    await page.waitForLoadState("networkidle").catch(() => {});
+    await context.setOffline(true);
+    await page.evaluate(() => window.dispatchEvent(new Event("offline")));
+    await expect(
+      page.getByRole("alert").filter({ hasText: /offline/i }),
+    ).toContainText(/offline . not live/i);
+    await context.setOffline(false);
+  });
+
+  test("mobile home hierarchy fits 390px without horizontal scroll", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/");
+    await expect(page.getByRole("heading", { name: /Right now/i })).toBeVisible();
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(overflow).toBeLessThanOrEqual(1);
   });
 });

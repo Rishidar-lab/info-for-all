@@ -7,8 +7,9 @@ export const dynamic = "force-static";
 /**
  * Web app manifest (App Router file convention — Next prepends `basePath`).
  *
- * v0.7 ships an installable manifest. A full offline service worker is a v0.8
- * commitment; the manifest never claims live updates when offline.
+ * v0.7 ships an installable manifest; v0.8 added an offline shell; v0.9 (Phase U)
+ * caches the last successful snapshot and shows an unmistakable OFFLINE — NOT
+ * LIVE banner. The manifest never claims live updates when offline.
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {

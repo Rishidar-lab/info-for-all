@@ -23,9 +23,9 @@ test.describe("@prod live production smoke", () => {
     });
   }
 
-  test("@prod home: v0.8 label, situation bar, event cards, basePath assets", async ({ page }) => {
+  test("@prod home: v0.9 label, situation bar, event cards, basePath assets", async ({ page }) => {
     await page.goto(BASE + "/");
-    await expect(page.getByRole("contentinfo")).toContainText(/v0\.8/);
+    await expect(page.getByRole("contentinfo")).toContainText(/v0\.9/);
     await expect(page.getByText("Current situation")).toBeVisible();
     expect(await page.locator("article.card").count()).toBeGreaterThan(3);
     const src = await page.locator('script[src*="_next/static"]').first().getAttribute("src");
