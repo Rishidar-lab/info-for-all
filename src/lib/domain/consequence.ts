@@ -88,21 +88,34 @@ export function assessConsequence(cluster: LiveCluster, articles: LiveArticle[])
   if (dp) push("displacement", 0.7, dp[0].trim());
 
   const oe = RE.officialEmergency.exec(text);
+  const capSeverity = (cluster.cap?.severity ?? "").toLowerCase();
+  const capIsSerious = capSeverity === "severe" || capSeverity === "extreme";
+  const sevSerious = ["significant", "severe", "critical"].includes(cluster.trendData?.severity?.level ?? "");
   if (oe) push("officialEmergencyAction", 0.78, oe[0].trim());
-  else if (articles.some((a) => OFFICIAL_PRIMARY.has(a.evidenceRole)) && cluster.isCrisis) {
-    push("officialEmergencyAction", 0.5, "an official alert / primary source for an active crisis");
+  else if (articles.some((a) => OFFICIAL_PRIMARY.has(a.evidenceRole)) && cluster.isCrisis && (capIsSerious || sevSerious)) {
+    // an official alert counts as emergency action only when it is actually a
+    // serious one — not a routine "Light Rain" / "Moderate" CAP watch.
+    push("officialEmergencyAction", 0.5, "a serious official alert for an active crisis");
   }
 
-  // ── scale — a single district is NOT "scale"; needs ≥2 districts, an explicit
-  //    people count, or a state-wide phrase ──
+  // ── scale — a single district is NOT "scale". A district COUNT only counts
+  //    when the event is actually significant: a bare CAP warning polygon that
+  //    lists 18 districts for "Light Rain" is a forecast area, not impact. So
+  //    the district-count path needs at least a `significant` severity or a
+  //    realised-impact signal already on the board; an explicit people count or
+  //    a state-wide phrase always counts. ──
   const districts = cluster.districts.length;
   const sp = RE.scalePeople.exec(text);
   const stateWide = /\b(state-?wide|across (?:the )?state|all districts|throughout tamil nadu)\b/i.test(text);
+  const sevLevel = cluster.trendData?.severity?.level ?? "";
+  const seriousEnough =
+    ["significant", "severe", "critical"].includes(sevLevel) ||
+    signals.some((s) => ["humanSafety", "serviceDisruption", "displacement", "damage", "officialEmergencyAction"].includes(s.name));
   let scaleV = 0;
-  if (districts >= 2) scaleV = Math.min(0.7, districts * 0.12);
+  if (districts >= 2 && seriousEnough) scaleV = Math.min(0.7, districts * 0.12);
   if (sp) scaleV = Math.max(scaleV, 0.62);
   if (stateWide) scaleV = Math.max(scaleV, 0.8);
-  if (scaleV > 0) push("scale", scaleV, sp ? sp[0].trim() : stateWide ? "state-wide" : `${districts} districts named`);
+  if (scaleV > 0) push("scale", scaleV, sp ? sp[0].trim() : stateWide ? "state-wide" : `${districts} districts affected`);
 
   const ec = RE.economic.exec(text);
   if (ec) push("economicImpact", 0.55, ec[0].trim());

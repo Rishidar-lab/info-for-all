@@ -149,13 +149,22 @@ export function computeEditorialPriority(input: EditorialInput): EditorialPriori
     pen("syndication", (PENALTY.syndicationMax * syndicated) / reports, `${syndicated} of ${reports} reports are syndicated copies`);
   }
 
+  // A SACHET-only CAP watch whose title is a bare hazard word ("Light Rain",
+  // "Thunderstorm"), optionally followed by a district list, and which is one
+  // source family and not a serious CAP severity — a forecast polygon, not a
+  // developing event. The appended "— Dist, Dist +" list does not make it more
+  // consequential.
+  const capTitleCore = cluster.title.trim().split(/\s+[—–-]\s+/)[0] ?? cluster.title.trim();
+  const capSev = (cluster.cap?.severity ?? "").toLowerCase();
   const genericCap =
     cluster.publishers.length === 1 &&
     cluster.publishers[0] === "NDMA SACHET" &&
-    GENERIC_CAP_TITLE.test(cluster.title.trim()) &&
-    cluster.districts.length === 0 &&
-    fam <= 1;
-  if (genericCap) pen("generic-cap", PENALTY.genericCap, "a generic national CAP watch with no named district and one source");
+    GENERIC_CAP_TITLE.test(capTitleCore) &&
+    fam <= 1 &&
+    capSev !== "severe" &&
+    capSev !== "extreme" &&
+    !["significant", "severe", "critical"].includes(cluster.trendData?.severity?.level ?? "");
+  if (genericCap) pen("generic-cap", PENALTY.genericCap, "a generic single-source CAP watch, not a developing event");
 
   const noExcerpt = articles.every((a) => !a.excerpt || a.excerpt.length < 20);
   if (noExcerpt && articles.length <= 1) pen("headline-only", PENALTY.headlineOnly, "a single headline with no excerpt to assess");
