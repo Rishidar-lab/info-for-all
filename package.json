@@ -15,6 +15,7 @@
     "typecheck": "tsc --noEmit",
     "pretest": "tsx scripts/prepare-data.ts",
     "test": "vitest run",
+    "test:e2e": "playwright test",
     "test:watch": "vitest",
     "ingest": "tsx scripts/prepare-data.ts && tsx scripts/ingest-feeds.ts",
     "seed:refresh": "tsx scripts/seed-refresh.ts",
