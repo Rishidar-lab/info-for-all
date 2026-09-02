@@ -273,6 +273,28 @@ export interface ClusterTrendData {
     addedNewFact: boolean;
     official: boolean;
   }[];
+  /** v0.8 — claim-aware novelty: exactly what changed since the previous snapshot. */
+  novelty?: {
+    updateKind: string;
+    meaningfulUpdateScore: number;
+    changes: string[];
+  };
+  /** v0.8 — the compact canonical current state of the event. */
+  eventState?: {
+    confirmedFacts: string[];
+    disputedClaims: string[];
+    latestNumbers: string[];
+    affectedLocations: string[];
+    officialActions: string[];
+    unresolvedQuestions: string[];
+    lastMeaningfulUpdateAt: string;
+  };
+  /** v0.8 — EVENT severity (how bad the event is), NOT a probability of truth. */
+  severity?: {
+    level: "informational" | "watch" | "significant" | "severe" | "critical";
+    reason: string;
+    peak: { deaths: number; injured: number; evacuated: number };
+  };
 }
 
 export interface SituationSnapshot {

@@ -25,19 +25,19 @@ export interface ClusterView {
   districtCount: number;
   /** CAP severity as issued, lowercased ("extreme" / "severe" / "moderate" / …). */
   capSeverity?: string;
+  /** v0.8 event severity — informational | watch | significant | severe | critical. */
+  severity?: string;
 }
 
-/** A genuine escalation: severe AND either corroborated, CAP-severe, or wide-area. */
+/** A genuine escalation: SEVERE/CRITICAL event severity, or a wide corroborated crisis. */
 function isEscalating(c: ClusterView): boolean {
+  if (c.severity === "critical" || c.severity === "severe") return true;
+  if (c.severity === "significant" && (c.independentFamilies >= 3 || c.districtCount >= 4)) return true;
+  if (c.severity) return false; // v0.8 severity present and below the bar
+  // fallback (pre-v0.8 snapshot)
   if (c.crisisPriority < 60) return false;
   const sev = (c.capSeverity ?? "").toLowerCase();
-  return (
-    c.independentFamilies >= 2 ||
-    sev.includes("extreme") ||
-    sev.includes("severe") ||
-    c.districtCount >= 4 ||
-    c.crisisPriority >= 80
-  );
+  return c.independentFamilies >= 2 || sev.includes("extreme") || sev.includes("severe") || c.districtCount >= 4 || c.crisisPriority >= 80;
 }
 
 function levelForTier(clusters: ClusterView[]): { level: SituationLevel; drivers: ClusterView[] } {
@@ -51,7 +51,7 @@ function levelForTier(clusters: ClusterView[]): { level: SituationLevel; drivers
   const strong = active.filter((c) => c.crisisPriority >= 48);
 
   let level: SituationLevel = "watch";
-  if (escalating.length >= 2 || escalating.some((c) => c.crisisPriority >= 82)) level = "crisis";
+  if (escalating.some((c) => c.severity === "critical") || escalating.length >= 2 || escalating.some((c) => c.crisisPriority >= 82)) level = "crisis";
   else if (escalating.length >= 1 || severe.length >= 3 || strong.length >= 5) level = "elevated";
 
   const drivers = [...active]

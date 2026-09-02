@@ -22,10 +22,11 @@ import { trendWindows, velocityScore, trendState } from "./velocity";
 import { computeTrend } from "./score";
 import { buildSituation } from "./situation";
 import { TREND_MIN } from "./weights";
-import type { NoveltyClass, IndependenceSummary } from "./types";
+import type { IndependenceSummary } from "./types";
+import { assessNovelty, buildEventState } from "./novelty";
+import { assessSeverity } from "@/lib/domain/severity";
 
 const OFFICIAL_PRIMARY = new Set(["official-alert", "primary-document"]);
-const CORRECTION_RE = /\b(correct(?:ion|ed)?|revised to|updated to|clarif\w+|retract\w+|withdraws?|takes back)\b/i;
 
 export interface EnrichOptions {
   now?: number;
@@ -60,39 +61,6 @@ function matchPrevious(
     if (j >= 0.5 && (!best || j > best.j)) best = { c: p, j };
   }
   return best?.c;
-}
-
-function noveltyFor(
-  cluster: LiveCluster,
-  articles: LiveArticle[],
-  prev: LiveCluster | undefined,
-  hasPreviousSnapshot: boolean,
-): { noveltyClass: NoveltyClass; quietGapHours: number } {
-  if (!hasPreviousSnapshot) return { noveltyClass: "unknown", quietGapHours: 0 };
-  if (!prev) return { noveltyClass: "new-event", quietGapHours: 0 };
-
-  const prevLast = Date.parse(prev.trendData?.lastSeenAt ?? prev.updatedAt);
-  const newest = Math.max(...articles.map((a) => Date.parse(a.publishedAt)));
-  const quietGapHours = Math.max(0, (newest - prevLast) / 3_600_000);
-
-  const newSincePrev = articles.filter((a) => Date.parse(a.publishedAt) > prevLast + 20 * 60_000);
-  if (newSincePrev.length === 0) return { noveltyClass: "more-of-same", quietGapHours };
-
-  if (newSincePrev.some((a) => CORRECTION_RE.test(a.title))) {
-    return { noveltyClass: "correction", quietGapHours };
-  }
-
-  // claim-set growth
-  const prevClaims = new Set((prev.claims?.claims ?? []).map((c) => c.canonicalText));
-  const nowClaims = (cluster.claims?.claims ?? []).map((c) => c.canonicalText);
-  const claimGrew = nowClaims.some((t) => !prevClaims.has(t));
-
-  // timeline: an entry that added a new fact, published after the prior snapshot
-  const tl = buildTimeline(articles);
-  const newFactEntry = tl.some((e) => e.addedNewFact && Date.parse(e.at) > prevLast + 20 * 60_000);
-
-  if (claimGrew || newFactEntry) return { noveltyClass: "new-fact", quietGapHours };
-  return { noveltyClass: "more-of-same", quietGapHours };
 }
 
 export interface EnrichedDataset extends LiveDataset {
@@ -183,7 +151,9 @@ export function enrichDataset(dataset: LiveDataset, opts: EnrichOptions = {}): E
         : earliest
       : earliest;
 
-    const { noveltyClass, quietGapHours } = noveltyFor(cluster, articles, prev, hasPrev);
+    const novelty = assessNovelty(cluster, articles, prev, hasPrev);
+    const { noveltyClass, quietGapHours } = novelty;
+    const sev = assessSeverity(cluster, articles);
 
     const windows = trendWindows(articles, familyOf, now);
     const vel = velocityScore(articles, familyOf, now);
@@ -225,6 +195,13 @@ export function enrichDataset(dataset: LiveDataset, opts: EnrichOptions = {}): E
       lastSeenAt,
       lastMeaningfulUpdateAt,
       timeline,
+      novelty: {
+        updateKind: novelty.updateKind,
+        meaningfulUpdateScore: novelty.meaningfulUpdateScore,
+        changes: novelty.changes,
+      },
+      eventState: buildEventState(cluster, articles, lastMeaningfulUpdateAt),
+      severity: { level: sev.severity, reason: sev.reason, peak: sev.peak },
     };
     cluster.trendData = trendData;
 
@@ -240,6 +217,7 @@ export function enrichDataset(dataset: LiveDataset, opts: EnrichOptions = {}): E
       independentFamilies: independence.families,
       districtCount: cluster.districts.length,
       capSeverity: cluster.cap?.severity,
+      severity: sev.severity,
     });
   }
 

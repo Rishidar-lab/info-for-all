@@ -72,6 +72,21 @@ export function EventCard({
             {TREND_STATE_LABEL[state]}
           </span>
         )}
+        {cluster.trendData?.severity && cluster.trendData.severity.level !== "informational" && (
+          <span
+            className={cn(
+              "pill",
+              cluster.trendData.severity.level === "critical" || cluster.trendData.severity.level === "severe"
+                ? "text-dispute bg-dispute-bg"
+                : cluster.trendData.severity.level === "significant"
+                  ? "text-caution bg-caution-bg"
+                  : "text-ink-2 bg-surface-2",
+            )}
+            title={`Event severity: ${cluster.trendData.severity.reason} — this is not a statement about whether the reports are true.`}
+          >
+            {cluster.trendData.severity.level}
+          </span>
+        )}
         <span className={cn("label", CAT_TONE[cat])}>{CATEGORY_LABEL[cat]}</span>
         {cluster.crisisType && (
           <>
@@ -134,6 +149,13 @@ export function EventCard({
 
       {kind && !cluster.crisisType && (
         <p className="mt-1.5 ui text-[11px] leading-snug text-ink-3">{kind}</p>
+      )}
+
+      {cluster.trendData?.novelty && cluster.trendData.novelty.updateKind !== "duplicate" && cluster.trendData.novelty.changes.length > 0 && (
+        <p className="mt-1.5 ui text-[11px] leading-snug">
+          <span className="font-semibold text-accent">What changed:</span>{" "}
+          <span className="text-ink-2">{cluster.trendData.novelty.changes[0]}</span>
+        </p>
       )}
 
       {showWhy ? (
