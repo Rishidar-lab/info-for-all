@@ -13,6 +13,9 @@ import {
 } from "@/lib/live/dataset";
 import { CRISIS_TYPE_LABEL } from "@/lib/live/crisis";
 import { trendRoutableSlugs } from "@/lib/live/trends-view";
+import { StoryTimeline } from "@/components/iffa/story-timeline";
+import { CoverageComparison } from "@/components/iffa/coverage-comparison";
+import { TrendWhy } from "@/components/iffa/trend-why";
 import { EvidenceRoleBadge, VerificationBadge, LifecycleBadge } from "@/components/live/badges";
 import { ClaimsPanel, type ArticleRef } from "@/components/live/claims-panel";
 import { CONFIDENCE_LABEL } from "@/lib/claims/confidence";
@@ -126,9 +129,17 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
             {!cluster.isVerifiedComparison && " These reports are shown separately below rather than as a verified comparison."}
           </p>
         )}
+
+        {cluster.trendData?.trend && (
+          <div className="mt-3 max-w-2xl">
+            <TrendWhy cluster={cluster} open />
+          </div>
+        )}
       </header>
 
       <div className="mt-6 flex min-w-0 flex-col gap-10">
+        <StoryTimeline cluster={cluster} articles={articles} />
+        <CoverageComparison cluster={cluster} articles={articles} />
         {/* ── Epistemic status — the claim layer ─────────────────────── */}
         {ec && ec.claims.length > 0 ? (
           <section>
