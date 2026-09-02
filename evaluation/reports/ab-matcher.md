@@ -11,4 +11,4 @@ semantic veto.
 | False positives | 4 | 5 | 1 |
 | Tamil ↔ Tamil recall | 0.0% | 100.0% | +100.0 pp |
 | Tamil ↔ English recall | 0.0% | 100.0% | +100.0 pp |
-| Runtime (148 pairs) | 332 ms | 291 ms | +-41 ms |
+| Runtime (148 pairs) | 344 ms | 285 ms | +-59 ms |
