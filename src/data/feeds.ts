@@ -184,7 +184,7 @@ export const FEED_SOURCES: FeedSource[] = [
     name: "Press Information Bureau — English",
     publisher: "Press Information Bureau",
     homepage: "https://pib.gov.in/",
-    url: "https://pib.gov.in/RssMain.aspx?ModId=6&Lang=1&Regid=1",
+    url: "https://www.pib.gov.in/RssMain.aspx?ModId=6&Lang=1&Regid=1&reg=3",
     kind: "rss",
     defaultEvidenceRole: "government-statement",
     official: true,
@@ -192,7 +192,7 @@ export const FEED_SOURCES: FeedSource[] = [
     focus: "india",
     role: "official",
     enabled: false,
-    note: "HTTP 403 (Akamai edge block) from GitHub Actions and this environment on 2026-09-01. Not retried aggressively. Enable where pib.gov.in is reachable.",
+    note: "DISABLED — v0.9 Phase Q re-investigation (2026-09-02): the 403 edge block is gone (www.pib.gov.in with the &reg suffix now returns HTTP 200, 20 English national releases), but the feed carries ONLY <title> + <link> — no <pubDate>, <description>, or <guid>. Without a timestamp the pipeline cannot place a release on the live timeline or judge recency, and filling in the date/body would require fetching each PRID page (scraping, disallowed). Revisit if PIB restores a dated RSS.",
   },
   {
     id: "imd-allindia",
@@ -439,7 +439,7 @@ export const FEED_SOURCES: FeedSource[] = [
     authorityClass: "primary-authority",
     categorySupport: ["politics", "crisis", "finance", "sports", "other-relevant"],
     region: "india",
-    note: "DISABLED — newsonair.gov.in/feed/ returns a slow 301 (20s+, 0 bytes) from this environment. Revisit.",
+    note: "DISABLED — re-checked v0.9 Phase Q (2026-09-02): newsonair.gov.in/feed/ still returns a 301 to https://newsonair.gov.in/feed/ that then hangs past a 25s timeout (0 bytes). Not reachable from CI or this environment. Revisit.",
   },
 
   // ── v0.8: finance ────────────────────────────────────────────────────
@@ -481,7 +481,7 @@ export const FEED_SOURCES: FeedSource[] = [
     categorySupport: ["finance"],
     region: "india",
     pollIntervalMinutes: 45,
-    note: "DISABLED — the RSS is dominated by enforcement-appeal filings, not policy news, and its pubDate format ('DD Mon, YYYY') is unparseable. Revisit if SEBI adds a press-release feed.",
+    note: "DISABLED — re-checked v0.9 Phase Q (2026-09-02, HTTP 200, 30 items): still dominated by SAT appeal filings and recovery-certificate notices ('Appeal No. 7022 of 2026 filed by …'), not policy/market news, and pubDate is still 'DD Mon, YYYY +0530' (no weekday, no time, stray comma — not RFC-822). Revisit if SEBI adds a press-release feed.",
   },
   {
     id: "thehindu-businessline",
