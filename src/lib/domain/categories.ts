@@ -69,7 +69,7 @@ export interface CategoryClassification {
   confidence: "high" | "medium" | "low";
 }
 
-interface CategoryMatcher {
+export interface CategoryMatcher {
   category: CategoryId;
   subCategory: string;
   any: string[];
@@ -78,7 +78,7 @@ interface CategoryMatcher {
 // ── CRISIS ─────────────────────────────────────────────────────────────
 const CRISIS: CategoryMatcher[] = [
   { category: "crisis", subCategory: "cyclone", any: ["cyclone", "cyclonic storm", "deep depression", "landfall"] },
-  { category: "crisis", subCategory: "flood", any: ["flood", "flooding", "inundation", "waterlogging", "deluge", "submerged", "flash flood"] },
+  { category: "crisis", subCategory: "flood", any: ["flood", "floods", "flooding", "inundation", "waterlogging", "deluge", "submerged", "flash flood"] },
   { category: "crisis", subCategory: "heavy_rain", any: ["heavy rain", "very heavy rain", "torrential rain", "red alert", "orange alert", "rainfall warning", "downpour"] },
   { category: "crisis", subCategory: "weather", any: ["imd warning", "weather warning", "squall", "gale warning", "thunderstorm warning", "lightning warning"] },
   { category: "crisis", subCategory: "heatwave", any: ["heatwave", "heat wave", "severe heat", "heat advisory"] },
@@ -87,10 +87,12 @@ const CRISIS: CategoryMatcher[] = [
   { category: "crisis", subCategory: "landslide", any: ["landslide", "landslip", "mudslide", "rockfall", "hill slip"] },
   { category: "crisis", subCategory: "fire", any: ["fire broke out", "massive fire", "building fire", "forest fire", "wildfire", "gutted in fire"] },
   { category: "crisis", subCategory: "industrial_accident", any: ["gas leak", "chemical leak", "factory blast", "boiler blast", "ammonia leak", "cracker unit blast", "industrial accident"] },
-  { category: "crisis", subCategory: "transport_accident", any: ["train derail", "derailment", "bus accident", "road accident", "boat capsized", "plane crash", "air crash", "pile-up"] },
+  { category: "crisis", subCategory: "transport_accident", any: ["train derail", "derailment", "bus accident", "road accident", "boat capsized", "boat capsizes", "capsizes in", "plane crash", "air crash", "pile-up", "falls into gorge", "falls into a gorge", "van overturns", "lorry overturns", "vehicle plunges", "car plunges"] },
+  { category: "crisis", subCategory: "casualties", any: ["killed as", "killed in", "dead as", "feared dead", "death toll", "toll rises", "toll mounts", "confirmed dead", "bodies recovered", "rivers breach banks", "breach their banks", "rescued hours later"] },
+  { category: "crisis", subCategory: "kidnap", any: ["kidnapped", "abducted", "held hostage", "ransom demand"] },
   { category: "crisis", subCategory: "public_health", any: ["disease outbreak", "epidemic", "dengue surge", "cholera", "leptospirosis", "nipah", "food poisoning", "health advisory"] },
   { category: "crisis", subCategory: "disease_outbreak", any: ["outbreak", "cases surge", "fever cases rise", "quarantine"] },
-  { category: "crisis", subCategory: "law_and_order", any: ["curfew", "section 144", "prohibitory orders", "clashes", "communal tension", "lynching"] },
+  { category: "crisis", subCategory: "law_and_order", any: ["curfew", "section 144", "prohibitory orders", "clashes", "communal tension", "lynching", "murder", "murdered", "hacked to death", "found dead", "body parts", "gang-rape", "sexual assault", "was assaulted", "molested", "kidnap", "abduct", "honour killing", "custodial death", "fake currency", "counterfeit currency"] },
   { category: "crisis", subCategory: "riot", any: ["riot", "arson", "mob attack", "group clash"] },
   { category: "crisis", subCategory: "protest_disruption", any: ["road blockade", "rail roko", "highway blocked by protest", "shutdown call", "bandh"] },
   { category: "crisis", subCategory: "infrastructure_failure", any: ["bridge collapse", "building collapse", "flyover crack", "wall collapse", "dam breach"] },
@@ -106,27 +108,28 @@ const CRISIS: CategoryMatcher[] = [
 
 // ── POLITICS ───────────────────────────────────────────────────────────
 const POLITICS: CategoryMatcher[] = [
-  { category: "politics", subCategory: "election", any: ["election", "poll date", "by-election", "bypoll", "voter list", "election commission", "nomination"] },
-  { category: "politics", subCategory: "campaign", any: ["campaign", "roadshow", "public meeting", "rally", "padayatra", "election tour"] },
+  { category: "politics", subCategory: "election", any: ["election", "poll date", "by-election", "bypoll", "voter list", "voter roll", "electoral roll", "election commission", "nomination", "special intensive revision", "sir voter"] },
+  { category: "politics", subCategory: "campaign", any: ["campaign", "roadshow", "public meeting", "rally", "padayatra", "election tour", "poll strategist", "as pm", "for pm", "pm pitch", "prime minister in 2029"] },
   { category: "politics", subCategory: "manifesto", any: ["manifesto", "poll promise", "election promise", "seven guarantees", "guarantee scheme"] },
-  { category: "politics", subCategory: "government_policy", any: ["government policy", "cabinet approves", "cabinet clears", "policy announced", "go issued", "government order"] },
-  { category: "politics", subCategory: "assembly", any: ["assembly session", "state assembly", "legislative assembly", "assembly passes", "assembly clears", "assembly adopts", "walkout", "adjournment motion", "clears bill", "passes bill", "tables bill", "bill to exempt", "resolution against"] },
-  { category: "politics", subCategory: "parliament", any: ["parliament", "lok sabha", "rajya sabha", "monsoon session", "winter session", "bill passed", "bill cleared"] },
-  { category: "politics", subCategory: "policy_row", any: ["policy row", "language policy", "language row", "policy u-turn", "over the ... row", "parties clash over", "clash over"] },
-  { category: "politics", subCategory: "court_governance", any: ["high court", "supreme court", "petition against", "stays order", "quashes", "contempt", "pil filed"] },
-  { category: "politics", subCategory: "minister_statement", any: ["minister said", "cm said", "chief minister said", "minister announced", "cm announced", "minister assured", "cm slams", "hits out"] },
-  { category: "politics", subCategory: "party_statement", any: ["party alleged", "party demands", "party condemns", "opposition slams", "dmk", "aiadmk", "bjp", "congress", "tvk", "vck", "pmk", "ntk"] },
-  { category: "politics", subCategory: "coalition", any: ["alliance", "coalition", "seat sharing", "seat-sharing", "poll pact", "joins hands", "front"] },
-  { category: "politics", subCategory: "appointment", any: ["appointed as", "takes charge as", "sworn in", "new chief secretary", "named governor", "elevated to"] },
+  { category: "politics", subCategory: "government_policy", any: ["government policy", "cabinet approves", "cabinet clears", "policy announced", "go issued", "government order", "tightens norms", "notifies rules", "sets sights on", "to formulate", "govt tightens", "government tightens"] },
+  { category: "politics", subCategory: "assembly", any: ["assembly session", "state assembly", "legislative assembly", "in the assembly", "in assembly", "attend the assembly", "attend assembly", "assembly passes", "assembly clears", "assembly adopts", "walkout", "adjournment motion", "clears bill", "passes bill", "tables bill", "moves bill", "moves a bill", "bill to exempt", "bill to do away", "bill to amend", "resolution against", "under rule 110", "rule 110", "mla", "mlas", "legislator", "legislators"] },
+  { category: "politics", subCategory: "parliament", any: ["parliament", "lok sabha", "rajya sabha", "monsoon session", "winter session", "bill passed", "bill cleared", "sco summit", "pmo"] },
+  { category: "politics", subCategory: "policy_row", any: ["policy row", "language policy", "language row", "policy u-turn", "parties clash over", "clash over", "cries foul", "draws opposition flak", "opposition flak", "pushback"] },
+  { category: "politics", subCategory: "court_governance", any: ["high court", "supreme court", "sc says", "sc rules", "sc bench", "hc says", "hc orders", "hc directs", "apex court", "madras high court", "delhi hc", "petition against", "stays order", "sets aside order", "quashes", "contempt", "pil filed", "moves court", "moves supreme court", "arbitral tribunal", "arbitration ruling", "nclt", "nclat"] },
+  { category: "politics", subCategory: "minister_statement", any: ["minister said", "cm said", "chief minister said", "minister announces", "minister announced", "cm announces", "cm announced", "minister assured", "minister appeals", "minister urges", "minister for", "cm slams", "hits out", "clarifies on", "orders inquiry", "orders probe", "seeks report", "seeks stringent action", "pays tribute"] },
+  { category: "politics", subCategory: "party_statement", any: ["party alleged", "party demands", "party condemns", "opposition slams", "dmk", "aiadmk", "bjp", "congress", "tvk", "vck", "pmk", "ntk", "aimim", "ysrcp", "ncpi", "iuml", "joins congress", "joins bjp", "joins dmk"] },
+  { category: "politics", subCategory: "coalition", any: ["alliance", "coalition", "seat sharing", "seat-sharing", "poll pact", "joins hands", "may form coalition", "eyes"] },
+  { category: "politics", subCategory: "appointment", any: ["appointed as", "takes charge as", "sworn in", "new chief secretary", "named governor", "elevated to", "ceo selection", "first ceo", "pro tem"] },
   { category: "politics", subCategory: "resignation", any: ["resigns", "quits", "steps down", "tenders resignation", "removed from post"] },
-  { category: "politics", subCategory: "corruption_allegation", any: ["corruption charge", "graft", "bribe", "kickback", "disproportionate assets", "scam alleged", "irregularities"] },
-  { category: "politics", subCategory: "investigation", any: ["ed raids", "cbi probe", "income tax raids", "summoned by ed", "chargesheet", "raids premises", "vigilance case"] },
-  { category: "politics", subCategory: "legislation", any: ["bill introduced", "ordinance", "amendment bill", "act amended", "draft law"] },
-  { category: "politics", subCategory: "regulation", any: ["new rules notified", "guidelines issued", "regulatory order", "ban notified"] },
-  { category: "politics", subCategory: "local_government", any: ["corporation council", "panchayat", "municipality", "ward", "mayor", "councillor", "local body"] },
-  { category: "politics", subCategory: "centre_state", any: ["centre-state", "gst council", "central funds", "denied funds", "governor vs government", "union government"] },
-  { category: "politics", subCategory: "public_scheme", any: ["welfare scheme", "cash transfer", "free bus", "kalaignar magalir", "pension scheme", "housing scheme", "dbt"] },
-  { category: "politics", subCategory: "administrative_action", any: ["suspended from service", "transferred", "collector orders", "show-cause notice", "departmental inquiry"] },
+  { category: "politics", subCategory: "corruption_allegation", any: ["corruption charge", "graft", "bribe", "kickback", "disproportionate assets", "scam alleged", "irregularities", "allegation of", "denies allegation"] },
+  { category: "politics", subCategory: "investigation", any: ["ed raids", "cbi probe", "income tax raids", "summoned by ed", "chargesheet", "raids premises", "vigilance case", "cb-cid registers", "cb-cid", "cbi registers", "case over deepfake", "registers case over"] },
+  { category: "politics", subCategory: "legislation", any: ["bill introduced", "ordinance", "amendment bill", "act amended", "draft law", "introduced in assembly", "introduced in parliament"] },
+  { category: "politics", subCategory: "regulation", any: ["new rules notified", "guidelines issued", "regulatory order", "ban notified", "directs 5-star", "fssai directs", "norms for contract"] },
+  { category: "politics", subCategory: "local_government", any: ["corporation council", "panchayat", "municipality", "municipal polls", "ward", "mayor", "councillor", "local body", "cmda", "township project"] },
+  { category: "politics", subCategory: "centre_state", any: ["centre-state", "gst council", "central funds", "denied funds", "governor vs government", "union government", "indus waters treaty", "sindhu nadi", "cauvery water dispute", "mekedatu"] },
+  { category: "politics", subCategory: "public_scheme", any: ["welfare scheme", "cash transfer", "free bus", "kalaignar magalir", "pension scheme", "housing scheme", "dbt", "gold-ring scheme", "gold ring scheme", "newborn gold"] },
+  { category: "politics", subCategory: "administrative_action", any: ["suspended from service", "suspended over", "suspended for", "transferred", "collector orders", "collector's concurrence", "collectors concurrence", "show-cause notice", "departmental inquiry", "hostel to reopen", "post-metric hostel"] },
+  { category: "politics", subCategory: "protest_politics", any: ["takes out march", "march to", "protest march", "stages protest", "sit-in", "dharna", "gherao", "black flag", "human chain", "protest against the government", "against the government"] },
 ];
 
 // ── FINANCE ────────────────────────────────────────────────────────────
@@ -145,7 +148,7 @@ const FINANCE: CategoryMatcher[] = [
   { category: "finance", subCategory: "crypto", any: ["bitcoin", "cryptocurrency", "crypto", "ethereum", "virtual digital asset"] },
   { category: "finance", subCategory: "corporate_results", any: ["quarterly results", "q1 profit", "q2 profit", "net profit", "revenue rose", "earnings"] },
   { category: "finance", subCategory: "corporate_action", any: ["acquisition", "merger", "stake sale", "buyback", "dividend", "bonus issue", "delisting"] },
-  { category: "finance", subCategory: "fraud", any: ["financial fraud", "ponzi", "chit fund scam", "investors duped", "default on payment"] },
+  { category: "finance", subCategory: "fraud", any: ["financial fraud", "ponzi", "chit fund scam", "investment scam", "investors duped", "duped of rs", "loses rs", "lost rs", "fell for", "falls prey to", "default on payment", "loan app fraud", "trading scam"] },
   { category: "finance", subCategory: "startup", any: ["startup funding", "series a", "series b", "valuation", "unicorn", "venture capital"] },
   { category: "finance", subCategory: "trade", any: ["exports", "imports", "trade deficit", "trade agreement", "tariff", "wto"] },
   { category: "finance", subCategory: "agriculture_market", any: ["msp", "minimum support price", "mandi price", "procurement price", "farm gate price"] },
@@ -158,14 +161,14 @@ const FINANCE: CategoryMatcher[] = [
 const SPORTS: CategoryMatcher[] = [
   { category: "sports", subCategory: "cricket", any: ["cricket", "test match", "odi", "t20", "ipl", "csk", "rcb", "mumbai indians", "bcci", "ranji", "world cup", "wickets", "century"] },
   { category: "sports", subCategory: "football", any: ["football", "isl", "fifa", "premier league", "la liga", "champions league", "goal in the"] },
-  { category: "sports", subCategory: "chess", any: ["chess", "grandmaster", "candidates tournament", "chess olympiad", "fide", "checkmate"] },
+  { category: "sports", subCategory: "chess", any: ["candidates tournament", "chess olympiad", "world chess championship", "chess title", "checkmate", "fide rating"] },
   { category: "sports", subCategory: "hockey", any: ["hockey", "fih", "hockey india", "penalty corner"] },
   { category: "sports", subCategory: "badminton", any: ["badminton", "bwf", "all england", "thomas cup", "uber cup"] },
-  { category: "sports", subCategory: "athletics", any: ["athletics", "100m", "marathon", "javelin", "long jump", "asian games athletics", "national record"] },
+  { category: "sports", subCategory: "athletics", any: ["marathon", "javelin", "long jump", "asian games athletics", "national record", "diamond league", "wins gold with", "m throw", "clocks a", "gold medal at the"] },
   { category: "sports", subCategory: "kabaddi", any: ["kabaddi", "pro kabaddi", "raid points"] },
-  { category: "sports", subCategory: "tennis", any: ["tennis", "atp", "wta", "grand slam", "wimbledon", "us open", "french open", "australian open"] },
+  { category: "sports", subCategory: "tennis", any: ["tennis", "atp tour", "wta tour", "grand slam", "wimbledon", "us open", "french open", "australian open"] },
   { category: "sports", subCategory: "motorsport", any: ["formula 1", "f1 grand prix", "motogp", "rally championship"] },
-  { category: "sports", subCategory: "other_sports", any: ["olympics", "asian games", "commonwealth games", "medal tally", "wrestling bout", "boxing bout", "shooting gold"] },
+  { category: "sports", subCategory: "other_sports", any: ["olympics", "asian games", "commonwealth games", "medal tally", "wrestling bout", "boxing bout", "shooting gold", "wrestling federation", "cleared to compete", "doping ban", "lifts suspension"] },
 ];
 
 // ── ENTERTAINMENT / CELEBRITY (demote aggressively) ────────────────────
@@ -184,6 +187,9 @@ const CELEBRITY: string[] = [
 ];
 
 const ALL: CategoryMatcher[] = [...CRISIS, ...POLITICS, ...FINANCE, ...SPORTS];
+
+/** Exposed for the v2 multi-signal classifier (`classify.ts`). */
+export const CATEGORY_MATCHERS = { CRISIS, POLITICS, FINANCE, SPORTS, ENTERTAINMENT, CELEBRITY, ALL };
 
 function hasTerm(hay: string, term: string): boolean {
   if (/[a-z0-9]/.test(term)) {

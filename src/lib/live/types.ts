@@ -211,6 +211,12 @@ export interface ClusterTrendData {
   /** IFFA news domain — CategoryId from src/lib/domain/categories.ts. */
   category?: string;
   categoryReason?: string;
+  /** v0.8 — cross-domain context (e.g. a budget story is finance + politics). */
+  secondaryCategories?: string[];
+  /** v0.8 — STRONG | MODERATE | WEAK | UNKNOWN (not a probability). */
+  categoryConfidence?: string;
+  /** v0.8 — the signals that drove the classification. */
+  categorySignals?: string[];
   /** Geo priority tier — GeoTier from src/lib/domain/geo-tiers.ts. */
   geoTier?: string;
   /** TrendSignal from src/lib/trends/types.ts (kept loose here to avoid a circular import). */

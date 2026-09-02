@@ -1,6 +1,6 @@
 {
   "name": "iffa",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "private": true,
   "description": "IFFA — Info Free For All. A Tamil Nadu-first, India-aware real-time news and current-trend intelligence platform: reporting grouped into events, ranked by what is actually changing, with source independence, claim provenance and Tamil↔English semantics made visible.",
   "scripts": {
@@ -20,6 +20,7 @@
     "seed:refresh": "tsx scripts/seed-refresh.ts",
     "validate:feed": "tsx scripts/validate-feed.ts",
     "eval:claims": "tsx scripts/eval-claims.ts",
+    "eval:category": "tsx scripts/eval-category.ts",
     "eval:cgi": "tsx scripts/eval-cgi.ts",
     "eval:identity": "tsx scripts/eval-identity.ts",
     "eval:misses": "tsx scripts/analyze-misses.ts",

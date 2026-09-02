@@ -12,7 +12,9 @@
  */
 import type { LiveArticle, LiveCluster, LiveDataset, ClusterTrendData } from "@/lib/live/types";
 import { analyseIndependence, independenceLabel } from "@/lib/independence";
-import { classifyCategory, type CategoryId, CATEGORY_ORDER, DEFAULT_ENABLED } from "@/lib/domain/categories";
+import { type CategoryId, CATEGORY_ORDER, DEFAULT_ENABLED } from "@/lib/domain/categories";
+import { classifyEvent } from "@/lib/domain/classify";
+import { buildSignature } from "@/lib/event-identity";
 import { geoTierOf, type GeoTier } from "@/lib/domain/geo-tiers";
 import { resolveDistricts } from "@/lib/domain/districts";
 import { buildTimeline, lastMeaningfulUpdate } from "./timeline";
@@ -117,9 +119,36 @@ export function enrichDataset(dataset: LiveDataset, opts: EnrichOptions = {}): E
       .join(" ")
       .slice(0, 600);
 
-    const cat = classifyCategory({
-      title: cluster.title,
+    // ── v0.8: multi-signal classification over ALL cluster members ──
+    // Union entities / concepts / actions from every member's signature, and
+    // classify the concatenated headlines + excerpts, not just the title.
+    const titleBlob = articles.map((a) => a.title).join("  ·  ").slice(0, 800);
+    const sigEntities = new Set<string>();
+    const sigConcepts = new Set<string>();
+    const sigActions = new Set<string>();
+    for (const a of articles.slice(0, 6)) {
+      const sig = buildSignature({
+        title: a.title,
+        excerpt: a.excerpt,
+        publishedAt: a.publishedAt,
+        language: a.language,
+        districts: a.districts,
+        crisisType: a.crisisType,
+      });
+      for (const e of sig.entities) sigEntities.add(e);
+      for (const c of sig.concepts) sigConcepts.add(c);
+      for (const f of sig.actions) sigActions.add(f);
+    }
+    const anyTamil = articles.some((a) => a.language === "ta");
+    const cat = classifyEvent({
+      title: titleBlob,
       excerpt: excerptBlob,
+      language: anyTamil ? "ta" : "en",
+      entities: [...sigEntities],
+      concepts: [...sigConcepts],
+      actions: [...sigActions],
+      districts: cluster.districts,
+      state: cluster.state,
       crisisType: cluster.crisisType,
     });
     // A cluster that names a Tamil Nadu district is P0 even if the feed's own
@@ -186,6 +215,9 @@ export function enrichDataset(dataset: LiveDataset, opts: EnrichOptions = {}): E
     const trendData: ClusterTrendData = {
       category: cat.category,
       categoryReason: cat.reason,
+      secondaryCategories: cat.secondaryCategories,
+      categoryConfidence: cat.confidenceClass,
+      categorySignals: cat.matchedSignals,
       geoTier: tier.tier,
       trend,
       independence,

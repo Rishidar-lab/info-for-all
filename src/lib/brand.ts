@@ -24,8 +24,8 @@ export const BRAND = {
     "IFFA groups reporting into events, ranks them by what is actually changing, and shows " +
     "how reliable each claim is and how Tamil and English sources describe the same story.",
   region: "Tamil Nadu & India",
-  version: "0.7",
-  versionLabel: "v0.7 — Trend Intelligence",
+  version: "0.8",
+  versionLabel: "v0.8 — Live Signal Intelligence",
   repoUrl: "https://github.com/Rishidar-lab/info-for-all",
   siteUrl: "https://rishidar-lab.github.io/info-for-all",
 } as const;
