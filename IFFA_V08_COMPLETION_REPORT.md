@@ -199,13 +199,24 @@ live site — run after deploy.
 
 ---
 
-## 13. Production URL & verification
-
-_(filled in below once the deploy completes)_
+## 13. Production URL & verification — DONE
 
 - URL: **https://rishidar-lab.github.io/info-for-all**
-- Deploy commit: _pending_
-- `@prod` E2E: _pending_
+- Deploy commit: `162c916` — **CI (incl. the new e2e job) + "Ingest live feeds & deploy" both SUCCESS.**
+- **All 14 routes HTTP 200** (incl. `/sw.js`, `/offline.html`).
+- **`@prod` E2E: 28 / 28 pass** against the live site (desktop + mobile-390) — every route
+  200, IFFA branding, `v0.8` footer label, "Current situation" bar, > 3 event cards,
+  `/info-for-all/_next/static` basePath assets, **no horizontal overflow at 390px**.
+- Content spot-checks on the live site:
+  - Home: "v0.8 — Live Signal Intelligence", situation bar (TN watch / India crisis),
+    "What matters right now", "What changed" (novelty), severity pills (6 critical /
+    6 significant / 4 watch).
+  - `/methodology/quality/`: "v0.4 → v0.5 → v0.6 → v0.7 → v0.8" history, "category
+    classification" section with per-category P/R table, the honest "91.2%" first-pass note,
+    "Live Signal Intelligence layer" stats.
+  - `/diagnostics/`: source-health table — 24 Healthy, 1 Failed, 4 Disabled (29 feeds).
+  - `/finance/`: 15 event cards · `/sports/`: 21 event cards (real live coverage).
+  - `<meta viewport>` present; every wide table `overflow-x-auto`.
 
 ---
 

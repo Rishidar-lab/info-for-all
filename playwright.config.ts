@@ -30,12 +30,16 @@ export default defineConfig({
     trace: "on-first-retry",
     screenshot: "only-on-failure",
   },
-  webServer: {
-    command: `sh -c 'rm -rf out && ${BASE_PATH ? `PAGES_BASE_PATH=${BASE_PATH} ` : ""}npm run build && PORT=${PORT} BASE_PATH=${BASE_PATH} node scripts/serve-out.mjs'`,
-    url: `http://localhost:${PORT}${BASE_PATH}/`,
-    reuseExistingServer: !process.env.CI,
-    timeout: 240_000,
-  },
+  // `E2E_PROD_ONLY=1` runs only tests/e2e/prod.spec.ts against the live site and
+  // needs no local server.
+  webServer: process.env.E2E_PROD_ONLY
+    ? undefined
+    : {
+        command: `sh -c 'rm -rf out && ${BASE_PATH ? `PAGES_BASE_PATH=${BASE_PATH} ` : ""}npm run build && PORT=${PORT} BASE_PATH=${BASE_PATH} node scripts/serve-out.mjs'`,
+        url: `http://localhost:${PORT}${BASE_PATH}/`,
+        reuseExistingServer: !process.env.CI,
+        timeout: 240_000,
+      },
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"], viewport: { width: 1280, height: 900 } } },
     { name: "mobile-390", use: { ...devices["Pixel 5"], viewport: { width: 390, height: 844 } } },

@@ -19,13 +19,13 @@ test.describe("@prod live production smoke", () => {
     test(`@prod ${r} → 200`, async ({ page }) => {
       const resp = await page.goto(BASE + r, { waitUntil: "domcontentloaded" });
       expect(resp?.status()).toBe(200);
-      await expect(page.locator("header")).toContainText("IFFA");
+      await expect(page.getByRole("banner")).toContainText("IFFA");
     });
   }
 
   test("@prod home: v0.8 label, situation bar, event cards, basePath assets", async ({ page }) => {
     await page.goto(BASE + "/");
-    await expect(page.locator("footer")).toContainText(/v0\.8/);
+    await expect(page.getByRole("contentinfo")).toContainText(/v0\.8/);
     await expect(page.getByText("Current situation")).toBeVisible();
     expect(await page.locator("article.card").count()).toBeGreaterThan(3);
     const src = await page.locator('script[src*="_next/static"]').first().getAttribute("src");
