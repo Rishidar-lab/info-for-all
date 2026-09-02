@@ -1,27 +1,43 @@
 import type { Claim, ConfidenceBand } from "./types";
+import type { IndependenceRelation } from "@/lib/independence";
 
 /**
- * Claim confidence — 0–100, plus a coarse band (High / Moderate / Low) which is
- * what readers see. No fake precision.
+ * Claim confidence — v0.4 (Phase 18).
  *
- * Formula (documented in docs/CLAIM-CONFIDENCE.md):
+ * 0–100 internally, shown to readers only as High / Moderate / Low. No fake
+ * precision. The formula is documented in docs/CLAIM-CONFIDENCE-v2.md.
  *
- *   start                                     30
- *   + independent source groups   (0,1,2,3+)  +0 / +14 / +24 / +32
- *   + a supporting primary evidence record            +18
- *   + direct (not attributed) reporting               +6
- *   + recency (last seen < 6h / < 24h / older)  +6 / +2 / 0
- *   - claim is an attributed statement               -16
- *   - claim is disputed                               -22
- *   - all support in ONE syndication group (>1 pub)   -8
- *   - extraction confidence < 0.5                      -6
+ *   start                                          30
+ *   + independent source groups   (0,1,2,3+)       +0 / +14 / +24 / +32
+ *   + a supporting primary-evidence record               +18
+ *   + direct (not attributed) reporting                  +6
+ *   + recency (last seen <6h / <24h / older)        +6 / +2 / 0
+ *   − claim is an attributed statement                   −16
+ *   − claim is disputed                                  −22
+ *   − all support in ONE syndication group (>1 pub)      −8
+ *   − mean extraction confidence < 0.5                   −6
+ *   − independence of the supporting reports is UNKNOWN  −6   (v0.4)
  *   clamp 0–100
+ *
+ *   v0.4 caps:
+ *     • if every cross-publisher pair is `unknown` and there is no confirmed
+ *       independent group, the score cannot exceed the Moderate band (69).
+ *       "Unknown independence" must never read as "independently confirmed".
  *
  * Bands:  >= 70 High   |   40–69 Moderate   |   < 40 Low
  */
+export interface ScoreOpts {
+  hasPrimaryEvidence: boolean;
+  isDisputed: boolean;
+  syndicationCollapsed: boolean;
+  now?: number;
+  /** v0.4: pairwise independence relations among the supporting reports. */
+  independenceRelations?: IndependenceRelation[];
+}
+
 export function scoreClaim(
   claim: Omit<Claim, "confidence" | "confidenceBand" | "rationale">,
-  opts: { hasPrimaryEvidence: boolean; isDisputed: boolean; syndicationCollapsed: boolean; now?: number },
+  opts: ScoreOpts,
 ): { score: number; band: ConfidenceBand; rationale: string[] } {
   const now = opts.now ?? Date.now();
   const rationale: string[] = [];
@@ -73,7 +89,18 @@ export function scoreClaim(
     rationale.push("Extracted with lower confidence — wording may not be exact.");
   }
 
-  const score = Math.max(0, Math.min(100, Math.round(s)));
+  // v0.4 — unknown independence is a demerit and a ceiling, never a free pass.
+  const rels = opts.independenceRelations ?? [];
+  const anyUnknown = rels.includes("unknown");
+  const anyConfirmedIndependent = rels.includes("independent") || groups >= 2;
+  if (anyUnknown && !anyConfirmedIndependent) {
+    s -= 6;
+    rationale.push("Whether the supporting reports are independent could not be established.");
+  }
+
+  let score = Math.max(0, Math.min(100, Math.round(s)));
+  if (anyUnknown && !anyConfirmedIndependent) score = Math.min(score, 69);
+
   const band: ConfidenceBand = score >= 70 ? "high" : score >= 40 ? "moderate" : "low";
   return { score, band, rationale };
 }

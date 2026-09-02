@@ -1,0 +1,4 @@
+# This directory holds the ACTIVE live-feed snapshot (live-feed.json), which is
+# a volatile build artefact and is NOT version-controlled — see docs/DATA-HYGIENE.md.
+# `scripts/prepare-data.ts` seeds it from src/data/fixtures/live-feed.seed.json
+# when it is missing; `npm run ingest` overwrites it with a fresh fetch.

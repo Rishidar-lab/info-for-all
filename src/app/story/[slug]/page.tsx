@@ -258,12 +258,34 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
             </h2>
           </div>
           {ec ? (
-            <div className="card grid grid-cols-2 gap-x-4 gap-y-3 bg-surface-2 p-4 sm:grid-cols-3">
-              <Metric n={ec.independence.reports} label="Reports ingested" />
-              <Metric n={ec.independence.distinctPublishers} label="Distinct publishers" />
-              <Metric n={ec.independence.independentGroups} label="Likely independent groups" />
-              <Metric n={ec.independence.possibleSyndicated} label="Possible syndicated copies" />
-              <Metric n={ec.independence.primarySources} label="Primary sources" />
+            <div className="flex flex-col gap-3">
+              {(ec.independence.label || (ec.independence.wireCredits?.length ?? 0) > 0) && (
+                <p className="ui text-[12.5px] text-ink-2">
+                  {ec.independence.label && (
+                    <span className="font-semibold text-ink">{ec.independence.label}.</span>
+                  )}{" "}
+                  {(ec.independence.wireCredits?.length ?? 0) > 0 && (
+                    <span>
+                      Wire copy credited: {ec.independence.wireCredits!.join(", ")} — counted once, not
+                      once per publication.
+                    </span>
+                  )}
+                  {(ec.independence.unknownPairs ?? 0) > 0 && (
+                    <span className="text-ink-3">
+                      {" "}
+                      {ec.independence.unknownPairs} source pair(s) could not be classified as
+                      independent or syndicated; treated as not independent.
+                    </span>
+                  )}
+                </p>
+              )}
+              <div className="card grid grid-cols-2 gap-x-4 gap-y-3 bg-surface-2 p-4 sm:grid-cols-3">
+                <Metric n={ec.independence.reports} label="Reports ingested" />
+                <Metric n={ec.independence.distinctPublishers} label="Distinct publishers" />
+                <Metric n={ec.independence.independentGroups} label="Likely independent groups" />
+                <Metric n={ec.independence.possibleSyndicated} label="Possible syndicated copies" />
+                <Metric n={ec.independence.primarySources} label="Primary sources" />
+              </div>
             </div>
           ) : (
             <p className="card bg-surface-2 px-4 py-3 ui text-[13px] text-ink-2">

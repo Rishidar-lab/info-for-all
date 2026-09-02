@@ -84,22 +84,32 @@ export default function AboutPage() {
           On a multi-source event, IFA breaks the coverage into structured{" "}
           <strong>claims</strong> and classifies each one: <em>corroborated</em> (more than one
           independent source group), <em>single source</em>, <em>attributed</em> (something a
-          named speaker said — kept as the speaker&rsquo;s claim, never promoted to a bare fact
-          unless separate evidence supports it), <em>disputed</em>, or <em>outdated</em>. Each
-          claim carries a documented confidence score —{" "}
+          named speaker said, alleged, expects or warned — kept as the speaker&rsquo;s claim,
+          never promoted to a bare fact unless separate evidence supports it), <em>disputed</em>,
+          or <em>outdated</em>. Each claim carries a documented confidence score —{" "}
           <a
-            href="https://github.com/Rishidar-lab/info-for-all/blob/main/docs/CLAIM-CONFIDENCE.md"
+            href="https://github.com/Rishidar-lab/info-for-all/blob/main/docs/CLAIM-CONFIDENCE-v2.md"
             target="_blank"
             rel="noopener noreferrer"
             className="text-accent hover:underline"
           >
             the formula is public
           </a>
-          . Publication count is not corroboration count: several outlets running one wire report
-          count as one independent source. The extraction is deterministic and rule-based — no
-          language model, and wording may not be exact, so the original source text is always
-          linked. The Common Ground Index is experimental and describes the state of the
-          reporting, not a verdict on the event.
+          . Publication count is not corroboration count: a dedicated{" "}
+          <strong>independence engine</strong> classifies every pair of reports as independent,
+          syndicated, or unclear — several outlets running one PTI dispatch count as a single
+          confirmation, and &ldquo;unclear&rdquo; never counts as independent. The extraction is
+          deterministic and rule-based — no language model in the deployed build — and wording
+          may not be exact, so the original source text is always linked. The Common Ground Index
+          is experimental and describes the state of the reporting, not a verdict on the event.
+        </p>
+        <p className="mt-3 text-[14.5px] leading-relaxed text-ink-2">
+          The claim engine is measured against a hand-labelled gold corpus. See the{" "}
+          <Link href="/methodology/quality" className="text-accent hover:underline">
+            claim-quality dashboard
+          </Link>{" "}
+          for extraction, matching, contradiction and attribution scores — including the ones
+          that are still weak.
         </p>
       </section>
 
@@ -117,8 +127,9 @@ export default function AboutPage() {
         <h2 className="font-serif text-[20px] font-semibold">Limitations</h2>
         <ul className="mt-2 flex flex-col gap-2 text-[14px] leading-relaxed text-ink-2">
           <li>IFA does not claim algorithmic neutrality. Clustering, geo-classification and claim extraction are rule-based and can err.</li>
-          <li>Claims are extracted by deterministic rules from headlines and short excerpts — the set is deliberately small, and wording may be loose. The linked source is authoritative.</li>
-          <li>&ldquo;Independent source groups&rdquo; is an estimate: near-identical headlines and shared verbatim passages are treated as one upstream source.</li>
+          <li>Claims are extracted by deterministic rules from headlines and short excerpts. Matching recall is well below 100% — the engine misses a share of genuine same-fact pairs (mostly at clustering, and in Tamil) rather than risk a false one. The linked source is authoritative.</li>
+          <li>&ldquo;Independent source groups&rdquo; is an estimate from publisher, wire credit, near-identical headlines and shared verbatim passages. When it cannot tell, it says so and does not count the reports as independent.</li>
+          <li>Tamil ↔ Tamil claim matching is weak (there is no Tamil morphological normaliser yet); Tamil ↔ English claims are never merged because there is no translation layer. The original Tamil text is always kept.</li>
           <li>Metadata differences between reports are not claims of contradiction; only a genuine semantic conflict is marked &ldquo;disputed&rdquo;.</li>
           <li>Feeds go down. When they do, IFA keeps the last known good snapshot, marks it stale, and never shows &ldquo;LIVE&rdquo;.</li>
           <li><strong>IFA is not an emergency service.</strong> For any emergency, follow the issuing authority&rsquo;s own instructions.</li>

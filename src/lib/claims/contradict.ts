@@ -11,7 +11,20 @@ import type { Claim, ClaimDispute, ConfidenceBand } from "./types";
  * False disputes are unacceptable, so thresholds are conservative.
  */
 
-const NUMERIC_KINDS = new Set(["deaths", "injuries", "missing", "rescued", "rainfall_mm", "amount_crore"]);
+const NUMERIC_KINDS = new Set([
+  "deaths",
+  "injuries",
+  "missing",
+  "rescued",
+  "rainfall_mm",
+  "amount_inr",
+  "houses_damaged",
+  "discharge_cusecs",
+  "relief_camps",
+  "teams",
+  "wind_kmph",
+  "flights_delayed",
+]);
 
 function bandFor(gap: number, base: number): ConfidenceBand {
   const rel = base > 0 ? gap / base : 1;
@@ -39,34 +52,45 @@ export function detectDisputes(claims: Claim[]): ClaimDispute[] {
       .filter((x) => Number.isFinite(x.v) && x.v > 0);
     const distinct = [...new Set(vals.map((x) => x.v))];
     if (distinct.length < 2) continue;
-    const lo = Math.min(...distinct);
-    const hi = Math.max(...distinct);
-    if (hi === lo) continue;
 
-    const loSide = vals.filter((x) => x.v === lo);
-    const hiSide = vals.filter((x) => x.v === hi);
-    const loAt = loSide.map((x) => x.c.lastSeenAt).sort().at(-1)!;
-    const hiAt = hiSide.map((x) => x.c.lastSeenAt).sort().at(-1)!;
-    // If the higher figure is clearly LATER, treat as an update, not a dispute.
-    const temporalUpdate = Math.abs(Date.parse(hiAt) - Date.parse(loAt)) > 45 * 60 * 1000 && Date.parse(hiAt) > Date.parse(loAt);
+    // Order the two conflicting figures by REPORT TIME, not by value — a
+    // developing count can fall (missing found) as well as rise (toll grows).
+    const earliestFor = (v: number) =>
+      Math.min(...vals.filter((x) => x.v === v).map((x) => Date.parse(x.c.firstSeenAt || x.c.lastSeenAt)));
+    const latestFor = (v: number) =>
+      Math.max(...vals.filter((x) => x.v === v).map((x) => Date.parse(x.c.lastSeenAt)));
+    const ordered = [...distinct].sort((p, q) => earliestFor(p) - earliestFor(q));
+    const aV = ordered[0]!;
+    const bV = ordered[ordered.length - 1]!;
+    if (aV === bV) continue;
+
+    const aSide = vals.filter((x) => x.v === aV);
+    const bSide = vals.filter((x) => x.v === bV);
+    const aAt = new Date(earliestFor(aV)).toISOString();
+    const bAt = new Date(latestFor(bV)).toISOString();
+    const gap = Math.abs(Date.parse(bAt) - Date.parse(aAt));
+    // Separated clearly in time ⇒ a developing-story update, not a contradiction.
+    const temporalUpdate = gap > 45 * 60 * 1000;
+    const spread = Math.abs(bV - aV);
+    const lo = Math.min(aV, bV);
 
     disputes.push({
-      field: kind.replace("_", " "),
+      field: kind.replace(/_/g, " "),
       a: {
-        value: `${lo}`,
-        publisherIds: [...new Set(loSide.flatMap((x) => x.c.supportingPublisherIds))],
-        at: loAt,
+        value: `${aV}`,
+        publisherIds: [...new Set(aSide.flatMap((x) => x.c.supportingPublisherIds))],
+        at: aAt,
       },
       b: {
-        value: `${hi}`,
-        publisherIds: [...new Set(hiSide.flatMap((x) => x.c.supportingPublisherIds))],
-        at: hiAt,
+        value: `${bV}`,
+        publisherIds: [...new Set(bSide.flatMap((x) => x.c.supportingPublisherIds))],
+        at: bAt,
       },
       reason: temporalUpdate
-        ? `Reported figure rose from ${lo} to ${hi}; the later figure may simply be an update.`
-        : `Sources report different ${kind.replace("_", " ")} figures (${lo} vs ${hi}) with no clear time ordering.`,
+        ? `Reported ${kind.replace(/_/g, " ")} figure moved from ${aV} to ${bV} over ${Math.round(gap / 3.6e6) || "<1"}h; the later figure is likely an update.`
+        : `Sources report different ${kind.replace(/_/g, " ")} figures (${aV} vs ${bV}) with no clear time ordering.`,
       kind: "numeric",
-      confidence: temporalUpdate ? "low" : bandFor(hi - lo, lo),
+      confidence: temporalUpdate ? "low" : bandFor(spread, lo),
       possiblyTemporalUpdate: temporalUpdate,
     });
   }

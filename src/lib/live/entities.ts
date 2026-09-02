@@ -109,6 +109,15 @@ export function extractEntities(rawTitle: string): Set<string> {
     if (run.length >= 1) {
       const phrase = run.join(" ").replace(/\.$/, "").trim();
       if (phrase.length > 3 && !STOP_CAPS.has(phrase)) out.add(phrase.toLowerCase());
+      // A long run with no separator is often two proper nouns run together
+      // ("Cyclone Ditwah Nagapattinam"). Also surface the trailing single token
+      // and the leading pair so a shared place name still matches.
+      if (run.length >= 3) {
+        const last = run[run.length - 1]!.replace(/\.$/, "").toLowerCase();
+        if (last.length >= 5 && !STOP_CAPS.has(last)) out.add(last);
+        const lead = run.slice(0, 2).join(" ").toLowerCase();
+        if (lead.length > 3) out.add(lead);
+      }
     }
     run = [];
   };
@@ -132,6 +141,33 @@ export function extractFigures(title: string): Set<string> {
   const re = /(?:₹|rs\.?\s?)?[\d,]+(?:\.\d+)?\s?(crore|lakh|tmcft|cusec|cusecs|mm|cm|km|dead|killed|injured|missing|feet|ft|%|per cent|percent)/g;
   let m: RegExpExecArray | null;
   while ((m = re.exec(t))) out.add(m[0].replace(/\s+/g, " ").trim());
+  // Also emit a UNIT-NORMALISED token so "120 mm" and "12 cm" of rain, or
+  // "Rs 500 crore" and "Rs 5,00,00,00,000", overlap as the same figure.
+  for (const q of parseFiguresNormalised(t)) out.add(q);
+  return out;
+}
+
+/**
+ * Normalised quantity tokens for clustering: length→mm, currency→rupees,
+ * counts with a magnitude word→base. Kept deliberately narrow — only the forms
+ * that recur in Tamil Nadu weather / relief reporting.
+ */
+function parseFiguresNormalised(t: string): string[] {
+  const out: string[] = [];
+  for (const m of t.matchAll(/\b([\d,]+(?:\.\d+)?)\s?(mm|cm|m|km)\b/g)) {
+    const n = Number(m[1].replace(/,/g, ""));
+    const mult = m[2] === "mm" ? 1 : m[2] === "cm" ? 10 : m[2] === "m" ? 1000 : 1_000_000;
+    if (Number.isFinite(n)) out.push(`q:len:${n * mult}`);
+  }
+  for (const m of t.matchAll(/(?:₹|rs\.?\s?)\s?([\d,]+(?:\.\d+)?)\s?(crore|lakh|thousand)?/g)) {
+    const n = Number(m[1].replace(/,/g, ""));
+    const mult = m[2] === "crore" ? 1e7 : m[2] === "lakh" ? 1e5 : m[2] === "thousand" ? 1e3 : 1;
+    if (Number.isFinite(n)) out.push(`q:inr:${n * mult}`);
+  }
+  for (const m of t.matchAll(/\b([\d,]+(?:\.\d+)?)\s?cusecs?\b/g)) {
+    const n = Number(m[1].replace(/,/g, ""));
+    if (Number.isFinite(n)) out.push(`q:cusec:${n}`);
+  }
   return out;
 }
 

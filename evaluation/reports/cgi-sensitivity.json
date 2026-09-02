@@ -1,0 +1,173 @@
+{
+  "generatedAt": "2026-09-02T02:11:48.441Z",
+  "events": 8,
+  "bandDistribution": {
+    "moderate": 6,
+    "low": 2
+  },
+  "meanScore": 56,
+  "weightSweeps": [
+    {
+      "weight": "thinBaseCap",
+      "direction": "−20%",
+      "from": 68,
+      "to": 54,
+      "meanAbsDelta": 4.25,
+      "maxAbsDelta": 14,
+      "bandFlips": 0
+    },
+    {
+      "weight": "thinBaseCap",
+      "direction": "+20%",
+      "from": 68,
+      "to": 82,
+      "meanAbsDelta": 3.5,
+      "maxAbsDelta": 14,
+      "bandFlips": 2
+    },
+    {
+      "weight": "corroboratedGain",
+      "direction": "−20%",
+      "from": 45,
+      "to": 36,
+      "meanAbsDelta": 3.38,
+      "maxAbsDelta": 6,
+      "bandFlips": 0
+    },
+    {
+      "weight": "corroboratedGain",
+      "direction": "+20%",
+      "from": 45,
+      "to": 54,
+      "meanAbsDelta": 3,
+      "maxAbsDelta": 6,
+      "bandFlips": 2
+    },
+    {
+      "weight": "singleSourcePenalty",
+      "direction": "+20%",
+      "from": 25,
+      "to": 30,
+      "meanAbsDelta": 1,
+      "maxAbsDelta": 2,
+      "bandFlips": 0
+    },
+    {
+      "weight": "singleSourcePenalty",
+      "direction": "−20%",
+      "from": 25,
+      "to": 20,
+      "meanAbsDelta": 0.75,
+      "maxAbsDelta": 3,
+      "bandFlips": 0
+    },
+    {
+      "weight": "attributedPenalty",
+      "direction": "−20%",
+      "from": 12,
+      "to": 10,
+      "meanAbsDelta": 0.5,
+      "maxAbsDelta": 1,
+      "bandFlips": 0
+    },
+    {
+      "weight": "attributedPenalty",
+      "direction": "+20%",
+      "from": 12,
+      "to": 14,
+      "meanAbsDelta": 0.5,
+      "maxAbsDelta": 1,
+      "bandFlips": 0
+    },
+    {
+      "weight": "evidenceBonus",
+      "direction": "−20%",
+      "from": 10,
+      "to": 8,
+      "meanAbsDelta": 0,
+      "maxAbsDelta": 0,
+      "bandFlips": 0
+    },
+    {
+      "weight": "evidenceBonus",
+      "direction": "+20%",
+      "from": 10,
+      "to": 12,
+      "meanAbsDelta": 0,
+      "maxAbsDelta": 0,
+      "bandFlips": 0
+    },
+    {
+      "weight": "disputedPenalty",
+      "direction": "−20%",
+      "from": 30,
+      "to": 24,
+      "meanAbsDelta": 0,
+      "maxAbsDelta": 0,
+      "bandFlips": 0
+    },
+    {
+      "weight": "disputedPenalty",
+      "direction": "+20%",
+      "from": 30,
+      "to": 36,
+      "meanAbsDelta": 0,
+      "maxAbsDelta": 0,
+      "bandFlips": 0
+    },
+    {
+      "weight": "hardDisputePenalty",
+      "direction": "−20%",
+      "from": 8,
+      "to": 6,
+      "meanAbsDelta": 0,
+      "maxAbsDelta": 0,
+      "bandFlips": 0
+    },
+    {
+      "weight": "hardDisputePenalty",
+      "direction": "+20%",
+      "from": 8,
+      "to": 10,
+      "meanAbsDelta": 0,
+      "maxAbsDelta": 0,
+      "bandFlips": 0
+    },
+    {
+      "weight": "syndicationPenalty",
+      "direction": "−20%",
+      "from": 8,
+      "to": 6,
+      "meanAbsDelta": 0,
+      "maxAbsDelta": 0,
+      "bandFlips": 0
+    },
+    {
+      "weight": "syndicationPenalty",
+      "direction": "+20%",
+      "from": 8,
+      "to": 10,
+      "meanAbsDelta": 0,
+      "maxAbsDelta": 0,
+      "bandFlips": 0
+    }
+  ],
+  "noPrimaryEvidenceScenario": {
+    "events": 8,
+    "meanScoreDrop": 0,
+    "bandFlips": 0
+  },
+  "defaults": {
+    "base": 40,
+    "corroboratedGain": 45,
+    "evidenceBonus": 10,
+    "singleSourcePenalty": 25,
+    "attributedPenalty": 12,
+    "disputedPenalty": 30,
+    "hardDisputePenalty": 8,
+    "syndicationPenalty": 8,
+    "thinBaseCap": 68,
+    "highBand": 70,
+    "moderateBand": 45
+  }
+}

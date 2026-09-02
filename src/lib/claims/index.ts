@@ -1,6 +1,6 @@
 import type { LiveArticle, LiveCluster } from "@/lib/live/types";
 import type { Claim, ClaimStatus, Evidence, EventClaims } from "./types";
-import { analyseIndependence } from "./corroborate";
+import { analyseIndependence, independenceLabel } from "./corroborate";
 import { normaliseClaims, type ClaimDraft } from "./normalize";
 import { detectDisputes } from "./contradict";
 import { extractEvidence } from "./evidence";
@@ -29,9 +29,19 @@ export function buildEventClaims(cluster: LiveCluster, articles: LiveArticle[], 
     c.independentSourceGroups.some(
       (g) => new Set(g.map((id) => pubByArticle.get(id))).size > 1,
     );
+  const relsFor = (c: { supportingArticleIds: string[] }) => {
+    const set = new Set(c.supportingArticleIds);
+    return independence.relations.filter((r) => set.has(r.a) && set.has(r.b)).map((r) => r.relation);
+  };
+  const scoreOpts = (c: Claim | ClaimDraft, isDisputed: boolean) => ({
+    isDisputed,
+    syndicated: syndicated(c),
+    now,
+    independenceRelations: relsFor(c),
+  });
 
   const drafts = normaliseClaims(cluster, articles, independence, now);
-  const claims: Claim[] = drafts.map((d) => finalise(d, { isDisputed: false, syndicated: syndicated(d), now }));
+  const claims: Claim[] = drafts.map((d) => finalise(d, scoreOpts(d, false)));
 
   // ── disputes: only genuine semantic conflicts ────────────────────
   const disputes = detectDisputes(claims);
@@ -42,7 +52,7 @@ export function buildEventClaims(cluster: LiveCluster, articles: LiveArticle[], 
     const field = c.predicates[0]?.replace(/_/g, " ");
     if (field && hardDisputeFields.has(field) && c.status !== "attributed") {
       c.status = "disputed";
-      rescore(c, { isDisputed: true, syndicated: syndicated(c), now });
+      rescore(c, scoreOpts(c, true));
     }
   }
 
@@ -53,7 +63,7 @@ export function buildEventClaims(cluster: LiveCluster, articles: LiveArticle[], 
   // ── link primary evidence to the claims it actually supports ─────
   linkEvidence(claims, evidence);
   for (const c of claims) {
-    if (c.primaryEvidenceIds.length) rescore(c, { isDisputed: c.status === "disputed", syndicated: syndicated(c), now });
+    if (c.primaryEvidenceIds.length) rescore(c, scoreOpts(c, c.status === "disputed"));
   }
 
   claims.sort((a, b) => statusRank(a.status) - statusRank(b.status) || b.confidence - a.confidence);
@@ -73,6 +83,9 @@ export function buildEventClaims(cluster: LiveCluster, articles: LiveArticle[], 
     independentGroups: independence.independentGroups,
     possibleSyndicated: independence.possibleSyndicated,
     primarySources,
+    label: independenceLabel(independence),
+    wireCredits: independence.wireCredits,
+    unknownPairs: independence.unknownPairs,
   };
 
   const cgi = computeCgi(claims, evidence, disputes, independenceSummary);
@@ -89,22 +102,31 @@ export function buildEventClaims(cluster: LiveCluster, articles: LiveArticle[], 
   };
 }
 
-function finalise(d: ClaimDraft, opts: { isDisputed: boolean; syndicated: boolean; now: number }): Claim {
+interface ClaimScoreOpts {
+  isDisputed: boolean;
+  syndicated: boolean;
+  now: number;
+  independenceRelations: import("@/lib/independence").IndependenceRelation[];
+}
+
+function finalise(d: ClaimDraft, opts: ClaimScoreOpts): Claim {
   const { score, band, rationale } = scoreClaim(d, {
     hasPrimaryEvidence: d.primaryEvidenceIds.length > 0,
     isDisputed: opts.isDisputed,
     syndicationCollapsed: opts.syndicated,
     now: opts.now,
+    independenceRelations: opts.independenceRelations,
   });
   return { ...d, confidence: score, confidenceBand: band, rationale };
 }
 
-function rescore(c: Claim, opts: { isDisputed: boolean; syndicated: boolean; now: number }): void {
+function rescore(c: Claim, opts: ClaimScoreOpts): void {
   const { score, band, rationale } = scoreClaim(c, {
     hasPrimaryEvidence: c.primaryEvidenceIds.length > 0,
     isDisputed: opts.isDisputed,
     syndicationCollapsed: opts.syndicated,
     now: opts.now,
+    independenceRelations: opts.independenceRelations,
   });
   c.confidence = score;
   c.confidenceBand = band;
@@ -150,18 +172,19 @@ function resolveTemporalUpdates(claims: Claim[], disputes: EventClaims["disputes
     const kind = d.field.replace(/ /g, "_");
     const same = claims.filter((c) => c.predicates[0] === kind && (c.type === "statistic" || c.type === "attribution"));
     if (same.length < 2) continue;
-    const lo = Number(d.a.value);
-    const hi = Number(d.b.value);
-    const earlier = same.find((c) => Number(c.objects[0]) === lo);
-    const later = same.find((c) => Number(c.objects[0]) === hi);
+    // d.a is the chronologically EARLIER figure, d.b the LATER one (contradict.ts).
+    const earlierVal = Number(d.a.value);
+    const laterVal = Number(d.b.value);
+    const earlier = same.find((c) => Number(c.objects[0]) === earlierVal);
+    const later = same.find((c) => Number(c.objects[0]) === laterVal);
     if (!earlier || !later || earlier === later) continue;
     if (earlier.status !== "disputed") earlier.status = "outdated";
-    earlier.notes.push(`Superseded by a later figure of ${hi} (${d.b.at}).`);
+    earlier.notes.push(`Superseded by a later figure of ${laterVal} (${d.b.at}).`);
     later.updates.push({
       at: d.b.at,
       publisherId: later.supportingPublisherIds[0] ?? "unknown",
       articleId: later.supportingArticleIds[0] ?? "unknown",
-      change: `${d.field}: ${lo} → ${hi}`,
+      change: `${d.field}: ${earlierVal} → ${laterVal}`,
       supersedes: true,
     });
   }
@@ -181,7 +204,7 @@ function deriveUnknowns(cluster: LiveCluster, claims: Claim[], evidence: Evidenc
   if (claims.some((c) => c.status === "attributed")) {
     out.push("Some statements below are attributed to a speaker; the underlying facts are not separately verified.");
   }
-  for (const u of cluster.unknowns) {
+  for (const u of cluster.unknowns ?? []) {
     if (!/claim-by-claim comparison awaits review/i.test(u)) out.push(u);
   }
   return [...new Set(out)];

@@ -53,6 +53,11 @@ jobs:
       - name: Validate generated feed
         run: npx tsx scripts/validate-feed.ts
 
+      # Claim-quality gate — fails the deploy if the claim layer regresses past
+      # the release thresholds (false corroboration, attribution retention, …).
+      - name: Claim quality gate
+        run: npm run quality-gate
+
       - name: Save feed snapshot for the next run
         if: always()
         uses: actions/cache/save@v4

@@ -127,6 +127,43 @@ const STOPWORDS = new Set([
   "video", "photos",
 ]);
 
+/**
+ * A small, deterministic stem/synonym fold so headline-token comparison is not
+ * defeated by ordinary inflection ("closed" vs "closes" vs "closure") or the
+ * handful of exact synonyms that recur in Tamil Nadu weather / relief reporting.
+ * This improves match QUALITY; it does not change any clustering threshold.
+ */
+const TOKEN_SYN: Record<string, string> = {
+  rainfall: "rain", downpour: "rain", showers: "rain", raining: "rain", rains: "rain",
+  flooded: "flood", flooding: "flood", floods: "flood", inundated: "flood", inundation: "flood",
+  closed: "close", closes: "close", closure: "close", shut: "close", shuts: "close", shutdown: "close", holiday: "close",
+  suspended: "suspend", suspends: "suspend", halted: "suspend", halts: "suspend", stopped: "suspend",
+  cancelled: "cancel", canceled: "cancel", cancels: "cancel",
+  killed: "die", dead: "die", died: "die", deaths: "die", death: "die",
+  injured: "injure", injuries: "injure", hurt: "injure", wounded: "injure",
+  rescued: "rescue", rescues: "rescue", evacuated: "evacuate", evacuation: "evacuate", evacuations: "evacuate", evacuees: "evacuate",
+  released: "release", releases: "release", releasing: "release", discharge: "release", discharged: "release",
+  opened: "open", opens: "open", opening: "open",
+  warning: "warn", warned: "warn", warns: "warn", alert: "warn", alerts: "warn",
+  imposed: "impose", imposes: "impose", clamped: "impose", clamps: "impose",
+  damaged: "damage", damages: "damage",
+  landslip: "landslide", landslides: "landslide",
+  cyclonic: "cyclone",
+};
+
+const NO_STEM_SUFFIX = /(?:ss|us|is|os|as|ews| news|sis)$/;
+
+function stemToken(w: string): string {
+  if (TOKEN_SYN[w]) return TOKEN_SYN[w];
+  // Conservative: only fold a simple trailing plural "-s". The explicit synonym
+  // map above already handles the inflections that matter for clustering.
+  if (w.length > 4 && w.endsWith("s") && !NO_STEM_SUFFIX.test(w)) {
+    const base = w.slice(0, -1);
+    return TOKEN_SYN[base] ?? base;
+  }
+  return w;
+}
+
 /** Normalised content tokens of a headline, for dedup + clustering. */
 export function titleTokens(title: string): string[] {
   return clean(title, 500)
@@ -135,7 +172,9 @@ export function titleTokens(title: string): string[] {
     .replace(COMBINING_MARKS, "")
     .replace(/[^\p{L}\p{N}\s]/gu, " ")
     .split(/\s+/)
-    .filter((w) => w.length > 2 && !STOPWORDS.has(w));
+    .filter((w) => w.length > 2 && !STOPWORDS.has(w))
+    .map(stemToken)
+    .filter((w) => !STOPWORDS.has(w));
 }
 
 export function normalisedTitleKey(title: string): string {

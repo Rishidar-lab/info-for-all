@@ -73,11 +73,17 @@ export interface Claim {
   id: string;
   eventId: string;
 
-  /** The single canonical English rendering of the assertion. */
+  /** The canonical rendering of the assertion (English when available). */
   canonicalText: string;
   /** Original-language rendering, preserved when a source is in Tamil. */
   canonicalTextOriginal?: string;
   originalLanguage?: "ta" | "en";
+  /** Language `canonicalText` is actually in (v0.4). */
+  canonicalLanguage?: "ta" | "en";
+  /** How `canonicalText` was produced from a non-English original. */
+  translationMethod?: "none" | "dictionary" | "model" | "not-applicable";
+  /** 0–1 confidence in the translation; undefined when translationMethod is n/a or none. */
+  translationConfidence?: number;
 
   type: ClaimType;
   status: ClaimStatus;
@@ -165,6 +171,12 @@ export interface EventClaims {
     independentGroups: number;
     possibleSyndicated: number;
     primarySources: number;
+    /** Short honest label ("Two independent newsrooms", "Independence unclear"). */
+    label?: string;
+    /** Wire agencies actually credited in this event's coverage ("PTI", "Reuters"). */
+    wireCredits?: string[];
+    /** Pairs the engine could not classify as independent OR syndicated. */
+    unknownPairs?: number;
   };
   /** Experimental Common Ground Index, computed from the claim layer. */
   cgi: {

@@ -161,7 +161,26 @@ function ClaimModal({
         </div>
 
         <div className="flex flex-col gap-4 p-4">
-          <Block label="Why IFA classified it this way">
+          <Block label="At a glance">
+            <dl className="grid grid-cols-2 gap-x-4 gap-y-1.5 ui text-[12px]">
+              <Fact k="Reported by" v={`${claim.supportingPublisherIds.length} publisher${claim.supportingPublisherIds.length === 1 ? "" : "s"}`} />
+              <Fact k="Independent groups" v={`${claim.independentSourceGroups.length}`} />
+              <Fact
+                k="Possible syndication"
+                v={`${Math.max(0, claim.supportingPublisherIds.length - claim.independentSourceGroups.length)} copy(ies)`}
+              />
+              <Fact k="Primary evidence" v={claim.primaryEvidenceIds.length ? `${claim.primaryEvidenceIds.length} record(s)` : "none"} />
+              <Fact k="Original language" v={claim.canonicalLanguage === "ta" ? "Tamil (kept as-is)" : "English"} />
+              <Fact
+                k="Attribution"
+                v={claim.provenance.find((p) => p.attribution)?.attribution ?? "— (direct)"}
+              />
+              <Fact k="First seen" v={fmtIST(claim.firstSeenAt)} />
+              <Fact k="Latest update" v={fmtIST(claim.lastSeenAt)} />
+            </dl>
+          </Block>
+
+          <Block label="Why this status">
             <ul className="flex flex-col gap-1 text-[13px] leading-relaxed text-ink-2">
               {claim.rationale.map((r) => (
                 <li key={r} className="flex gap-2">
@@ -303,6 +322,15 @@ function Block({ label, children }: { label: string; children: React.ReactNode }
     <div>
       <div className="label mb-1.5">{label}</div>
       {children}
+    </div>
+  );
+}
+
+function Fact({ k, v }: { k: string; v: string }) {
+  return (
+    <div className="flex flex-col">
+      <dt className="text-ink-3">{k}</dt>
+      <dd className="font-medium text-ink">{v}</dd>
     </div>
   );
 }

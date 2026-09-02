@@ -11,12 +11,44 @@ import type { Claim, ClaimDispute, ConfidenceBand, Evidence, EventClaims } from 
  * it is never presented as a verdict on the event — only on the state of
  * reporting about it.
  */
+
+/** Tunable CGI weights. The defaults ship; `npm run eval:cgi` sweeps ±20%. */
+export interface CgiWeights {
+  base: number;
+  corroboratedGain: number;
+  evidenceBonus: number;
+  singleSourcePenalty: number;
+  attributedPenalty: number;
+  disputedPenalty: number;
+  hardDisputePenalty: number;
+  syndicationPenalty: number;
+  thinBaseCap: number;
+  highBand: number;
+  moderateBand: number;
+}
+
+export const DEFAULT_CGI_WEIGHTS: CgiWeights = {
+  base: 40,
+  corroboratedGain: 45,
+  evidenceBonus: 10,
+  singleSourcePenalty: 25,
+  attributedPenalty: 12,
+  disputedPenalty: 30,
+  hardDisputePenalty: 8,
+  syndicationPenalty: 8,
+  thinBaseCap: 68,
+  highBand: 70,
+  moderateBand: 45,
+};
+
 export function computeCgi(
   claims: Claim[],
   evidence: Evidence[],
   disputes: ClaimDispute[],
   independence: EventClaims["independence"],
+  weights: CgiWeights = DEFAULT_CGI_WEIGHTS,
 ): EventClaims["cgi"] {
+  const w = weights;
   // CGI is about agreement ACROSS sources — meaningless with only one publisher.
   if (independence.distinctPublishers < 2) return null;
 
@@ -29,6 +61,8 @@ export function computeCgi(
       c.predicates.length > 0 ||
       c.type === "statistic" ||
       c.type === "attribution" ||
+      c.type === "allegation" ||
+      c.type === "prediction" ||
       c.type === "official-statement" ||
       c.primaryEvidenceIds.length > 0 ||
       (c.type === "event" && c.independentSourceGroups.length >= 2),
@@ -44,24 +78,24 @@ export function computeCgi(
   const withEvidence = substantive.filter((c) => c.primaryEvidenceIds.length > 0).length;
 
   const n = substantive.length;
-  let score = 40;
-  score += Math.round((corroborated / n) * 45);
-  score += withEvidence > 0 ? 10 : 0;
-  score -= Math.round((singleSource / n) * 25);
-  score -= Math.round((attributed / n) * 12);
-  score -= Math.round((disputed / n) * 30);
-  score -= disputes.filter((d) => !d.possiblyTemporalUpdate && d.confidence !== "low").length * 8;
-  if (independence.possibleSyndicated > independence.independentGroups) score -= 8;
+  let score = w.base;
+  score += Math.round((corroborated / n) * w.corroboratedGain);
+  score += withEvidence > 0 ? w.evidenceBonus : 0;
+  score -= Math.round((singleSource / n) * w.singleSourcePenalty);
+  score -= Math.round((attributed / n) * w.attributedPenalty);
+  score -= Math.round((disputed / n) * w.disputedPenalty);
+  score -= disputes.filter((d) => !d.possiblyTemporalUpdate && d.confidence !== "low").length * w.hardDisputePenalty;
+  if (independence.possibleSyndicated > independence.independentGroups) score -= w.syndicationPenalty;
 
   // Thin evidence base: a single corroborated headline is not "high common
   // ground". Only let a score reach the high band when there is real breadth —
   // a primary record, several distinct claims, or 3+ independent source groups.
   const hasBreadth =
     withEvidence > 0 || substantive.length >= 3 || independence.independentGroups >= 3;
-  if (!hasBreadth) score = Math.min(score, 68);
+  if (!hasBreadth) score = Math.min(score, w.thinBaseCap);
   score = Math.max(0, Math.min(100, score));
 
-  const band: ConfidenceBand = score >= 70 ? "high" : score >= 45 ? "moderate" : "low";
+  const band: ConfidenceBand = score >= w.highBand ? "high" : score >= w.moderateBand ? "moderate" : "low";
 
   const positive: string[] = [];
   const negative: string[] = [];

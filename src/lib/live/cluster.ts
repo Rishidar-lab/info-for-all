@@ -73,7 +73,10 @@ interface Edge {
  */
 function scorePair(a: LiveArticle, b: LiveArticle, sa: Sig, sb: Sig, sameWindowMs: number): Edge | null {
   if (Math.abs(Date.parse(a.publishedAt) - Date.parse(b.publishedAt)) > sameWindowMs) return null;
-  if ((a.crisisType || null) !== (b.crisisType || null)) return null;
+  // Block only a genuine hazard contradiction (flood vs cyclone). One report
+  // naming the hazard and the other not ("Chennai floods: schools shut" vs
+  // "Chennai schools declared holiday") is still the same event.
+  if (a.crisisType && b.crisisType && a.crisisType !== b.crisisType) return null;
 
   // Geographic contradiction — different named districts / states, no overlap.
   if (a.districts.length > 0 && b.districts.length > 0 && !districtOverlap(a.districts, b.districts)) {
@@ -95,7 +98,10 @@ function scorePair(a: LiveArticle, b: LiveArticle, sa: Sig, sb: Sig, sameWindowM
   // Dam", "Freedom Park" or "Birbhum" is.
   const sharedRare = [...sa.rareEntities].filter((e) => sb.rareEntities.has(e));
   const sharedKey = sharedRare.filter((e) => !PERSON_ENTITIES.has(e));
-  const keyN = sharedKey.length;
+  // A shared NAMED district is itself a specific shared reference (the same
+  // signal class as sharing "Freedom Park" or "Birbhum"). It only counts when
+  // the districts genuinely overlap — different districts still block the join.
+  const keyN = sharedKey.length + (dOverlap ? 1 : 0);
   const sharedTxt = sharedKey.length ? ` (${sharedKey.slice(0, 3).join(", ")})` : "";
   const dTxt = dOverlap ? a.districts.filter((d) => b.districts.includes(d)).join(", ") : "";
 
@@ -125,6 +131,12 @@ function scorePair(a: LiveArticle, b: LiveArticle, sa: Sig, sb: Sig, sameWindowM
           ? `Shared specific reference${sharedTxt}, headline overlap ${(titleSim * 100).toFixed(0)}%.`
           : `Same district (${dTxt}), headline overlap ${(titleSim * 100).toFixed(0)}%.`,
     };
+  }
+  // Near-identical LONG headlines from two publishers: almost certainly one
+  // story (syndicated wire copy or a shared brief). Still bounded by the time
+  // window and the geographic-contradiction check above.
+  if (titleSim >= 0.9 && sa.tokens.size >= 5 && sb.tokens.size >= 5) {
+    return { confidence: "probable", reason: `Near-identical headline (${(titleSim * 100).toFixed(0)}%) — likely one source.` };
   }
   if (titleSim >= 0.5 || (keyN >= 1 && titleSim >= 0.2)) {
     return { confidence: "weak", reason: `Headline / entity similarity only (${(titleSim * 100).toFixed(0)}%).` };
