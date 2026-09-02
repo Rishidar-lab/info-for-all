@@ -25,6 +25,7 @@ import { parseFeed, parseSachetJson, type RawItem } from "../src/lib/live/parse"
 import { normalizeItem } from "../src/lib/live/normalize";
 import { clusterArticles } from "../src/lib/live/cluster";
 import { buildEventClaims } from "../src/lib/claims";
+import { stripLoneSurrogates } from "../src/lib/live/text";
 import { crisisPriority, capWeight, detectCrisisType, verificationFor } from "../src/lib/live/crisis";
 import { normalisedTitleKey } from "../src/lib/live/text";
 import type { FeedStatus, LiveArticle, LiveDataset, FeedHealth } from "../src/lib/live/types";
@@ -284,7 +285,9 @@ async function main() {
   };
 
   mkdirSync(dirname(OUT), { recursive: true });
-  writeFileSync(OUT, JSON.stringify(dataset, null, 2) + "\n");
+  // Defensive: every text field is already cleaned, but a lone UTF-16 surrogate
+  // anywhere in the snapshot makes it invalid JSON to Turbopack's parser.
+  writeFileSync(OUT, stripLoneSurrogates(JSON.stringify(dataset, null, 2)) + "\n");
 
   console.log(
     `\nWrote ${OUT}\n  health=${dataset.health}  articles=${articles.length}  clusters=${clusters.length}  ` +

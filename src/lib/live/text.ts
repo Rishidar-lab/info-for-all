@@ -27,6 +27,18 @@ const CONTROL_CHARS = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/g;
 const COMBINING_MARKS = /[\u0300-\u036F]/g;
 const TAMIL_BLOCK = /[\u0B80-\u0BFF]/g;
 
+// Unpaired UTF-16 surrogates — a high surrogate not followed by a low one, or a
+// low surrogate not preceded by a high one. Feeds sometimes emit half an emoji,
+// and a length clamp can split a valid pair; either way `JSON.stringify` then
+// renders a lone `\uD83D`, which Turbopack rejects as invalid JSON when it
+// imports the generated snapshot.
+const LONE_SURROGATE = /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g;
+
+/** Drop any unpaired surrogate code unit. */
+export function stripLoneSurrogates(s: string): string {
+  return s.replace(LONE_SURROGATE, "");
+}
+
 export function decodeEntities(input: string): string {
   return input
     .replace(/&#x([0-9a-fA-F]+);/g, (_, h) => safeCodePoint(parseInt(h, 16)))
@@ -59,8 +71,9 @@ export function clean(input: unknown, maxLen = 400): string {
   s = stripTags(s);
   s = decodeEntities(s);
   s = s.replace(CONTROL_CHARS, "");
+  s = stripLoneSurrogates(s);
   s = s.replace(/\s+/g, " ").trim();
-  if (s.length > maxLen) s = s.slice(0, maxLen - 1).trimEnd() + "…";
+  if (s.length > maxLen) s = stripLoneSurrogates(s.slice(0, maxLen - 1)).trimEnd() + "…";
   return s;
 }
 
