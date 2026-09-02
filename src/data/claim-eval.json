@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-09-02T03:45:52.178Z",
+  "generatedAt": "2026-09-02T09:46:17.164Z",
   "corpusInstant": "2026-09-02T06:00:00.000Z",
   "provider": "rule-only",
   "totals": {
     "cases": 223,
-    "passed": 211
+    "passed": 222
   },
   "languageBreakdown": {
     "english": 162,
@@ -14,7 +14,7 @@
   "categoryBreakdown": {
     "Same fact, different wording": {
       "n": 27,
-      "passed": 26
+      "passed": 27
     },
     "Related but different fact": {
       "n": 13,
@@ -22,7 +22,7 @@
     },
     "Numeric agreement (unit normalisation)": {
       "n": 8,
-      "passed": 7
+      "passed": 8
     },
     "Numeric contradiction": {
       "n": 10,
@@ -46,19 +46,19 @@
     },
     "Primary evidence support": {
       "n": 10,
-      "passed": 9
+      "passed": 10
     },
     "Syndication vs independence": {
       "n": 13,
-      "passed": 12
+      "passed": 13
     },
     "Tamil ↔ Tamil": {
       "n": 26,
-      "passed": 22
+      "passed": 26
     },
     "Tamil ↔ English": {
       "n": 33,
-      "passed": 30
+      "passed": 33
     },
     "Same people, different story": {
       "n": 18,
@@ -77,17 +77,17 @@
     "claimMatching": {
       "label": "Claim matching",
       "precision": 1,
-      "recall": 0.8924731182795699,
-      "f1": 0.9431818181818181,
+      "recall": 1,
+      "f1": 1,
       "accuracy": null,
       "n": 164
     },
     "claimExtraction": {
       "label": "Claim extraction (expected type recovered)",
       "precision": null,
-      "recall": 0.963855421686747,
+      "recall": 0.9879518072289156,
       "f1": null,
-      "accuracy": 0.963855421686747,
+      "accuracy": 0.9879518072289156,
       "n": 83
     },
     "contradiction": {
@@ -117,8 +117,8 @@
     "primaryEvidence": {
       "label": "Primary-evidence linking",
       "precision": 1,
-      "recall": 0.8571428571428571,
-      "f1": 0.923076923076923,
+      "recall": 1,
+      "f1": 1,
       "accuracy": null,
       "n": 7
     },
@@ -143,7 +143,7 @@
       "precision": null,
       "recall": null,
       "f1": null,
-      "accuracy": 0.8461538461538461,
+      "accuracy": 1,
       "n": 26
     },
     "crossLanguageHeld": {
@@ -170,26 +170,10 @@
     "cases": []
   },
   "failureCounts": {
-    "missed-match": 10,
-    "extraction-miss": 3,
     "attribution-lost": 1,
-    "missed-evidence-link": 1
+    "extraction-miss": 1
   },
   "sampleFailures": [
-    {
-      "id": "C05",
-      "category": "Numeric agreement (unit normalisation)",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
-    },
-    {
-      "id": "C05",
-      "category": "Numeric agreement (unit normalisation)",
-      "kind": "extraction-miss",
-      "expected": "statistic",
-      "actual": "event"
-    },
     {
       "id": "H07",
       "category": "Prediction",
@@ -203,75 +187,33 @@
       "kind": "extraction-miss",
       "expected": "prediction|attribution",
       "actual": "official-statement,event"
-    },
-    {
-      "id": "I09",
-      "category": "Primary evidence support",
-      "kind": "missed-evidence-link",
-      "expected": "CAP supports the claim",
-      "actual": "no evidence extracted"
-    },
-    {
-      "id": "J10",
-      "category": "Syndication vs independence",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
-    },
-    {
-      "id": "P04",
-      "category": "Tamil ↔ Tamil",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
-    },
-    {
-      "id": "P12",
-      "category": "Tamil ↔ Tamil",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
-    },
-    {
-      "id": "P13",
-      "category": "Tamil ↔ Tamil",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
-    },
-    {
-      "id": "P14",
-      "category": "Tamil ↔ Tamil",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
-    },
-    {
-      "id": "Q06",
-      "category": "Tamil ↔ English",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
-    },
-    {
-      "id": "Q11",
-      "category": "Tamil ↔ English",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
     }
   ],
   "languageRecall": {
-    "english": 0.94,
-    "tamilTamil": 0.8181818181818182,
-    "crossLanguage": 0.8571428571428571
+    "english": 1,
+    "tamilTamil": 1,
+    "crossLanguage": 1
   },
   "v04": {
     "cases": 148,
+    "clean": 127,
     "matchingPrecision": 1,
     "matchingRecall": 0.591,
     "tamilMatching": 0.125,
+    "crossLanguage": null,
     "contradictionRecall": 0.9,
-    "falseCorroboration": 0
+    "falseCorroboration": 0,
+    "falseCorroborationDen": 47
+  },
+  "v05": {
+    "cases": 223,
+    "clean": 211,
+    "matchingPrecision": 1,
+    "matchingRecall": 0.892,
+    "tamilMatching": 0.846,
+    "crossLanguage": 1,
+    "contradictionRecall": 1,
+    "falseCorroboration": 0,
+    "falseCorroborationDen": 71
   }
 }

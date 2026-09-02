@@ -17,7 +17,7 @@ const CONCEPTS: Record<string, string[]> = {
   reservoir: ["reservoir", "storage level", "full reservoir level", "approaches full"],
   rain: ["rain", "rainfall", "downpour", "showers", "rains"],
   "heavy-rain": ["heavy rain", "very heavy rain", "extremely heavy rain", "torrential rain"],
-  flood: ["flood", "floods", "flooding", "waterlogging", "inundation", "inundated", "submerged", "deluge"],
+  flood: ["flood", "floods", "flooding", "waterlogging", "inundation", "inundated", "submerged", "deluge", "river swells", "river in spate", "in spate", "banks overflow", "banks overflowing", "overflowed its banks", "river rising", "water level rising"],
   warning: ["warning", "warned", "warns"],
   alert: ["alert", "alerts", "on alert"],
   red: ["red alert"],
@@ -25,8 +25,13 @@ const CONCEPTS: Record<string, string[]> = {
   yellow: ["yellow alert"],
   order: ["order", "ordered", "directive", "directed"],
   announcement: ["announced", "announcement", "announces"],
-  evacuation: ["evacuation", "evacuated", "evacuate", "moved residents", "move residents", "shifted residents", "shift residents", "relocated", "residents out", "people out of"],
+  evacuation: ["evacuation", "evacuated", "evacuate", "moved residents", "move residents", "shifted residents", "shift residents", "relocated", "residents out", "people out of", "moved to safety", "shifted to safety", "moved to safer", "taken to safety", "moved to higher ground"],
   rescue: ["rescue", "rescued", "pulled out", "pulled to safety", "brought to safety", "winched"],
+  "rough-sea": ["rough sea", "sea turned rough", "sea is rough", "high waves", "swell surge", "kallakkadal", "sea surge", "turbulent sea", "sea churning", "rough sea conditions"],
+  boat: ["boat", "boats", "catamaran", "fishing vessel", "fishing vessels", "mechanised boats", "country boats"],
+  landfall: ["landfall", "make landfall", "makes landfall", "cross the coast", "crosses the coast", "cross coast", "to cross the coast", "hit the coast", "cross the tamil nadu coast"],
+  damage: ["road damaged", "road caved in", "road subsidence", "subsidence", "caved in", "washed away", "breach", "breached", "sustained damage", "extensive damage", "structural damage"],
+  diversion: ["diverted", "diversion", "route diverted", "traffic diverted", "rerouted", "route change", "traffic rerouted", "changed route", "alternate route"],
   death: ["killed", "dead", "died", "deaths", "toll", "fatalities", "lost their lives"],
   injury: ["injured", "hurt", "wounded", "injuries"],
   release: ["released", "release", "water released", "discharge", "opened the dam", "let out"],
@@ -81,6 +86,7 @@ export const CONCEPT_EQUIV: [string, string][] = [
   ["flood", "rain"],
   ["evacuation", "rescue"],
   ["power-cut", "power"],
+  ["sea", "coast"],
 ];
 
 /**

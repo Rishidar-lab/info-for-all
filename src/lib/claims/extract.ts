@@ -134,6 +134,13 @@ function parseFigures(text: string): { kind: string; value: number; raw: string 
   push("deaths", new RegExp(`\\b${NUM}\\s+${P}(?:killed|dead|died|deaths|lost their lives)\\b`));
   push("injuries", new RegExp(`\\b${NUM}\\s+${P}(?:injured|hurt|wounded)\\b`));
   push("missing", new RegExp(`\\b${NUM}\\s+${P}(?:missing|unaccounted)\\b`));
+  // "two fishermen from X go missing", "three workers still not traced"
+  push(
+    "missing",
+    new RegExp(
+      `\\b${NUM}\\s+(?:fishermen|persons?|people|residents?|workers?|labourers?|crew|sailors?|passengers?|students?|tourists?)\\b[^.]{0,45}?\\b(?:go missing|goes missing|went missing|reported missing|still missing|missing|unaccounted|untraceable|not (?:been )?traced)\\b`,
+    ),
+  );
   // verb-first forms: "kills 3", "injures 12", "leaves 7 dead", "damages 150 huts"
   push("deaths", new RegExp(`\\b(?:kills?|killing|claim(?:s|ed)? the lives of|leaves?)\\s+${NUM}\\b(?![^.]{0,15}\\binjured)`));
   push("injuries", new RegExp(`\\b(?:injur(?:es|ed|ing)|hurts?|wounds?)\\s+${NUM}\\b`));
@@ -158,6 +165,10 @@ function parseFigures(text: string): { kind: string; value: number; raw: string 
   push("houses_damaged", new RegExp(`\\b${NUM}\\s+(?:houses?|huts?|homes?|dwellings?)\\s+(?:were\\s+)?(?:damaged|destroyed|collapsed)`));
   push("houses_damaged", new RegExp(`\\b(?:damages?|destroys?|damage (?:rises|rose|climbs) to)\\s+${NUM}\\s+(?:houses?|huts?|homes?)`));
   push("discharge_cusecs", new RegExp(`\\b${NUM}[\\d,]*\\s?cusecs?\\b`));
+  // reservoir / dam water level in feet — "level at 118 ft", "118 ft of 120 ft"
+  if (/\b(dam|reservoir|storage|water level|full level|lake|nears? full|against a full)\b/.test(t)) {
+    push("water_level_ft", new RegExp(`\\b${NUM}(?:\\.\\d+)?\\s?(?:ft|feet)\\b`));
+  }
   push("relief_camps", new RegExp(`\\b${NUM}\\s+(?:flood\\s+)?relief\\s+(?:camps?|centres?|shelters?)\\b`));
   // people sheltered: "relief camps house/shelter/hold N", "camp population now N"
   push("rescued", new RegExp(`\\brelief camps?\\b[^.]{0,20}?\\b(?:house|houses|shelter|shelters|hold|holds)\\s+${NUM}\\b`));
@@ -569,6 +580,7 @@ function figurePhrase(f: { kind: string; value: number }): string {
     case "rainfall_mm": return `${n} mm of rainfall was recorded`;
     case "houses_damaged": return `${n} houses were reported damaged`;
     case "discharge_cusecs": return `${n} cusecs of water was released`;
+    case "water_level_ft": return `the reservoir water level was reported at ${n} ft`;
     case "relief_camps": return `${n} relief camps were opened`;
     case "teams": return `${n} rescue teams were deployed`;
     case "wind_kmph": return `winds of ${n} kmph were recorded or forecast`;

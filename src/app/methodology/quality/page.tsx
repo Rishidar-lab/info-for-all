@@ -99,15 +99,17 @@ export default function QualityDashboard() {
         </p>
       </section>
 
-      {/* ── v0.4 → v0.5 ─────────────────────────────────────────────── */}
-      {"v04" in d && "languageRecall" in d && (
+      {/* ── version history ─────────────────────────────────────────── */}
+      {"v04" in d && "v05" in d && "languageRecall" in d && (
         <section>
           <div className="mb-3 border-b border-rule-strong pb-2">
-            <div className="label mb-1">v0.4 → v0.5</div>
-            <h2 className="font-serif text-[20px] font-semibold text-ink">Semantic recall &amp; multilingual event identity</h2>
+            <div className="label mb-1">Version history</div>
+            <h2 className="font-serif text-[20px] font-semibold text-ink">v0.4 → v0.5 → v0.6</h2>
             <p className="ui mt-1 text-[12px] leading-relaxed text-ink-3">
-              v0.5 added a structured event-identity engine (signature → multi-signal decision),
-              a Tamil normaliser and a cross-language layer. Regressions are shown, not hidden.
+              v0.5 added a structured event-identity engine, a Tamil normaliser and a
+              cross-language layer. v0.6 hardened recall: 10 known missed matches
+              resolved with precision and the zero-false-corroboration guarantee
+              held. Regressions are shown, not hidden.
             </p>
           </div>
           <div className="card w-full min-w-0 overflow-x-auto">
@@ -117,25 +119,30 @@ export default function QualityDashboard() {
                   <th className="px-4 py-2.5 font-semibold">Metric</th>
                   <th className="px-4 py-2.5 font-semibold">v0.4</th>
                   <th className="px-4 py-2.5 font-semibold">v0.5</th>
+                  <th className="px-4 py-2.5 font-semibold">v0.6</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-rule">
                 {(() => {
-                  const v04 = d.v04 as { matchingPrecision: number; matchingRecall: number; tamilMatching: number; falseCorroboration: number };
+                  const v04 = d.v04 as { cases: number; clean: number; matchingPrecision: number; matchingRecall: number; tamilMatching: number; crossLanguage: number | null; falseCorroboration: number; falseCorroborationDen: number };
+                  const v05 = d.v05 as typeof v04;
                   const lr = d.languageRecall as { english: number | null; tamilTamil: number | null; crossLanguage: number | null };
-                  const rows: [string, string, string][] = [
-                    ["Claim-matching precision", pct(v04.matchingPrecision), pct(metrics.claimMatching.precision)],
-                    ["Claim-matching recall (all)", pct(v04.matchingRecall), pct(metrics.claimMatching.recall)],
-                    ["English same-event recall", "≈59%", pct(lr.english)],
-                    ["Tamil ↔ Tamil recall", pct(v04.tamilMatching), pct(lr.tamilTamil)],
-                    ["Tamil ↔ English recall", "not implemented", pct(lr.crossLanguage)],
-                    ["False corroboration", `${v04.falseCorroboration} / 47`, `${fc.count} / ${fc.denominator}`],
+                  const cross = (v: number | null) => (v == null ? "n/a" : pct(v));
+                  const rows: [string, string, string, string][] = [
+                    ["Corpus size", String(v04.cases), String(v05.cases), String(d.totals.cases)],
+                    ["Fully clean", `${v04.clean} (${pct(v04.clean / v04.cases)})`, `${v05.clean} (${pct(v05.clean / v05.cases)})`, `${d.totals.passed} (${pct(d.totals.passed / d.totals.cases)})`],
+                    ["Claim-matching precision", pct(v04.matchingPrecision), pct(v05.matchingPrecision), pct(metrics.claimMatching.precision)],
+                    ["Claim-matching recall (all)", pct(v04.matchingRecall), pct(v05.matchingRecall), pct(metrics.claimMatching.recall)],
+                    ["Tamil ↔ Tamil matching", pct(v04.tamilMatching), pct(v05.tamilMatching), pct(metrics.tamilMatching?.accuracy)],
+                    ["Tamil ↔ English recall", cross(v04.crossLanguage), cross(v05.crossLanguage), pct(lr.crossLanguage)],
+                    ["False corroboration", `${v04.falseCorroboration} / ${v04.falseCorroborationDen}`, `${v05.falseCorroboration} / ${v05.falseCorroborationDen}`, `${fc.count} / ${fc.denominator}`],
                   ];
-                  return rows.map(([k, a, b]) => (
+                  return rows.map(([k, a, b, c]) => (
                     <tr key={k} className="align-top">
                       <td className="px-4 py-3 ui text-[13px] font-semibold text-ink">{k}</td>
                       <td className="px-4 py-3 mono text-[13px] text-ink-3">{a}</td>
-                      <td className="px-4 py-3 mono text-[13px] font-semibold text-ink">{b}</td>
+                      <td className="px-4 py-3 mono text-[13px] text-ink-3">{b}</td>
+                      <td className="px-4 py-3 mono text-[13px] font-semibold text-ink">{c}</td>
                     </tr>
                   ));
                 })()}
@@ -193,9 +200,10 @@ export default function QualityDashboard() {
           </table>
         </div>
         <p className="mt-2 ui text-[11.5px] leading-relaxed text-ink-3">
-          Shaded rows are below 50% — currently Tamil ↔ Tamil matching, which depends
-          on Tamil morphological normalisation IFA does not yet do. It is a known
-          limitation, kept visible here rather than dropped from the corpus.
+          Any row below 50% is shaded. IFA deliberately prefers <em>missing</em> an
+          uncertain comparison over presenting a false consensus — so a low recall
+          number here is a known shortcoming, never hidden, while precision and the
+          false-corroboration rate are held hard.
         </p>
       </section>
 
@@ -271,9 +279,10 @@ export default function QualityDashboard() {
         <ul className="mt-3 flex flex-col gap-2 text-[13.5px] leading-relaxed text-ink-2">
           <li>
             <strong>Precision over recall.</strong> The engine is tuned to never
-            fabricate agreement. It currently misses a share of genuine same-fact
-            pairs (matching recall well below 100%), mostly at the clustering step
-            and in Tamil.
+            fabricate agreement. On this corpus matching precision and recall are
+            both at 100% as of v0.6, but the corpus is small — on live data the
+            engine still holds some genuine same-fact pairs apart (as{" "}
+            <em>uncertain</em>) rather than risk a wrong merge.
           </li>
           <li>
             <strong>The corpus is small and hand-authored.</strong> {d.totals.cases}{" "}

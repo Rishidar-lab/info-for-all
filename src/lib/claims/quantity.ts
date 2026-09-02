@@ -54,7 +54,7 @@ export function parseNumberToken(token: string): number | null {
   return null;
 }
 
-const LENGTH_TO_MM: Record<string, number> = { mm: 1, cm: 10, m: 1000, km: 1_000_000 };
+const LENGTH_TO_MM: Record<string, number> = { mm: 1, cm: 10, m: 1000, km: 1_000_000, ft: 304.8, feet: 304.8 };
 const CURRENCY_MULT: Record<string, number> = { "": 1, thousand: 1e3, lakh: 1e5, crore: 1e7, million: 1e6, billion: 1e9 };
 const COUNT_MULT: Record<string, number> = { "": 1, thousand: 1e3, lakh: 1e5, crore: 1e7, million: 1e6, billion: 1e9 };
 
@@ -74,8 +74,8 @@ export function parseQuantities(text: string): Quantity[] {
     }
   };
 
-  // ── length: rainfall / levels — "120 mm", "12 cm", "1.2 m" ──
-  for (const m of t.matchAll(/\b([\d,]+(?:\.\d+)?)\s?(mm|cm|km|m)\b/g)) {
+  // ── length: rainfall / levels — "120 mm", "12 cm", "1.2 m", "118 ft" ──
+  for (const m of t.matchAll(/\b([\d,]+(?:\.\d+)?)\s?(mm|cm|km|m|ft|feet)\b/g)) {
     const n = parseNumberToken(m[1]);
     const mult = LENGTH_TO_MM[m[2]];
     if (n != null && mult) add({ value: n * mult, unit: "mm", dimension: "length", raw: m[0].trim() });
@@ -119,8 +119,12 @@ export function parseQuantities(text: string): Quantity[] {
     if (base != null && mult) add({ value: base * mult, unit: "1", dimension: "count", raw: m[0].trim() });
   }
 
-  // ── "N districts" — a distinctive statewide-weather figure ──
-  for (const m of t.matchAll(/\b(\d{1,2})\s+(?:districts?|மாவட்டங்கள்|மாவட்டங்களுக்கு|மாவட்டங்களில்)\b/g)) {
+  // ── "N districts" — a distinctive statewide-weather figure. The Tamil forms
+  //    end in a Tamil letter, which is `\W` to a non-`u` regex, so a trailing
+  //    `\b` would never match after them — use a non-letter/digit lookahead. ──
+  for (const m of t.matchAll(
+    /\b(\d{1,2})\s+(?:districts?|மாவட்டங்கள்|மாவட்டங்களுக்கு|மாவட்டங்களில்|மாவட்டங்களிலும்)(?![\p{L}\p{N}])/gu,
+  )) {
     const n = Number(m[1]);
     if (Number.isFinite(n) && n >= 2) add({ value: n, unit: "districts", dimension: "district-count", raw: m[0].trim() });
   }

@@ -3,8 +3,15 @@
 IFA is designed to encourage verification rather than demand trust. This document states the method —
 **and its weaknesses** — for each stage of the pipeline. Nothing here is hidden or hand-waved.
 
-The in-app `/methodology` page is a condensed version of this document generated from the live
-weight table.
+> **STATUS (v0.6):** §0 (principle) and §5+ are current. §1–§4 predate the static
+> pivot and the v0.5–v0.6 identity/claim engines and are being rewritten — the
+> **authoritative, up-to-date descriptions** are the public `/about` page,
+> `docs/EVENT-IDENTITY.md`, `docs/CLAIM-CONFIDENCE-v2.md`, and the code in
+> `src/lib/{live,event-identity,claims,semantic,language}/`. In particular:
+> ingestion now yields `RawItem` (`src/lib/live/parse.ts`); clustering is the
+> two-pass lexical + semantic engine in `src/lib/live/cluster.ts` (not a single
+> weighted blend); language is detected (`detectLanguage`) and Tamil is handled
+> explicitly.
 
 ---
 

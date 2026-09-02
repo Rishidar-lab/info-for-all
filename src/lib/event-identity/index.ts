@@ -18,9 +18,17 @@ export type { IdentityDecision, EventRelation } from "./decide";
 import type { EventSignature } from "./signature";
 import { decideIdentity } from "./decide";
 import { cosine } from "@/lib/semantic/embeddings";
-import { GENERIC_CONCEPTS } from "@/lib/semantic/concepts";
+import { GENERIC_CONCEPTS, conceptOverlap } from "@/lib/semantic/concepts";
 
 const SPECIFIC_CONCEPT_EXCLUDE = new Set([...GENERIC_CONCEPTS, "rain", "flood", "cyclone"]);
+
+/**
+ * Quantity dimensions distinctive enough that two reports citing the SAME value
+ * are very likely the same event ("90 kmph winds", "16 districts", "12000
+ * cusecs", "Rs 500 crore"). Rainfall length and bare people-counts are too
+ * common to block on.
+ */
+const DISTINCTIVE_QTY_DIMS = new Set(["district-count", "speed", "volume-rate", "currency", "temperature"]);
 
 export interface CandidatePair {
   i: number;
@@ -50,6 +58,7 @@ export function candidatePairs(
   const byEntity = new Map<string, number[]>();
   const byPlace = new Map<string, number[]>();
   const byCrisis = new Map<string, number[]>();
+  const byQuantity = new Map<string, number[]>();
   // "Tamil Nadu" / "India" / a state name are far too hot to block on — dozens
   // of unrelated stories a day share them. Districts, specific places (dams,
   // towns), and strong named entities carry the signal.
@@ -62,6 +71,9 @@ export function candidatePairs(
       push(byPlace, p.place.canonical, i);
     }
     if (sigs[i].crisisType) push(byCrisis, sigs[i].crisisType!, i);
+    for (const q of sigs[i].quantities) {
+      if (DISTINCTIVE_QTY_DIMS.has(q.dimension)) push(byQuantity, `${q.dimension}:${Math.round(q.value)}`, i);
+    }
   }
 
   const seen = new Set<number>();
@@ -79,6 +91,7 @@ export function candidatePairs(
   for (const [k, idxs] of byDistrict) for (const [x, y] of pairsOf(idxs)) consider(x, y, `district:${k}`);
   for (const [k, idxs] of byEntity) for (const [x, y] of pairsOf(idxs)) consider(x, y, `entity:${k}`);
   for (const [k, idxs] of byPlace) for (const [x, y] of pairsOf(idxs)) consider(x, y, `place:${k}`);
+  for (const [k, idxs] of byQuantity) for (const [x, y] of pairsOf(idxs)) consider(x, y, `qty:${k}`);
   // crisis-type block, gated by a cheap embedding check
   for (const [k, idxs] of byCrisis) {
     for (const [x, y] of pairsOf(idxs)) {
@@ -91,9 +104,23 @@ export function candidatePairs(
   const stateIdx: number[] = [];
   for (let i = 0; i < n; i++) if (sigs[i].places.some((p) => p.place.type === "state" || HOT.has(p.place.canonical))) stateIdx.push(i);
   for (const [x, y] of pairsOf(stateIdx)) {
-    if (cosine(sigs[x].embedding, sigs[y].embedding) < 0.6) continue;
-    const sharedSpecific = [...sigs[x].concepts].some((c) => !SPECIFIC_CONCEPT_EXCLUDE.has(c) && sigs[y].concepts.has(c));
-    if (sharedSpecific) consider(x, y, "state+concept");
+    // conceptOverlap reports tokens from its first argument, so run it both ways
+    // and union — the candidate set must not depend on article order.
+    const shared = [
+      ...new Set([
+        ...conceptOverlap(sigs[x].concepts, sigs[y].concepts).shared,
+        ...conceptOverlap(sigs[y].concepts, sigs[x].concepts).shared,
+      ]),
+    ].filter((c) => !SPECIFIC_CONCEPT_EXCLUDE.has(c));
+    // embedding-close with one shared specific concept, OR two shared specific
+    // concepts at any cosine — enough to catch "TN rain hits air & rail" pairs,
+    // still filters "TN weather" ↔ "TN Assembly".
+    if (
+      (shared.length >= 1 && cosine(sigs[x].embedding, sigs[y].embedding) >= 0.6) ||
+      shared.length >= 2
+    ) {
+      consider(x, y, "state+concept");
+    }
   }
   return out;
 }

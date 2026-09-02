@@ -72,6 +72,7 @@ export function decideIdentity(a: EventSignature, b: EventSignature): IdentityDe
   }
 
   const strongEntity = s.entityScore > 0;
+  const sameIncident = !!a.incidentType && a.incidentType === b.incidentType;
   const sameLoc = s.placeRelation === "same"; // shared DISTRICT or specific place
   const regionOnly = s.placeRelation === "same-region-only"; // just the state / a broad region
   const nestedLoc = s.placeRelation === "nested";
@@ -103,6 +104,21 @@ export function decideIdentity(a: EventSignature, b: EventSignature): IdentityDe
     return { relation: "uncertain", confidence: "low", signals: s, blockers, reasons, crossLanguage };
   }
 
+  // ── same specific place / district + same incident sub-type ─────────
+  // A fire, a wall collapse, a boat capsize at the SAME named place, within the
+  // window (the temporal blocker above already removed week-apart repeats), with
+  // at least one more shared anchor — the same event reported two ways.
+  if (
+    sameLoc &&
+    sameIncident &&
+    noPenalty &&
+    (s.exactPlace || strongEntity || sharedSpecificConcepts >= 1 || s.quantityMatch === 1)
+  ) {
+    reasons.push(`same place and the same incident type (${a.incidentType})`);
+    const conf = s.exactPlace || sharedSpecificConcepts >= 1 || s.quantityMatch === 1 ? "moderate" : "low";
+    return { relation: "same", confidence: conf, signals: s, blockers, reasons, crossLanguage };
+  }
+
   // high confidence
   if (
     sameLoc &&
@@ -121,7 +137,16 @@ export function decideIdentity(a: EventSignature, b: EventSignature): IdentityDe
     return { relation: "same", confidence: "high", signals: s, blockers, reasons, crossLanguage };
   }
   // moderate confidence
-  if (sameLoc && noPenalty && ((actionSame && conceptOk) || (conceptGood && (actionOk || semanticGood)) || (strongEntity && conceptOk))) {
+  if (
+    sameLoc &&
+    noPenalty &&
+    ((actionSame && conceptOk) ||
+      (conceptGood && (actionOk || semanticGood)) ||
+      (strongEntity && conceptOk) ||
+      // same place + two or more distinctive shared concepts (a strong topical
+      // match) even when the surface action is absent on one side
+      (conceptGood && sharedSpecificConcepts >= 2 && (s.semanticScore >= 0.45 || actionSame || s.actionRelation === "compatible")))
+  ) {
     reasons.push("same place with matching topic and " + (actionSame ? "action" : semanticGood ? "semantic similarity" : "overlap"));
     return { relation: "same", confidence: "moderate", signals: s, blockers, reasons, crossLanguage };
   }

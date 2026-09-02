@@ -6,9 +6,9 @@ semantic veto.
 
 | Metric | v0.4 | v0.5 | Δ |
 |---|---|---|---|
-| Matching precision | 92.7% | 93.2% | 0.5 pp |
-| Matching recall | 72.9% | 98.6% | +25.7 pp |
+| Matching precision | 92.7% | 93.3% | 0.6 pp |
+| Matching recall | 72.9% | 100.0% | +27.1 pp |
 | False positives | 4 | 5 | 1 |
 | Tamil ↔ Tamil recall | 0.0% | 100.0% | +100.0 pp |
 | Tamil ↔ English recall | 0.0% | 100.0% | +100.0 pp |
-| Runtime (148 pairs) | 354 ms | 291 ms | +-63 ms |
+| Runtime (148 pairs) | 342 ms | 289 ms | +-53 ms |

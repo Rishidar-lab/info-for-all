@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-09-02T03:45:52.178Z",
+  "generatedAt": "2026-09-02T09:46:17.164Z",
   "now": "2026-09-02T06:00:00.000Z",
   "provider": "rule-only",
   "totals": {
     "cases": 223,
-    "passed": 211
+    "passed": 222
   },
   "byCategory": {
     "Same fact, different wording": {
       "n": 27,
-      "passed": 26
+      "passed": 27
     },
     "Related but different fact": {
       "n": 13,
@@ -17,7 +17,7 @@
     },
     "Numeric agreement (unit normalisation)": {
       "n": 8,
-      "passed": 7
+      "passed": 8
     },
     "Numeric contradiction": {
       "n": 10,
@@ -41,19 +41,19 @@
     },
     "Primary evidence support": {
       "n": 10,
-      "passed": 9
+      "passed": 10
     },
     "Syndication vs independence": {
       "n": 13,
-      "passed": 12
+      "passed": 13
     },
     "Tamil ↔ Tamil": {
       "n": 26,
-      "passed": 22
+      "passed": 26
     },
     "Tamil ↔ English": {
       "n": 33,
-      "passed": 30
+      "passed": 33
     },
     "Same people, different story": {
       "n": 18,
@@ -72,15 +72,15 @@
     "claimMatching": {
       "label": "Claim matching",
       "precision": 1,
-      "recall": 0.8924731182795699,
-      "f1": 0.9431818181818181,
+      "recall": 1,
+      "f1": 1,
       "n": 164,
-      "detail": "TP 83 · FP 0 · FN 10 · TN 71"
+      "detail": "TP 93 · FP 0 · FN 0 · TN 71"
     },
     "claimExtraction": {
       "label": "Claim extraction (expected type recovered)",
-      "accuracy": 0.963855421686747,
-      "recall": 0.963855421686747,
+      "accuracy": 0.9879518072289156,
+      "recall": 0.9879518072289156,
       "n": 83
     },
     "contradiction": {
@@ -104,10 +104,10 @@
     "primaryEvidence": {
       "label": "Primary-evidence linking",
       "precision": 1,
-      "recall": 0.8571428571428571,
-      "f1": 0.923076923076923,
+      "recall": 1,
+      "f1": 1,
       "n": 7,
-      "detail": "TP 6 · FP 0 · FN 1"
+      "detail": "TP 7 · FP 0 · FN 0"
     },
     "independence": {
       "label": "Source-independence classification",
@@ -121,7 +121,7 @@
     },
     "tamilMatching": {
       "label": "Tamil ↔ Tamil matching",
-      "accuracy": 0.8461538461538461,
+      "accuracy": 1,
       "n": 26
     },
     "crossLanguageHeld": {
@@ -143,20 +143,6 @@
   },
   "failures": [
     {
-      "id": "C05",
-      "category": "Numeric agreement (unit normalisation)",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
-    },
-    {
-      "id": "C05",
-      "category": "Numeric agreement (unit normalisation)",
-      "kind": "extraction-miss",
-      "expected": "statistic",
-      "actual": "event"
-    },
-    {
       "id": "H07",
       "category": "Prediction",
       "kind": "attribution-lost",
@@ -169,83 +155,6 @@
       "kind": "extraction-miss",
       "expected": "prediction|attribution",
       "actual": "official-statement,event"
-    },
-    {
-      "id": "I09",
-      "category": "Primary evidence support",
-      "kind": "missed-evidence-link",
-      "expected": "CAP supports the claim",
-      "actual": "no evidence extracted"
-    },
-    {
-      "id": "J10",
-      "category": "Syndication vs independence",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
-    },
-    {
-      "id": "P04",
-      "category": "Tamil ↔ Tamil",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
-    },
-    {
-      "id": "P12",
-      "category": "Tamil ↔ Tamil",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
-    },
-    {
-      "id": "P13",
-      "category": "Tamil ↔ Tamil",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
-    },
-    {
-      "id": "P14",
-      "category": "Tamil ↔ Tamil",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
-    },
-    {
-      "id": "Q06",
-      "category": "Tamil ↔ English",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
-    },
-    {
-      "id": "Q11",
-      "category": "Tamil ↔ English",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
-    },
-    {
-      "id": "Q14",
-      "category": "Tamil ↔ English",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
-    },
-    {
-      "id": "S10",
-      "category": "Same fact, different wording",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
-    },
-    {
-      "id": "S10",
-      "category": "Same fact, different wording",
-      "kind": "extraction-miss",
-      "expected": "statistic",
-      "actual": "event"
     }
   ],
   "caseResults": [
@@ -683,23 +592,13 @@
       "id": "C05",
       "category": "C-numeric-agreement",
       "relation": "same",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-match",
-          "expected": "A and B corroborate",
-          "actual": "kept separate"
-        },
-        {
-          "kind": "extraction-miss",
-          "expected": "statistic",
-          "actual": "event"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "match-fn": true,
+        "match-tp": true,
         "contradiction-tn": true,
-        "extraction-den": true
+        "extraction-den": true,
+        "extraction-hit": true
       }
     },
     {
@@ -1480,16 +1379,10 @@
       "id": "I09",
       "category": "I-primary-evidence",
       "relation": "supports",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-evidence-link",
-          "expected": "CAP supports the claim",
-          "actual": "no evidence extracted"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "evidence-fn": true
+        "evidence-tp": true
       }
     },
     {
@@ -1639,16 +1532,10 @@
       "id": "J10",
       "category": "J-syndication",
       "relation": "same",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-match",
-          "expected": "A and B corroborate",
-          "actual": "kept separate"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "match-fn": true,
+        "match-tp": true,
         "contradiction-tn": true,
         "independence-den": true,
         "independence-hit": true
@@ -2221,20 +2108,15 @@
       "id": "P04",
       "category": "K-tamil-tamil",
       "relation": "same",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-match",
-          "expected": "A and B corroborate",
-          "actual": "kept separate"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "match-fn": true,
+        "match-tp": true,
         "crosslang-original-den": true,
         "crosslang-original-kept": true,
         "contradiction-tn": true,
-        "tamil-match-den": true
+        "tamil-match-den": true,
+        "tamil-match-hit": true
       }
     },
     {
@@ -2346,60 +2228,45 @@
       "id": "P12",
       "category": "K-tamil-tamil",
       "relation": "same",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-match",
-          "expected": "A and B corroborate",
-          "actual": "kept separate"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "match-fn": true,
+        "match-tp": true,
         "crosslang-original-den": true,
         "crosslang-original-kept": true,
         "contradiction-tn": true,
-        "tamil-match-den": true
+        "tamil-match-den": true,
+        "tamil-match-hit": true
       }
     },
     {
       "id": "P13",
       "category": "K-tamil-tamil",
       "relation": "same",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-match",
-          "expected": "A and B corroborate",
-          "actual": "kept separate"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "match-fn": true,
+        "match-tp": true,
         "crosslang-original-den": true,
         "crosslang-original-kept": true,
         "contradiction-tn": true,
-        "tamil-match-den": true
+        "tamil-match-den": true,
+        "tamil-match-hit": true
       }
     },
     {
       "id": "P14",
       "category": "K-tamil-tamil",
       "relation": "same",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-match",
-          "expected": "A and B corroborate",
-          "actual": "kept separate"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "match-fn": true,
+        "match-tp": true,
         "crosslang-original-den": true,
         "crosslang-original-kept": true,
         "contradiction-tn": true,
-        "tamil-match-den": true
+        "tamil-match-den": true,
+        "tamil-match-hit": true
       }
     },
     {
@@ -2562,16 +2429,10 @@
       "id": "Q06",
       "category": "L-tamil-english",
       "relation": "same",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-match",
-          "expected": "A and B corroborate",
-          "actual": "kept separate"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "match-fn": true,
+        "match-tp": true,
         "crosslang-original-den": true,
         "crosslang-original-kept": true,
         "contradiction-tn": true
@@ -2633,16 +2494,10 @@
       "id": "Q11",
       "category": "L-tamil-english",
       "relation": "same",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-match",
-          "expected": "A and B corroborate",
-          "actual": "kept separate"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "match-fn": true,
+        "match-tp": true,
         "crosslang-original-den": true,
         "crosslang-original-kept": true,
         "contradiction-tn": true
@@ -2678,16 +2533,10 @@
       "id": "Q14",
       "category": "L-tamil-english",
       "relation": "same",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-match",
-          "expected": "A and B corroborate",
-          "actual": "kept separate"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "match-fn": true,
+        "match-tp": true,
         "crosslang-original-den": true,
         "crosslang-original-kept": true,
         "contradiction-tn": true
@@ -3098,23 +2947,13 @@
       "id": "S10",
       "category": "A-same-fact-different-wording",
       "relation": "same",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-match",
-          "expected": "A and B corroborate",
-          "actual": "kept separate"
-        },
-        {
-          "kind": "extraction-miss",
-          "expected": "statistic",
-          "actual": "event"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "match-fn": true,
+        "match-tp": true,
         "contradiction-tn": true,
-        "extraction-den": true
+        "extraction-den": true,
+        "extraction-hit": true
       }
     },
     {

@@ -5,9 +5,9 @@ sweep shows what happens as the merge bar is lowered.
 
 | Merge bar | Precision | Recall | False positives | False corroboration |
 |---|---|---|---|---|
-| high | 100.0% | 40.9% | 0 | 0 |
-| high+moderate | 100.0% | 76.5% | 0 | 0 |
-| high+moderate+low | 100.0% | 76.5% | 0 | 0 |
+| high | 100.0% | 37.4% | 0 | 0 |
+| high+moderate | 100.0% | 85.2% | 0 | 0 |
+| high+moderate+low | 100.0% | 85.2% | 0 | 0 |
 
 ## Selected operating point
 

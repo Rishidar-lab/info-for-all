@@ -1,75 +1,70 @@
 # IFA Roadmap
 
-Phased, each phase building on the last. **Phase 0–5 are substantially present in this MVP**; later
-phases are designed-for, not built.
+**Status:** current as of v0.6.
 
-## Phase 0 — Foundation ✅ (this MVP)
+IFA shipped as an MVP service (Drizzle / SQLite / Next.js API routes / Docker),
+then **pivoted to a fully static Next.js 16 site** on GitHub Pages before launch.
+Everything below reflects that static architecture — see `docs/ARCHITECTURE.md`.
 
-- Next.js 16 + TypeScript + Tailwind v4, editorial design system.
-- Drizzle schema (16 core models + CGI components, corrections, ingestion log), migrations, seed.
-- Env validation, structured logging, structured error responses, security headers, SSRF guard.
-- Vitest (unit + integration) and Playwright (E2E), CI workflow, Docker.
+## Current architecture (what is built and deployed)
 
-## Phase 1 — RSS aggregation 🟡 (adapter built; scheduling + Postgres pending)
+- **Static Next.js 16 + TypeScript + Tailwind v4**, editorial design system.
+  `output: "export"`, deployed to GitHub Pages by a scheduled workflow. No
+  database, no server, no API routes at runtime.
+- **Ingestion** — RSS / Atom / CAP(SACHET JSON) via `fast-xml-parser`;
+  SSRF-guarded URLs; canonical-URL + dedupe-key normalisation; explainable
+  Tamil-Nadu geo-classification; deterministic 0–100 crisis priority with CAP
+  fields preserved verbatim.
+- **Event identity (v0.5–v0.6)** — a structured, language-neutral event
+  signature; permissive candidate retrieval; a conservative, fully explainable
+  decision gate (no hidden merge score). Two-pass clustering (lexical + semantic,
+  semantic-veto).
+- **Multilingual (v0.5–v0.6)** — Tamil news-domain normalisation, a Tamil↔English
+  concept lexicon, an offline dictionary gloss, canonical place resolution. A
+  cross-language merge requires structured agreement and is capped at Moderate
+  confidence. Tamil original text is always kept.
+- **Claim intelligence (v0.3–v0.6)** — rule-based extraction with mandatory
+  attribution retention; corroboration by union-find (syndicated copies collapse
+  to one independent group); contradiction detection for genuine numeric /
+  temporal conflicts only; primary-evidence linking; a documented confidence
+  formula (`docs/CLAIM-CONFIDENCE-v2.md`).
+- **Common Ground Index v0.1** — experimental, component-based, no political
+  labels, only shown with ≥2 publishers.
+- **Evaluation** — a hand-labelled gold corpus (`evaluation/claims/`, 223 cases)
+  run against the real pipeline; `npm run eval:claims` / `eval:identity` /
+  `quality-gate` / `audit:identity`. CI: lint → typecheck → test → eval → gate →
+  build.
 
-- RSS/Atom adapter with SSRF protection and size caps — **done**.
-- Scheduled polling of a configured feed list; per-feed dedupe; ingestion-run dashboard.
-- Move to PostgreSQL (schema is portable); `PostgresFtsSearch` behind `SearchService`.
-- Publisher-terms / robots.txt registry.
+## Recent releases
 
-## Phase 2 — Story clustering 🟡 (heuristic built)
+| Version | Theme |
+| --- | --- |
+| v0.3 | grounded claim intelligence (rule-based extraction, corroboration, contradiction, CGI v0.1) |
+| v0.4 | claim quality, the gold corpus + evaluation harness, evidence intelligence |
+| v0.5 | semantic recall & multilingual event identity (structured signature, candidate/decision split, Tamil + cross-language) |
+| **v0.6** | recall hardening & production-truth pass: 10/10 known false negatives resolved, precision and 0-false-corroboration held, docs/dependency drift removed |
 
-- Embedding-based candidate retrieval (`AIProvider.embed` + pgvector) with a learned reranker.
-- Cluster splitting / merging tools for editors; cluster quality metrics.
-- Multilingual clustering (shared entity space).
+## Near-term (candidate, not committed)
 
-## Phase 3 — Claim graph 🟡 (relational model + mock extraction built)
+- Reduce remaining event-identity misses surfaced by the live audit (e.g. detect
+  an action from a quoted-headline form like `'… opens Mettur dam …'`).
+- CGI v0.2: per-claim rather than per-event convergence; sensitivity analysis on
+  weights, all formulations stored side by side.
+- More Tamil / cross-language corpus coverage; a small, corpus-driven bilingual
+  lexicon rather than an open-ended dictionary.
+- Wider Indian-language handling (Hindi) if feeds justify it.
 
-- Higher-recall extraction with a real provider; coreference resolution.
-- Claim canonicalisation across events; a proper graph store (or `pg` recursive CTEs) for
-  `SUPPORTS` / `CONTRADICTS` / `REFINES` / `DUPLICATES` traversal.
-- Claim-level subscriptions and diffs.
+## Longer-term (designed-for, not built)
 
-## Phase 4 — Evidence engine 🟡 (model + linking built)
+- **Ownership intelligence** — source-ownership graph, media-ecosystem map,
+  "reached you through N independent owners" explainers.
+- **Personalised information analysis** — opt-in, local-first media-diet and
+  blind-spot views.
+- **Realtime monitoring** — streaming ingestion, live event pages, alerts on new
+  contradictions / corrections / CGI shifts. Would require reconsidering the
+  static model.
+- **Mobile client** and a **documented public API**.
 
-- Automated primary-source discovery (government / court / filing indexes, research-paper matching).
-- Document fetching, hashing, archival snapshots, authenticity checks.
-- Fact-check integration as a distinct evidence type.
-
-## Phase 5 — Common Ground Index 🟡 (v0.1 built, explainable)
-
-- Calibration against a labelled corpus; sensitivity analysis on weights.
-- `cgi-v0.2` with per-claim rather than per-event convergence; confidence intervals.
-- A/B of alternative formulations, all stored side by side.
-
-## Phase 6 — Ownership intelligence
-
-- Source ownership graph; media-ecosystem map; funding and cross-holding data.
-- "This story reached you through N independent owners" explainers.
-
-## Phase 7 — Personalised information analysis
-
-- Personal media diet, blind-spot discovery, framing analysis — all opt-in, all local-first.
-- Newsletter generation from a watchlist.
-
-## Phase 8 — Realtime monitoring
-
-- Streaming ingestion; live event pages; alerts on new contradictions / corrections / CGI shifts.
-
-## Phase 9 — Mobile application
-
-- Read-optimised native/React Native client over the public API.
-
-## Phase 10 — Public API
-
-- Documented, versioned, rate-limited, keyed public API; researcher and journalist tooling; browser
-  extension.
-
----
-
-## Explicitly out of scope for now
-
-Source ownership graph · media ecosystem map · government document indexing · research paper matching
-· fact-check integration · event geolocation · multilingual ingestion (Tamil / Hindi) · translation ·
-narrative-evolution view · headline-framing analysis · watchlists · alerts · researcher dashboards ·
-browser extension. The data model and module interfaces are shaped to accommodate these later.
+Adopting any longer-term item — especially a persistent store or a server — is an
+explicit architecture decision. The static model is intentional until a
+requirement genuinely cannot be met within it.

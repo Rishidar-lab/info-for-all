@@ -53,11 +53,26 @@ function publicView(r: CorpusReport) {
     /** Frozen v0.4 result (evaluation/reports/v0.5-baseline.md) for the A/B on the dashboard. */
     v04: {
       cases: 148,
+      clean: 127,
       matchingPrecision: 1.0,
       matchingRecall: 0.591,
       tamilMatching: 0.125,
+      crossLanguage: null as number | null,
       contradictionRecall: 0.9,
       falseCorroboration: 0,
+      falseCorroborationDen: 47,
+    },
+    /** Frozen v0.5 result (evaluation/reports/v0.6-baseline.md) for the version history. */
+    v05: {
+      cases: 223,
+      clean: 211,
+      matchingPrecision: 1.0,
+      matchingRecall: 0.892,
+      tamilMatching: 0.846,
+      crossLanguage: 1.0,
+      contradictionRecall: 1.0,
+      falseCorroboration: 0,
+      falseCorroborationDen: 71,
     },
   };
 }

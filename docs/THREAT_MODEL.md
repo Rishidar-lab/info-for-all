@@ -1,5 +1,27 @@
 # IFA Threat Model (MVP v0.1)
 
+> **STATUS (v0.6): partially superseded.** This model was written for the
+> abandoned IFA *service* (Next.js API routes, a SQLite/Drizzle store, write
+> endpoints, per-IP rate limiting, an always-on model provider). IFA now ships as
+> a **fully static site** with no server, no database and no runtime API — see
+> `docs/ARCHITECTURE.md`.
+>
+> **Still current:** T1 (SSRF at ingest — URL validation is now
+> `safeUrl()` in `src/lib/live/text.ts`, applied in
+> `src/lib/live/normalize.ts`; the fetch itself runs only in trusted CI, not on
+> user input), T3 (XSS from feed content — `stripTags` + `decodeEntities` in
+> `src/lib/live/text.ts`, React escaping, CSP in `next.config.ts`), T8
+> (clickjacking), T9 (supply chain — the dormant AI SDKs are
+> `optionalDependencies`).
+>
+> **No longer applicable:** T2 (no SQL / ORM / DB), T4–T6 (no request bodies, no
+> write endpoints, no server secrets — CI holds no `IFA_WRITE_TOKEN`), T5's
+> rate-limiting residuals. T7 applies only if an operator manually enables a
+> model provider locally; the deployed build calls none.
+>
+> A ground-up static-site threat model is a separate task tracked in
+> `docs/ROADMAP.md`.
+
 Scope: the IFA web application, its API, and the ingestion pipeline. Out of scope: hosting
 infrastructure, the operator's OS, and the (optional) third-party model provider.
 

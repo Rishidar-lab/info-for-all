@@ -1,130 +1,144 @@
 # IFA Architecture
 
+**Status:** current as of v0.6. This document describes what the repository
+actually builds and deploys today. An earlier revision described a
+Drizzle / SQLite / Next.js-API-route service that was **abandoned** before
+launch — see [Superseded design](#superseded-design) at the end.
+
+## What IFA is, structurally
+
+A **fully static Next.js 16 site**. No database, no API routes, no server at
+runtime. Everything is computed at build time from a committed data snapshot and
+emitted as static HTML + JSON for GitHub Pages.
+
+- `next.config.ts`: `output: "export"`, `trailingSlash: true`, `basePath` from
+  `PAGES_BASE_PATH`.
+- Deploy: `.github/workflows/deploy-pages.yml` (push, 15-min schedule, manual
+  dispatch) runs the ingest + build and publishes `out/`.
+- The deterministic, rule-based pipeline runs in `scripts/` and `src/lib/`. **No
+  LLM / paid API is called in the deployed build.** `@anthropic-ai/sdk` /
+  `openai` are optional, dormant dependencies gated behind `IFA_*_PROVIDER` env
+  vars that are never set in CI.
+
 ## Pipeline
 
 ```mermaid
 flowchart TD
-    A[Ingestion adapters<br/>rss · manual · api] --> B[Normalization<br/>canonical URL, strip HTML, dedupe key]
-    B --> C[Source upsert<br/>domain, ownership, wire]
-    C --> D[Event clustering<br/>title + entity + keyword + temporal]
-    D -->|join| E[(Event)]
-    D -->|new| E
-    E --> F[Claim extraction<br/>AIProvider.extractClaims + provenance]
-    F --> G[Entity recognition<br/>+ link article/event/claim]
-    G --> H[Contradiction / relationship detection<br/>AIProvider.detectContradictions]
-    H --> I[Analysis<br/>independence · corroboration · status · evidence status]
-    I --> J[Common Ground Index<br/>components stored separately]
-    J --> K[Ingestion run log]
-    E --> L[API route handlers<br/>Zod-validated, structured errors]
-    I --> L
-    J --> L
-    L --> M[IFA UI<br/>Next.js RSC · editorial design]
-    E --> M
+    SR[Source registry<br/>src/data/feeds.ts] --> ING[Fetch / ingest<br/>scripts/ingest-feeds.ts<br/>RSS · Atom · CAP/SACHET JSON]
+    ING --> NORM[Normalisation<br/>src/lib/live/normalize.ts<br/>clean HTML · canonical URL · dedupe key · SSRF-safe URLs]
+    NORM --> GEO[Geo + crisis classification<br/>src/lib/live/geo.ts · crisis.ts]
+    GEO --> SIG[Event signature<br/>src/lib/event-identity/signature.ts<br/>entities · places · concepts · actions · quantities · date]
+    SIG --> CAND[Candidate retrieval<br/>src/lib/event-identity/index.ts<br/>permissive blocking: district · place · entity · crisis · quantity · state+concept]
+    CAND --> DEC[Identity decision<br/>src/lib/event-identity/decide.ts<br/>conservative gate · explainable · no hidden score]
+    NORM --> LEX[Lexical clustering<br/>src/lib/live/cluster.ts<br/>scorePair + semantic veto]
+    LEX --> DEC
+    DEC --> CL[Clusters<br/>src/lib/live/cluster.ts]
+    CL --> CLAIM[Claim extraction<br/>src/lib/claims/extract.ts<br/>attribution-preserving · rule-based]
+    CLAIM --> CORR[Corroboration / independence / evidence<br/>src/lib/claims · src/lib/independence]
+    CORR --> CGI[Common Ground Index v0.1<br/>src/lib/claims/cgi.ts · experimental · gated on ≥2 publishers]
+    CGI --> DS[Static dataset<br/>src/lib/live/dataset.ts]
+    DS --> EXP[next build → static export<br/>152 pages]
+    EXP --> GH[GitHub Pages]
 ```
 
-## Request / render flow
+## Render flow
 
 ```mermaid
 flowchart LR
+    subgraph Build
+      D[src/data/generated/live-feed.json<br/>gitignored · seeded from fixtures] --> RSC[Server Components<br/>src/app/*]
+      RSC --> HTML[Static HTML + JSON]
+    end
     subgraph Browser
-      P[Page / Story / Search]
+      HTML --> P[Home / Story / Sources / Methodology]
+      P --> F[Client filters only<br/>language · geography · district]
     end
-    subgraph Next.js server
-      RSC[Server Components] --> DOM[domain layer<br/>src/lib/domain/*]
-      RH[Route handlers<br/>src/app/api/*] --> DOM
-      DOM --> DB[(SQLite via Drizzle)]
-      DOM --> INT[AIProvider<br/>mock | anthropic | openai]
-    end
-    P -->|HTML| RSC
-    P -->|fetch JSON| RH
 ```
+
+Pages are all `○ (Static)` or `● (SSG)`. `generateStaticParams` enumerates every
+cluster (`/story/[slug]`, `/methodology/clusters/[slug]`) and worked example
+(`/methodology/examples/[slug]`).
 
 ## Module boundaries
 
-| Module | Responsibility | Key interface |
-| ------ | -------------- | ------------- |
-| `src/lib/ingestion/*` | native payload → `RawFeedItem` → `NormalizedArticle`; SSRF guard | `IngestionAdapter<TInput>` |
-| `src/lib/clustering` | assign an article to an event or start a new one | `ClusteringService` |
-| `src/lib/intelligence` | claim extraction, summarisation, contradiction detection, embeddings | `AIProvider` |
-| `src/lib/independence` | collapse non-independent articles into clusters | `computeIndependence()` |
-| `src/lib/cgi` | transparent, component-based Common Ground Index | `computeCgi()`, versioned `CGI_WEIGHTS_*` |
-| `src/lib/search` | cross-entity ranked search over a caller-supplied corpus | `SearchService` |
-| `src/lib/domain/*` | orchestration + DB queries + serialised view models | `analyzeEvent`, `ingest`, `getEventDetail`, `runSearch` |
-| `src/app/*` | Next.js pages (RSC) and `/api` route handlers | — |
+| Module | Responsibility |
+| ------ | -------------- |
+| `src/data/feeds.ts` | the source registry — publisher, URL, kind, language, evidence role. No URL is invented. |
+| `src/lib/live/parse.ts` | RSS / Atom / CAP(SACHET JSON) → `RawItem` via `fast-xml-parser` |
+| `src/lib/live/normalize.ts` | `RawItem` → `LiveArticle`: HTML strip, entity decode, canonical + SSRF-safe URL, dedupe key, language detect |
+| `src/lib/live/geo.ts` · `crisis.ts` | explainable TN geo-classification; deterministic 0–100 crisis priority; CAP severity/urgency/certainty preserved verbatim |
+| `src/lib/event-identity/*` | "are these two articles the same event?" — `buildSignature`, `candidatePairs` (permissive), `decideIdentity` (conservative, explainable) |
+| `src/lib/semantic/*` | `concepts.ts` (EN→concept lexicon), `actions.ts` (action ontology), `embeddings.ts` (deterministic hashing embedding, retrieval-only) |
+| `src/lib/language/*` | `tamil.ts` (conservative news-domain normaliser + concept/place/org lexicon), `locations.ts` (canonical place registry + `placeRelation`), `translation.ts` (offline dictionary gloss) |
+| `src/lib/live/cluster.ts` | two-pass clustering: lexical `scorePair`, then a semantic pass that only ADDS merges; "semantic veto" lets the identity engine's location model overrule a lexical match |
+| `src/lib/claims/*` | rule-based claim extraction with mandatory attribution retention; `normalize`, `corroborate` (union-find; syndicated copies collapse to one group), `contradict` (genuine numeric/temporal conflicts only), `evidence`, `confidence`, `cgi` (experimental), `present` |
+| `src/lib/independence/*` | pair-classified independence (independent / likely / syndicated / likely-syndicated / **unknown**) + wire-service detection |
+| `src/lib/live/dataset.ts` | assembles the final view model the pages read |
+| `src/app/*` | Next.js RSC pages — read the dataset, render, no data fetching |
 
-Every heavy module is an interface with a v1 implementation, so it can be replaced without touching
-callers. Domain orchestration functions take a `Db` argument (dependency injection) so tests run
-against isolated databases.
+Every heavy step is a plain function over plain data, unit-tested in isolation
+(`tests/unit/`, Vitest). The evaluation harness (`evaluation/claims/`) runs the
+**real** pipeline against a hand-labelled gold corpus.
 
-## Data model
+## Data
 
-16 core models plus supporting tables. `SOURCE → ARTICLE → CLAIM → EVIDENCE` is the provenance chain;
-`ClaimRelationship` (`SUPPORTS` / `CONTRADICTS` / `REFINES` / `DUPLICATES`) is the claim graph.
+- **Snapshot:** `src/data/generated/live-feed.json` (gitignored). In CI it is
+  produced by `scripts/ingest-feeds.ts`; locally it is seeded from
+  `src/data/fixtures/live-feed.seed.json` by `scripts/prepare-data.ts` (an npm
+  `pre*` hook), so `npm test` / `npm run build` work with no network.
+- **No persistent store.** Each build is a pure function of the snapshot. There
+  are no migrations, no ORM, no timestamps-as-rows.
+- **Hygiene:** running `npm run ingest` / the eval scripts refreshes committed
+  report artifacts under `evaluation/reports/` and `src/data/claim-eval.json`
+  (timestamps + minor runtime jitter). Those are release artifacts, not tree
+  dirt. `next dev` re-adds the agent block to `AGENTS.md`.
 
-```mermaid
-erDiagram
-    SOURCE ||--o{ ARTICLE : publishes
-    EVENT ||--o{ EVENT_ARTICLE : clusters
-    ARTICLE ||--o{ EVENT_ARTICLE : in
-    EVENT ||--o{ CLAIM : has
-    ARTICLE ||--o{ CLAIM : "extracted from"
-    CLAIM ||--o{ CLAIM_EVIDENCE : cites
-    EVIDENCE ||--o{ CLAIM_EVIDENCE : supports
-    CLAIM ||--o{ CLAIM_RELATIONSHIP : from
-    CLAIM ||--o{ CLAIM_RELATIONSHIP : to
-    EVENT ||--o{ TIMELINE_ENTRY : records
-    EVENT ||--o{ COMMON_GROUND_SCORE : scored
-    COMMON_GROUND_SCORE ||--o{ CGI_COMPONENT : "broken down into"
-    EVENT ||--o{ EVENT_TOPIC : tagged
-    TOPIC ||--o{ EVENT_TOPIC : tags
-    EVENT ||--o{ CORRECTION : "corrected by"
-    ENTITY ||--o{ ARTICLE_ENTITY : mentioned
-    ENTITY ||--o{ EVENT_ENTITY : salient
-    ENTITY ||--o{ CLAIM_ENTITY : referenced
-```
+## Safety properties enforced in code + CI
 
-Timestamps are epoch-ms integers surfacing as `Date`. `isDemo` marks synthetic rows. Scores keep an
-`inputsSnapshot` and their component rows so the formula can evolve without losing history.
+- **No fabricated consensus.** The identity gate that emits `relation: "same"` is
+  deliberately strict; permissiveness lives only in candidate generation.
+  `npm run quality-gate` fails the build if the live snapshot shows any
+  fabricated corroboration.
+- **Attribution is never dropped.** "the minister said X" extracts as an
+  attributed claim, never a bare fact.
+- **Cross-language merges require structured agreement** — a shared district or
+  specific place, a compatible date, and a shared entity/action or ≥2 shared
+  specific concepts. A shared "Tamil Nadu" alone never merges. Confidence is
+  capped at Moderate.
+- **Tamil original text is always preserved** alongside any normalised form.
+- **SSRF:** feed URLs are validated to `http(s)` only; localhost / RFC1918 /
+  link-local / metadata addresses are rejected at ingest.
+- **No political-orientation labels** on live content. Left/Center/Right appear
+  only in the static worked examples at `/methodology/examples`.
 
-## Deviations from the master spec (and the upgrade path)
+## Possible future architecture (NOT built)
 
-### SQLite → PostgreSQL (Phase 1)
+These are designed-for, not present. Adopting any of them is an explicit
+decision, not implied by this document.
 
-The schema avoids SQLite-only constructs. To move to Postgres:
+- Streaming / realtime ingestion and live event pages.
+- A persistent store (only if incremental state across builds is actually
+  needed — the static model is intentional until then).
+- A model-assisted extraction / translation provider behind the existing
+  `IFA_CLAIM_PROVIDER` / `IFA_TRANSLATION_PROVIDER` / `IFA_EMBEDDING_PROVIDER`
+  seams.
+- Source-ownership graph, personalisation, a public API, a mobile client.
 
-1. add a `postgres` Drizzle dialect schema (same table/column names; `text` → `text`, timestamp
-   columns → `timestamptz`, JSON columns → `jsonb`);
-2. point `DATABASE_URL` at the `docker-compose.yml` Postgres service;
-3. regenerate migrations for the new dialect;
-4. no domain-layer changes — queries use the portable Drizzle query builder, no raw SQL.
+See `docs/ROADMAP.md` for the phased view.
 
-### In-app search → Postgres FTS / pgvector (Phase 1–2)
+## Superseded design
 
-`SearchService` is the seam. `InMemorySearch` (TF-IDF over a rebuilt corpus) is swapped for:
+An earlier revision of this file (and `docs/ROADMAP.md` Phase 0) described:
 
-- **Phase 1:** a `PostgresFtsSearch` using `to_tsvector` / `ts_rank` and a materialised `search_documents` table;
-- **Phase 2:** a `VectorSearch` using `pgvector` + `AIProvider.embed()` for semantic recall, with FTS as the lexical prefilter.
+> Drizzle schema (16 core models), SQLite via `better-sqlite3` with a
+> PostgreSQL/`pgvector` upgrade path, Next.js `/api` route handlers with Zod
+> validation, `src/lib/{domain,ingestion,intelligence,clustering,cgi}`, a
+> `docker/Dockerfile` + `docker-compose.yml`, `GET /api/health`.
 
-The API contract (`/api/search?q=&type=&limit=`) does not change.
-
-### Prisma → Drizzle
-
-`prisma` npm `latest` currently resolves to a release candidate. Drizzle is a mature TypeScript ORM
-with no binary engine, no codegen, and plain-SQL migrations. Domain code depends only on the Drizzle
-query builder and the `$inferSelect` / `$inferInsert` types.
-
-## Deployment
-
-- **Docker:** `docker/Dockerfile` (multi-stage; standalone Next output; `better-sqlite3` rebuilt in
-  the runner). `docker-compose.yml` runs the app with a volume-mounted SQLite file and an optional
-  Postgres service for the Phase 1 path.
-- **Node:** `npm run build && npm run db:setup && npm start`.
-- Route handlers and DB-reading pages are `force-dynamic`; `better-sqlite3` is in
-  `serverExternalPackages` so Turbopack never bundles it.
-
-## Observability
-
-`src/lib/logger.ts` — dependency-free structured JSON with recursive secret redaction. The `route()`
-wrapper logs `request.completed` / `request.failed` with status, duration, error code and request id.
-`GET /api/health` returns database status, event count, demo-mode flag, active AI provider, version
-and timestamp.
+That service was built as an MVP and then **abandoned**: its uncommitted pglite
+DB layer failed during `next build`, and the project was refocused onto the
+comparison UI as a fully static site. The code was removed (recoverable at commit
+`e99ae64`). `package.json` still lists `@electric-sql/pglite`, `postgres`,
+`drizzle-orm`, `drizzle-kit` — retained only to avoid a risky `npm install` in
+the constrained build environment; nothing imports them (see
+`evaluation/reports/v0.6-dependency-audit.md`).
