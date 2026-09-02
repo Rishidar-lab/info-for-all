@@ -25,6 +25,7 @@ import { TREND_MIN } from "./weights";
 import type { IndependenceSummary } from "./types";
 import { assessNovelty, buildEventState } from "./novelty";
 import { resolveTemporal } from "@/lib/domain/temporal";
+import { assessLocalImpact } from "@/lib/domain/local-impact";
 import { detectPoliticalEvent, threadRelation, type ThreadRelation } from "@/lib/domain/politics";
 import { assessSeverity } from "@/lib/domain/severity";
 import { computeEditorialPriority, buildSurfaces } from "@/lib/editorial";
@@ -224,6 +225,13 @@ export function enrichDataset(dataset: LiveDataset, opts: EnrichOptions = {}): E
         effectiveUntil: temporal.effectiveUntil,
         notes: temporal.notes,
       },
+      // Local impact is a Tamil-Nadu-on-the-ground readout: only for P0 (TN scope),
+      // and only kept when an impact was actually demonstrated in the reporting.
+      localImpact: (() => {
+        if (tier.tier !== "P0") return undefined;
+        const li = assessLocalImpact(cluster, articles);
+        return li.statements.length > 0 ? li : undefined;
+      })(),
     };
     cluster.trendData = trendData;
 

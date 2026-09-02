@@ -238,6 +238,28 @@ export function EventCard({
         </div>
       )}
 
+      {cluster.trendData?.localImpact && cluster.trendData.localImpact.statements.length > 0 && (
+        <p className="mt-1.5 ui text-[11px] leading-snug text-ink-2">
+          <span className="font-semibold text-ink-3">On the ground</span>
+          {cluster.trendData.localImpact.scale !== "none" && (
+            <span className="mx-1 rounded bg-ink/5 px-1 py-px text-[10px] font-semibold uppercase tracking-wide text-ink-3">
+              {cluster.trendData.localImpact.scale}
+            </span>
+          )}
+          <span className="text-ink-2">
+            {[
+              cluster.trendData.localImpact.impactKinds.join(" / "),
+              cluster.trendData.localImpact.affectedInfrastructure.join(", "),
+            ]
+              .filter(Boolean)
+              .join(" — ")}
+          </span>
+          {cluster.trendData.localImpact.affectedDistricts.length > 0 && (
+            <span className="text-ink-3"> · {cluster.trendData.localImpact.affectedDistricts.slice(0, 4).join(", ")}</span>
+          )}
+        </p>
+      )}
+
       {showWhy && ed ? (
         <EditorialWhy cluster={cluster} />
       ) : showWhy ? (

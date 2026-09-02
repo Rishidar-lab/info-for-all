@@ -135,6 +135,31 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
             <TrendWhy cluster={cluster} open />
           </div>
         )}
+
+        {cluster.trendData?.localImpact && cluster.trendData.localImpact.statements.length > 0 && (
+          <div className="mt-4 max-w-2xl border-l-2 border-rule-strong pl-3">
+            <div className="label mb-1">On the ground</div>
+            <p className="ui text-[12px] text-ink-3">
+              {cluster.trendData.localImpact.scale !== "none" && (
+                <span className="mr-1 font-semibold uppercase tracking-wide">
+                  {cluster.trendData.localImpact.scale}
+                </span>
+              )}
+              {cluster.trendData.localImpact.affectedDistricts.join(", ") ||
+                cluster.trendData.localImpact.affectedTowns.join(", ")}
+            </p>
+            <ul className="mt-1.5 flex flex-col gap-1 ui text-[12.5px] text-ink-2">
+              {cluster.trendData.localImpact.statements.map((s, i) => (
+                <li key={i}>
+                  <span className="text-ink-3">[{s.kinds.join(" / ")}]</span> {s.text}
+                </li>
+              ))}
+            </ul>
+            <p className="ui mt-1.5 text-[11px] text-ink-3">
+              Read from the reporting — IFFA does not infer an impact that a report does not state.
+            </p>
+          </div>
+        )}
       </header>
 
       <div className="mt-6 flex min-w-0 flex-col gap-10">

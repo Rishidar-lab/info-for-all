@@ -44,7 +44,7 @@ describe("IFFA claim-aware novelty v2 (v0.8 Phase D)", () => {
   });
 
   it("no matched prior cluster → new-event / major-development", () => {
-    const r = assessNovelty(cluster({}), [mk({ publisher: "A", title: "Fire at Ambattur factory", hoursAgo: 1 })], undefined, true);
+    const r = assessNovelty(cluster({}), [mk({ publisher: "A", title: "Fire at Ambattur factory", hoursAgo: 1 })], undefined, true, NOW);
     expect(r.noveltyClass).toBe("new-event");
     expect(r.updateKind).toBe("major-development");
   });

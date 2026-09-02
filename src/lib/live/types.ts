@@ -325,6 +325,26 @@ export interface ClusterTrendData {
     effectiveUntil?: { phrase: string; iso?: string; certainty: "explicit" | "relative" | "inferred" };
     notes: string[];
   };
+  /**
+   * v0.9 Phase K/L — extractive local-impact model for a Tamil Nadu event:
+   * which districts / towns / infrastructure / institutions are affected, and
+   * how. Never inferred — every entry is backed by a phrase in the reporting.
+   */
+  localImpact?: {
+    affectedDistricts: string[];
+    affectedTowns: string[];
+    affectedInfrastructure: string[];
+    affectedInstitutions: string[];
+    impactKinds: string[];
+    scale: "none" | "localised" | "city-wide" | "multi-district" | "state-wide";
+    /** impact statements — each names both a kind of impact and what it fell on */
+    statements: {
+      text: string;
+      kinds: string[];
+      infrastructure: string[];
+      districts: string[];
+    }[];
+  };
   /** v0.8 — EVENT severity (how bad the event is), NOT a probability of truth. */
   severity?: {
     level: "informational" | "watch" | "significant" | "severe" | "critical";
