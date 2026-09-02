@@ -182,19 +182,29 @@ Sportstar, PIB retry.
 
 ---
 
-## 7. Production verification
+## 7. Production verification — DONE
 
-Pending the push + GitHub Actions run. Post-deploy checklist (to be completed against the
-real URLs):
+**Commit `b4cc97d`:** CI **success**, "Ingest live feeds & deploy to GitHub Pages" **success**.
+Verified against the real site `https://rishidar-lab.github.io/info-for-all`:
 
-- `/` `/crisis/` `/politics/` `/finance/` `/sports/` `/tamil-nadu/` `/india/` `/trends/`
-  `/sources/` `/methodology/quality/` `/about/` `/diagnostics/` — HTTP 200
-- asset URLs carry the `/info-for-all` basePath
-- version label "v0.7 — Trend Intelligence" visible (footer)
-- live feed data present, situation bar rendering
-- mobile 390 px — no horizontal overflow
+| Route | HTTP | Content check |
+|---|---|---|
+| `/` | 200 | "Current events without the noise", Current Situation bar (TN: Watch — live), "What matters right now" / "Fast rising" / "Watching", 90× "Open event" cards, trend-state pills + scores, "source families" |
+| `/crisis/` `/politics/` `/finance/` `/sports/` | 200 | `CategoryView` header + "trend-ranked" cards |
+| `/tamil-nadu/` `/india/` | 200 | geo-tier event lists |
+| `/trends/` | 200 | weight table (Recency / Velocity / Consequence …), "weighted geometric mean", `docs/TREND-MODEL.md` link, Trending + Watching |
+| `/story/<slug>/` | 200 | trend "why" disclosure, **Timeline / What changed**, **Compare coverage / Points of agreement** |
+| `/sources/` | 200 | typed registry (authority class, covered domains, poll cadence), "feeds under investigation" |
+| `/methodology/quality/` | 200 | **"v0.4 → v0.5 → v0.6 → v0.7"** (4 columns), "Trend Intelligence layer" section, "313" tests, "Critical-safety corpus" |
+| `/about/` | 200 | P0/P1/P2 scope, "Trend ranking (v0.7)" section |
+| `/diagnostics/` | 200 | ingestion / clustering / trend-detection stats, feed-status table |
 
-_(Filled in below once the deploy completes.)_
+- Asset URLs carry the `/info-for-all` basePath (`/info-for-all/_next/...`). ✔
+- Footer shows **"v0.7 — Trend Intelligence"**. ✔
+- The live deploy **re-ingested fresh** (Situation bar reads "Watch" vs the committed seed's
+  "Elevated") — production is serving genuinely live data, not the seed. ✔
+- `<meta name="viewport" content="width=device-width, initial-scale=1">`; every wide table
+  wrapped in `overflow-x-auto`; no fixed-width element on the home page. Mobile-safe at 390 px. ✔
 
 ---
 
