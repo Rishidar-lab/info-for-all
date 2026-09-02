@@ -15,6 +15,19 @@ import type { LiveArticle } from "@/lib/live/types";
 import { normalisedTitleKey } from "@/lib/live/text";
 import { detectWireCredit } from "./wire";
 
+/**
+ * Publishers that share a corporate parent — not fully independent of each other.
+ * Mirrors `ownershipGroup` in the feed registry; kept here as a small static map
+ * so the pair classifier stays a pure function of two articles. (v0.9 Phase G.)
+ */
+const PUBLISHER_GROUP: Record<string, string> = {
+  "Hindustan Times": "HT Media",
+  Mint: "HT Media",
+  "The Hindu": "Kasturi & Sons",
+  "The Hindu BusinessLine": "Kasturi & Sons",
+  Sportstar: "Kasturi & Sons",
+};
+
 export type IndependenceRelation =
   | "independent"
   | "likely-independent"
@@ -64,6 +77,12 @@ export function classifyPair(a: LiveArticle, b: LiveArticle): PairRelation {
 
   if (a.publisher === b.publisher) {
     return rel("syndicated", `Same publisher (${a.publisher}) — one newsroom's several takes.`);
+  }
+
+  const ga = PUBLISHER_GROUP[a.publisher];
+  const gb = PUBLISHER_GROUP[b.publisher];
+  if (ga && gb && ga === gb) {
+    return rel("likely-syndicated", `${a.publisher} and ${b.publisher} share a parent (${ga}) — not independent newsrooms.`);
   }
 
   const wa = detectWireCredit(TEXTS(a));
