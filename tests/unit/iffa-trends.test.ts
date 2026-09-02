@@ -274,3 +274,24 @@ describe("IFFA enrichDataset end to end (Phase E/F)", () => {
     expect(a.clusters.map((c) => c.trendData?.trend?.score)).toEqual(b.clusters.map((c) => c.trendData?.trend?.score));
   });
 });
+
+describe("IFFA political claim threads (v0.9 Phase D)", () => {
+  it("links an allegation and its denial about the same subject, but not unrelated politics", () => {
+    const arts = [
+      mk({ publisher: "The Hindu", title: "Opposition AIADMK alleges ₹600-crore corruption in the Kallanai barrage contract", hoursAgo: 6, excerpt: "AIADMK leaders levelled corruption charges over the Kallanai barrage tender awarded last month." }),
+      mk({ publisher: "Times of India", title: "AIADMK repeats Kallanai barrage corruption allegation in the Assembly", hoursAgo: 5, excerpt: "The party alleged irregularities in the Kallanai barrage contract." }),
+      mk({ publisher: "News18", title: "Government denies Kallanai barrage corruption charge, calls it baseless", hoursAgo: 2, excerpt: "The Water Resources Minister rejected the AIADMK allegation on the Kallanai barrage contract as politically motivated and false." }),
+      mk({ publisher: "Dinamani", title: "Chief Minister inaugurates a new bus terminus in Kilambakkam", hoursAgo: 4, excerpt: "The CM opened the long-delayed Kilambakkam bus terminus." }),
+    ];
+    const enriched = enrichDataset(datasetOf(arts), { now: NOW, previous: null });
+    const denial = enriched.clusters.find((c) => /denies/i.test(c.title));
+    const allegation = enriched.clusters.find((c) => /alleges|allegation/i.test(c.title));
+    const terminus = enriched.clusters.find((c) => /terminus/i.test(c.title));
+
+    expect(denial?.trendData?.politicalThread?.links?.length).toBeGreaterThan(0);
+    expect(denial?.trendData?.politicalThread?.links?.[0].relation).toBe("denies");
+    expect(allegation?.trendData?.politicalThread?.links?.some((l) => l.slug === denial?.slug)).toBe(true);
+    // the unrelated inauguration is NOT pulled into the thread
+    expect(terminus?.trendData?.politicalThread).toBeUndefined();
+  });
+});

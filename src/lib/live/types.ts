@@ -235,6 +235,13 @@ export interface ClusterTrendData {
   categoryConfidence?: string;
   /** v0.8 — the signals that drove the classification. */
   categorySignals?: string[];
+  /**
+   * v0.9 Phase D — political claim thread: typed links to other political
+   * events (a denial of an allegation, a response to a criticism, …).
+   */
+  politicalThread?: {
+    links: { slug: string; relation: string; headline: string }[];
+  };
   /** v0.9 — structured per-category evidence (primary + each secondary). */
   categoryEvidence?: {
     category: string;

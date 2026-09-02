@@ -46,6 +46,17 @@ const BAND_TONE: Record<string, string> = {
   suppressed: "text-ink-3 bg-surface-2",
 };
 
+const THREAD_RELATION_LABEL: Record<string, string> = {
+  denies: "denied by —",
+  contradicts: "contradicted by —",
+  supports: "corroborated by —",
+  updates: "updated by —",
+  corrects: "corrected by —",
+  supersedes: "superseded by —",
+  "responds-to": "response to —",
+  related: "related —",
+};
+
 export function EventCard({
   cluster,
   emphasis = false,
@@ -212,6 +223,19 @@ export function EventCard({
             )}
           <span className="text-ink-2">{cluster.trendData.novelty.changes[0]}</span>
         </p>
+      )}
+
+      {cluster.trendData?.politicalThread && cluster.trendData.politicalThread.links.length > 0 && (
+        <div className="mt-1.5 ui text-[11px] leading-snug text-ink-2">
+          <span className="font-semibold text-ink-3">In this thread:</span>{" "}
+          {cluster.trendData.politicalThread.links.slice(0, 3).map((l, i) => (
+            <span key={l.slug}>
+              {i > 0 && "; "}
+              <span className="text-ink-3">{THREAD_RELATION_LABEL[l.relation] ?? l.relation}</span>{" "}
+              <span>{l.headline}</span>
+            </span>
+          ))}
+        </div>
       )}
 
       {showWhy && ed ? (

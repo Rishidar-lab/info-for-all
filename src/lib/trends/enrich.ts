@@ -25,6 +25,7 @@ import { TREND_MIN } from "./weights";
 import type { IndependenceSummary } from "./types";
 import { assessNovelty, buildEventState } from "./novelty";
 import { resolveTemporal } from "@/lib/domain/temporal";
+import { detectPoliticalEvent, threadRelation, type ThreadRelation } from "@/lib/domain/politics";
 import { assessSeverity } from "@/lib/domain/severity";
 import { computeEditorialPriority, buildSurfaces } from "@/lib/editorial";
 
@@ -245,6 +246,8 @@ export function enrichDataset(dataset: LiveDataset, opts: EnrichOptions = {}): E
     });
   }
 
+  linkPoliticalThreads(dataset.clusters, byId);
+
   const { trending, watching } = rankTrendingWatching(dataset.clusters);
   const situation = buildSituation(situationInput, dataset.generatedAt);
   const editorial = buildSurfaces(dataset.clusters);
@@ -259,6 +262,108 @@ export function enrichDataset(dataset: LiveDataset, opts: EnrichOptions = {}): E
     editorial,
   };
   return enriched;
+}
+
+/**
+ * v0.9 Phase D — link political events into claim threads. Two political
+ * clusters that share a subject and stand in a typed relation (a denial of an
+ * allegation, a response to a criticism, an investigation supporting a charge,
+ * a later update of the same action) are cross-referenced. Typed structure,
+ * not a graph DB: each cluster gets `politicalThread.links[]` naming the other
+ * slug and the relation.
+ */
+const THREAD_STOP = new Set([
+  "tamil", "nadu", "india", "indian", "state", "minister", "ministers", "assembly", "government",
+  "govt", "chief", "party", "leader", "leaders", "opposition", "centre", "union", "cabinet",
+  "council", "house", "session", "over", "after", "amid", "against", "about", "says",
+  "said", "claims", "alleges", "slams", "hits", "announces", "launches", "proposes", "seeks",
+  "welcomes", "condemns", "demands", "meeting", "press", "conference", "today", "yesterday",
+  "vijay", "stalin", "modi", "rahul", "gandhi", "annamalai", "palaniswami", "edappadi",
+  "district", "districts", "people", "scheme", "schemes", "project", "projects", "bill",
+  // generic political concepts — shared-ness of these does NOT mean same subject
+  "corruption", "probe", "investigation", "inquiry", "allegation", "allegations", "welfare",
+  "protest", "election", "elections", "resignation", "bjp", "dmk", "congress", "aiadmk", "tvk",
+  "vck", "pmk", "ntk", "coalition", "alliance", "cbi", "cb-cid", "enforcement", "vigilance",
+  "corporation", "collector", "governor", "speaker", "court", "case", "police", "video",
+  "deepfake", "scam", "kickback", "graft", "row", "issue", "matter", "statement", "remarks",
+]);
+
+function linkPoliticalThreads(clusters: LiveCluster[], byId: Map<string, LiveArticle>): void {
+  const pol = clusters.filter((c) => c.trendData?.category === "politics" && c.trendData.geoTier !== "out");
+  const meta = pol.map((c) => {
+    const arts = articlesOf(c, byId);
+    const blob = [c.title, ...arts.slice(0, 4).map((a) => a.title)].join("  ·  ");
+    const ev = detectPoliticalEvent(blob);
+    // canonical subject: strong signature entities, districts, and specific
+    // proper-noun / scheme / place tokens — minus generic political vocabulary.
+    const entities = new Set<string>();
+    const add = (s: string) => {
+      const k = s.toLowerCase().trim();
+      if (k.length >= 5 && !THREAD_STOP.has(k)) entities.add(k);
+    };
+    for (const a of arts.slice(0, 4)) {
+      const sig = buildSignature({ title: a.title, excerpt: a.excerpt, publishedAt: a.publishedAt, language: a.language, districts: a.districts });
+      for (const e of sig.entities) add(e);
+    }
+    for (const d of c.districts) add(d);
+    for (const w of `${c.title} ${arts[0]?.excerpt ?? ""}`.replace(/[^\p{L}\p{N}\s-]/gu, " ").split(/\s+/)) {
+      if (w.length >= 7 && /^[A-Z]/.test(w)) add(w);
+    }
+    const at = Date.parse(c.trendData?.firstSeenAt ?? c.updatedAt);
+    return { c, ev, entities, at };
+  });
+
+  // Only the highest-confidence relations cross-link two events: an explicit
+  // denial of an allegation, or a direct contradiction. "supports" / "updates"
+  // lean on the topic heuristic and are too noisy for a public thread.
+  const strong = (r: ThreadRelation | null): r is ThreadRelation => r === "denies" || r === "contradicts";
+
+  for (let i = 0; i < meta.length; i++) {
+    for (let j = i + 1; j < meta.length; j++) {
+      const a = meta[i];
+      const b = meta[j];
+      if (a.ev.action === "other" && b.ev.action === "other") continue;
+      if (Number.isFinite(a.at) && Number.isFinite(b.at) && Math.abs(a.at - b.at) > 4 * 86_400_000) continue;
+
+      // same subject: a shared strong entity/place, at least one ≥7 chars
+      const sharedEntities = [...a.entities].filter((e) => b.entities.has(e));
+      if (!sharedEntities.some((e) => e.length >= 7)) continue;
+
+      const relAB = threadRelation(a.ev, b.ev);
+      const relBA = threadRelation(b.ev, a.ev);
+      if (!strong(relAB) && !strong(relBA)) continue;
+
+      attachLink(a.c, b.c.slug, strong(relAB) ? relAB : inverseRelation(relBA), b.c.title);
+      attachLink(b.c, a.c.slug, strong(relBA) ? relBA : inverseRelation(relAB), a.c.title);
+    }
+  }
+}
+
+/** The other end of a directed relation, for the reverse link. */
+function inverseRelation(rel: ThreadRelation | null): ThreadRelation {
+  switch (rel) {
+    case "denies":
+    case "responds-to":
+    case "contradicts":
+      return "related"; // "X is denied by Y" — keep it descriptive, not inverted
+    case "supports":
+      return "supports";
+    case "updates":
+    case "corrects":
+    case "supersedes":
+      return "updates";
+    default:
+      return "related";
+  }
+}
+
+function attachLink(cluster: LiveCluster, slug: string, relation: ThreadRelation, headline: string): void {
+  const td = cluster.trendData;
+  if (!td) return;
+  td.politicalThread ??= { links: [] };
+  if (td.politicalThread.links.some((l) => l.slug === slug)) return;
+  if (td.politicalThread.links.length >= 4) return; // a thread, not a web
+  td.politicalThread.links.push({ slug, relation, headline: headline.slice(0, 140) });
 }
 
 const ACTIVE_LIFECYCLE = new Set(["active", "update", "developing"]);
