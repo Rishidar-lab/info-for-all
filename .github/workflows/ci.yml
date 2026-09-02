@@ -23,5 +23,6 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run eval:claims -- --quiet
+      - run: npm run eval:identity
       - run: npm run quality-gate
       - run: npm run build

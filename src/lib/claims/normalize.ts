@@ -136,7 +136,11 @@ function mergeByIdentity(drafts: ClaimDraft[], independence: IndependenceResult)
       continue;
     }
     const host = out.find(
-      (o) => MERGEABLE.has(o.type) && o.type === d.type && sameAssertion(o.canonicalText, d.canonicalText),
+      (o) =>
+        MERGEABLE.has(o.type) &&
+        o.type === d.type &&
+        !numericallyConflicting(o, d) &&
+        sameAssertion(o.canonicalText, d.canonicalText),
     );
     if (!host) {
       out.push(d);
@@ -178,6 +182,16 @@ const IDENTITY_STOP = new Set([
   "will", "that", "this", "have", "been", "from", "with", "over", "into", "after", "amid",
   "tamil", "nadu", "india", "state", "government",
 ]);
+
+/** Two claims that assert DIFFERENT values for the same numeric predicate must never merge. */
+function numericallyConflicting(a: ClaimDraft, b: ClaimDraft): boolean {
+  const pa = a.predicates[0];
+  const pb = b.predicates[0];
+  if (!pa || pa !== pb) return false;
+  const va = Number(a.objects[0]);
+  const vb = Number(b.objects[0]);
+  return Number.isFinite(va) && Number.isFinite(vb) && va !== vb;
+}
 
 function sameAssertion(a: string, b: string): boolean {
   const ta = assertionTokens(a);

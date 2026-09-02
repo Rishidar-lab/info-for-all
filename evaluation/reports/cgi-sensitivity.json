@@ -1,18 +1,37 @@
 {
-  "generatedAt": "2026-09-02T02:11:48.441Z",
+  "generatedAt": "2026-09-02T03:45:54.892Z",
   "events": 8,
   "bandDistribution": {
-    "moderate": 6,
-    "low": 2
+    "moderate": 5,
+    "low": 2,
+    "high": 1
   },
-  "meanScore": 56,
+  "meanScore": 58.1,
   "weightSweeps": [
+    {
+      "weight": "corroboratedGain",
+      "direction": "−20%",
+      "from": 45,
+      "to": 36,
+      "meanAbsDelta": 4.5,
+      "maxAbsDelta": 9,
+      "bandFlips": 0
+    },
+    {
+      "weight": "corroboratedGain",
+      "direction": "+20%",
+      "from": 45,
+      "to": 54,
+      "meanAbsDelta": 4.13,
+      "maxAbsDelta": 9,
+      "bandFlips": 2
+    },
     {
       "weight": "thinBaseCap",
       "direction": "−20%",
       "from": 68,
       "to": 54,
-      "meanAbsDelta": 4.25,
+      "meanAbsDelta": 2.5,
       "maxAbsDelta": 14,
       "bandFlips": 0
     },
@@ -21,27 +40,9 @@
       "direction": "+20%",
       "from": 68,
       "to": 82,
-      "meanAbsDelta": 3.5,
+      "meanAbsDelta": 1.75,
       "maxAbsDelta": 14,
-      "bandFlips": 2
-    },
-    {
-      "weight": "corroboratedGain",
-      "direction": "−20%",
-      "from": 45,
-      "to": 36,
-      "meanAbsDelta": 3.38,
-      "maxAbsDelta": 6,
-      "bandFlips": 0
-    },
-    {
-      "weight": "corroboratedGain",
-      "direction": "+20%",
-      "from": 45,
-      "to": 54,
-      "meanAbsDelta": 3,
-      "maxAbsDelta": 6,
-      "bandFlips": 2
+      "bandFlips": 1
     },
     {
       "weight": "singleSourcePenalty",

@@ -99,6 +99,61 @@ export default function QualityDashboard() {
         </p>
       </section>
 
+      {/* ── v0.4 → v0.5 ─────────────────────────────────────────────── */}
+      {"v04" in d && "languageRecall" in d && (
+        <section>
+          <div className="mb-3 border-b border-rule-strong pb-2">
+            <div className="label mb-1">v0.4 → v0.5</div>
+            <h2 className="font-serif text-[20px] font-semibold text-ink">Semantic recall &amp; multilingual event identity</h2>
+            <p className="ui mt-1 text-[12px] leading-relaxed text-ink-3">
+              v0.5 added a structured event-identity engine (signature → multi-signal decision),
+              a Tamil normaliser and a cross-language layer. Regressions are shown, not hidden.
+            </p>
+          </div>
+          <div className="card w-full min-w-0 overflow-x-auto">
+            <table className="w-full min-w-[560px] border-collapse text-left">
+              <thead>
+                <tr className="border-b border-rule-strong bg-surface-2 ui text-[11px] uppercase tracking-wider text-ink-3">
+                  <th className="px-4 py-2.5 font-semibold">Metric</th>
+                  <th className="px-4 py-2.5 font-semibold">v0.4</th>
+                  <th className="px-4 py-2.5 font-semibold">v0.5</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-rule">
+                {(() => {
+                  const v04 = d.v04 as { matchingPrecision: number; matchingRecall: number; tamilMatching: number; falseCorroboration: number };
+                  const lr = d.languageRecall as { english: number | null; tamilTamil: number | null; crossLanguage: number | null };
+                  const rows: [string, string, string][] = [
+                    ["Claim-matching precision", pct(v04.matchingPrecision), pct(metrics.claimMatching.precision)],
+                    ["Claim-matching recall (all)", pct(v04.matchingRecall), pct(metrics.claimMatching.recall)],
+                    ["English same-event recall", "≈59%", pct(lr.english)],
+                    ["Tamil ↔ Tamil recall", pct(v04.tamilMatching), pct(lr.tamilTamil)],
+                    ["Tamil ↔ English recall", "not implemented", pct(lr.crossLanguage)],
+                    ["False corroboration", `${v04.falseCorroboration} / 47`, `${fc.count} / ${fc.denominator}`],
+                  ];
+                  return rows.map(([k, a, b]) => (
+                    <tr key={k} className="align-top">
+                      <td className="px-4 py-3 ui text-[13px] font-semibold text-ink">{k}</td>
+                      <td className="px-4 py-3 mono text-[13px] text-ink-3">{a}</td>
+                      <td className="px-4 py-3 mono text-[13px] font-semibold text-ink">{b}</td>
+                    </tr>
+                  ));
+                })()}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-2 ui text-[11.5px] leading-relaxed text-ink-3">
+            The full A/B on the frozen 148-case corpus, the candidate-recall / decision-precision
+            split, and the decision-threshold curve are in{" "}
+            <a href="https://github.com/Rishidar-lab/info-for-all/blob/main/evaluation/reports/ab-matcher.md" className="text-accent hover:underline" target="_blank" rel="noopener noreferrer">ab-matcher.md</a>
+            {", "}
+            <a href="https://github.com/Rishidar-lab/info-for-all/blob/main/evaluation/reports/identity.md" className="text-accent hover:underline" target="_blank" rel="noopener noreferrer">identity.md</a>
+            {" and "}
+            <a href="https://github.com/Rishidar-lab/info-for-all/blob/main/evaluation/reports/threshold-analysis.md" className="text-accent hover:underline" target="_blank" rel="noopener noreferrer">threshold-analysis.md</a>.
+          </p>
+        </section>
+      )}
+
       {/* ── metrics table ───────────────────────────────────────────── */}
       <section>
         <div className="mb-3 border-b border-rule-strong pb-2">

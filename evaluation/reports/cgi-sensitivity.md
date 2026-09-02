@@ -4,16 +4,16 @@ _The Common Ground Index is **experimental**. This report measures how
 stable it is — it is not a claim that the weights are correct._
 
 - events analysed (≥2 publishers, CGI present): **8**
-- mean CGI: **56** · band distribution: {"moderate":6,"low":2}
+- mean CGI: **58.1** · band distribution: {"moderate":5,"low":2,"high":1}
 
 ## Weight perturbation (±20%), ranked by impact
 
 | Weight | Change | value | mean |Δscore| | max |Δ| | band flips |
 |---|---|---|---|---|---|
-| thinBaseCap | −20% | 68→54 | 4.25 | 14 | 0 |
-| thinBaseCap | +20% | 68→82 | 3.5 | 14 | 2 |
-| corroboratedGain | −20% | 45→36 | 3.38 | 6 | 0 |
-| corroboratedGain | +20% | 45→54 | 3 | 6 | 2 |
+| corroboratedGain | −20% | 45→36 | 4.5 | 9 | 0 |
+| corroboratedGain | +20% | 45→54 | 4.13 | 9 | 2 |
+| thinBaseCap | −20% | 68→54 | 2.5 | 14 | 0 |
+| thinBaseCap | +20% | 68→82 | 1.75 | 14 | 1 |
 | singleSourcePenalty | +20% | 25→30 | 1 | 2 | 0 |
 | singleSourcePenalty | −20% | 25→20 | 0.75 | 3 | 0 |
 | attributedPenalty | −20% | 12→10 | 0.5 | 1 | 0 |

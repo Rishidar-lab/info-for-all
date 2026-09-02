@@ -45,7 +45,7 @@ const ALLEGATION_VERBS = /\b(alleg\w+|accus\w+|claim\w+|blam\w+|denounc\w+|slam\
 
 /** Words that mark a PREDICTION / expectation about the future. */
 const PREDICTION_CUES =
-  /\b(expects?|expected to|likely to|forecasts?\b|forecast to|predicts?|projected to|projection|(?:could|may|might|would|will)\s+(?:cross|breach|rise|fall|intensify|weaken|reach|make landfall|be inundated|worsen|continue|persist|bring|hit|receive|see)|set to|braces? for|is expected|anticipat\w+|in the next \d+|over the next|tomorrow|by (?:tonight|midnight|tomorrow|wednesday|thursday|friday))\b/i;
+  /\b(expects?|expected to|likely to|forecasts?\b|forecast to|predicts?|projected to|projection|(?:could|may|might|would|will)\s+(?:cross|breach|rise|fall|intensify|weaken|reach|make landfall|be inundated|worsen|continue|persist|bring|hit|receive|see)|to (?:cross|make landfall|hit the coast)|set to|braces? for|is expected|anticipat\w+|in the next \d+|over the next|tomorrow|by (?:tonight|midnight|tomorrow|wednesday|thursday|friday))\b/i;
 
 const SPEECH_VERB =
   "said|says|stated|announced|announces|claimed|claims|alleged|alleges|accused|asserted|asserts|warned|warns|told|confirmed|confirms|denied|denies|added|adds|reiterated|reiterates|promised|promises|believes?|expects?|expected|fears?|feared|estimated|estimates|projected|projects|noted|notes|indicated|indicates|forecast|forecasts";
@@ -130,7 +130,7 @@ function parseFigures(text: string): { kind: string; value: number; raw: string 
     }
   };
 
-  const P = "(?:people\\s+|persons?\\s+|residents?\\s+|fishermen\\s+|were\\s+|are\\s+|got\\s+|still\\s+|reported\\s+|feared\\s+|confirmed\\s+){0,3}";
+  const P = "(?:people\\s+|persons?\\s+|residents?\\s+|fishermen\\s+|were\\s+|are\\s+|got\\s+|still\\s+|reported\\s+|feared\\s+|confirmed\\s+|rain-related\\s+|flood-related\\s+|weather-related\\s+|lightning\\s+|storm-related\\s+){0,3}";
   push("deaths", new RegExp(`\\b${NUM}\\s+${P}(?:killed|dead|died|deaths|lost their lives)\\b`));
   push("injuries", new RegExp(`\\b${NUM}\\s+${P}(?:injured|hurt|wounded)\\b`));
   push("missing", new RegExp(`\\b${NUM}\\s+${P}(?:missing|unaccounted)\\b`));
@@ -147,7 +147,7 @@ function parseFigures(text: string): { kind: string; value: number; raw: string 
       `\\b${NUM}\\s+(?:people\\s+|persons?\\s+|residents?\\s+)?(?:rescued|evacuated|shifted|moved to (?:relief|safety)|pulled (?:to safety|out|from)|shifted to relief camps?)\\b`,
     ),
   );
-  push("rescued", new RegExp(`\\b(?:rescued|evacuated|shifted|moved|pulled out)\\s+(?:out\\s+)?${NUM}\\b`));
+  push("rescued", new RegExp(`\\b(?:rescued|evacuated|shifted|moved|pull(?:ed)? out)\\s+(?:out\\s+)?${NUM}\\s+(?:people|persons?|residents?|villagers?)?\\b`));
   push("rescued", new RegExp(`\\b${NUM}\\s+(?:shifted|moved)\\s+to\\s+(?:relief|safety)`));
   push("teams", new RegExp(`\\b(?:deploys?|deployed|stations?|stationed|sends?|sent|rushes?|rushed)\\s+${NUM}\\s+(?:ndrf\\s+|sdrf\\s+|rescue\\s+|relief\\s+)?teams?\\b`));
   push("teams", new RegExp(`\\b${NUM}\\s+(?:ndrf|sdrf|rescue|relief)\\s+teams?\\b`));
@@ -169,6 +169,17 @@ function parseFigures(text: string): { kind: string; value: number; raw: string 
       if (!seen.has(k)) {
         seen.add(k);
         out.push({ kind: "amount_inr", value: q.value, raw: q.raw });
+      }
+    }
+    // a large count near a relocation verb → people sheltered / rescued
+    if (
+      q.dimension === "count" &&
+      /\b(shifted|moved|evacuat\w+|relocat\w+|relief camps?|to safety|housed|sheltered)\b/.test(t)
+    ) {
+      const k = `rescued:${q.value}`;
+      if (!seen.has(k)) {
+        seen.add(k);
+        out.push({ kind: "rescued", value: q.value, raw: q.raw });
       }
     }
   }
@@ -227,14 +238,14 @@ function parseFigures(text: string): { kind: string; value: number; raw: string 
 const SUBJECT_CLASS: { re: RegExp; cls: string; noun: string; type?: ClaimType }[] = [
   { re: /\b(schools?|colleges?|educational institutions?|classes|anna university|universit(?:y|ies))\b/i, cls: "education", noun: "Schools / colleges" },
   { re: /\b(semester )?exams?\b/i, cls: "exams", noun: "Examinations" },
-  { re: /\b(suburban )?(trains?|rail services?|railways?|emu services?)\b/i, cls: "rail", noun: "Train services", type: "event" },
+  { re: /\b(suburban )?(trains?|rail services?|railways?|emu services?|rail traffic|rail and|air and rail)\b/i, cls: "rail", noun: "Train services", type: "event" },
   { re: /\bmetro\b/i, cls: "metro", noun: "Metro services", type: "event" },
   { re: /\bflights?\b|\bair(?:port)? operations?\b/i, cls: "air", noun: "Flights", type: "event" },
   { re: /\bbus(?:es)? services?\b|\bstate transport\b/i, cls: "bus", noun: "Bus services", type: "event" },
   { re: /\b(power (?:supply|cut|shutdown)?|electricity|tangedco)\b/i, cls: "power", noun: "Power supply", type: "event" },
   { re: /\b(fishing|fishermen|fisherfolk|venture into (?:the )?sea|put to sea)\b/i, cls: "fishing", noun: "Fishing" },
   { re: /\bsection\s*1?44\b|\bprohibitory orders?\b/i, cls: "section-144", noun: "Prohibitory orders (Section 144)" },
-  { re: /\bevacuat\w+\b/i, cls: "evacuation", noun: "Evacuation" },
+  { re: /\bevacuat\w+\b|\bmove(?:d|s)? residents\b|\bresidents (?:were )?moved out\b|\bmoved out of low-lying\b|\bshift(?:ed)? residents\b|\brelocat\w+ residents\b/i, cls: "evacuation", noun: "Evacuation" },
   { re: /\brelief (?:camps?|centres?|shelters?)\b/i, cls: "relief-camps", noun: "Relief camps", type: "event" },
   { re: /\b(?:public |local |government )?holiday\b/i, cls: "holiday", noun: "A public holiday" },
   { re: /\b(mettur|bhavani|amaravathi|sathanur|krishnagiri|vaigai|reservoir)\b[^.]{0,20}\bdam\b|\bdam\b[^.]{0,20}\b(shutters?|storage|level|release)\b/i, cls: "dam", noun: "Dam", type: "event" },
@@ -245,7 +256,7 @@ const PREDICATE_SYN: { re: RegExp; pred: string }[] = [
   { re: /\b(suspend\w*|halt\w*|stopped?|call(?:ed)? off|off the tracks|not (?:operate|run)|disrupt\w*|hit by|paralys\w+)\b/i, pred: "suspended" },
   { re: /\bcut\b|\bcuts\b|\boutage\b|\bsnapped\b/i, pred: "suspended" },
   { re: /\b(cancel\w*)\b/i, pred: "cancelled" },
-  { re: /\b(ban\w*|prohibit\w*|barred|advised not to|not to venture|kept off)\b/i, pred: "banned" },
+  { re: /\b(bans?|banned|banning|prohibit\w*|barred|advised not to|not to venture|kept off|no fishing)\b/i, pred: "banned" },
   { re: /\b(postpone\w*|put off|defer\w*|reschedul\w*)\b/i, pred: "postponed" },
   { re: /\b(open\w*|release\w*|discharg\w*|lift(?:ed|s)? (?:shutters|gates))\b/i, pred: "opened" },
   { re: /\b(impose\w*|clamp\w*|promulgat\w*|comes? into force|in force|slap\w*)\b/i, pred: "imposed" },

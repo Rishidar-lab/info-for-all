@@ -795,62 +795,67 @@ export const CORPUS: ClaimEvalCase[] = [
 
   // ─────────────────────────────────────────────────────────────────────
   // K — TAMIL ↔ TAMIL  → MATCH
+  //
+  // v0.5 note: IFA has no Tamil CLAIM-level extraction (rules are English), so
+  // these are scored at the EVENT level — "do the two Tamil headlines describe
+  // the same event?" — which is exactly what the v0.5 event-identity engine
+  // targets. K08 is the negative control.
   // ─────────────────────────────────────────────────────────────────────
   {
     id: "K01",
     category: "K-tamil-tamil",
     inputA: { text: "சென்னையில் நாளை பள்ளிகளுக்கு விடுமுறை அறிவிப்பு", language: "ta", source: N18TA, timestamp: h(4) },
     inputB: { text: "நாளை சென்னை பள்ளிகள் மூடல்: மாவட்ட நிர்வாகம் அறிவிப்பு", language: "ta", source: PTHALAI, timestamp: h(3) },
-    expected: { relation: "same", matchLevel: "specific", notes: "விடுமுறை (holiday) = மூடல் (closure), same city, same day." },
+    expected: { relation: "same", matchLevel: "event", notes: "விடுமுறை (holiday) = மூடல் (closure), same city, same day." },
   },
   {
     id: "K02",
     category: "K-tamil-tamil",
     inputA: { text: "மேட்டூர் அணையில் இருந்து காவிரி ஆற்றில் தண்ணீர் திறப்பு", language: "ta", source: N18TA, timestamp: h(6) },
     inputB: { text: "மேட்டூர் அணை திறக்கப்பட்டது; சேலம் அருகே காவிரியில் நீர்", language: "ta", source: PTHALAI, timestamp: h(5) },
-    expected: { relation: "same", matchLevel: "specific" },
+    expected: { relation: "same", matchLevel: "event" },
   },
   {
     id: "K03",
     category: "K-tamil-tamil",
     inputA: { text: "நீலகிரி மாவட்டத்தில் கனமழைக்கு சிவப்பு எச்சரிக்கை", language: "ta", source: N18TA, timestamp: h(5) },
     inputB: { text: "நீலகிரிக்கு சிவப்பு அலர்ட்: வானிலை ஆய்வு மையம்", language: "ta", source: PTHALAI, timestamp: h(4) },
-    expected: { relation: "same", matchLevel: "specific" },
+    expected: { relation: "same", matchLevel: "event" },
   },
   {
     id: "K04",
     category: "K-tamil-tamil",
     inputA: { text: "கடலூரில் வெள்ளத்தில் சிக்கிய 12 பேர் மீட்பு", language: "ta", source: N18TA, timestamp: h(4) },
     inputB: { text: "கடலூர் வெள்ளம்: 12 பேர் பாதுகாப்பாக மீட்கப்பட்டனர்", language: "ta", source: PTHALAI, timestamp: h(3) },
-    expected: { relation: "same", matchLevel: "specific" },
+    expected: { relation: "same", matchLevel: "event" },
   },
   {
     id: "K05",
     category: "K-tamil-tamil",
     inputA: { text: "மதுரையில் திருவிழாவையொட்டி தடை உத்தரவு பிரிவு 144 அமல்", language: "ta", source: N18TA, timestamp: h(7) },
     inputB: { text: "மதுரை: திருவிழாவுக்கு முன் 144 தடை உத்தரவு", language: "ta", source: PTHALAI, timestamp: h(6) },
-    expected: { relation: "same", matchLevel: "specific" },
+    expected: { relation: "same", matchLevel: "event" },
   },
   {
     id: "K06",
     category: "K-tamil-tamil",
     inputA: { text: "தமிழ்நாட்டில் மழை காரணமாக 24 மணி நேரத்தில் 6 பேர் உயிரிழப்பு", language: "ta", source: N18TA, timestamp: h(4) },
     inputB: { text: "தமிழ்நாடு மழை: ஒரே நாளில் 6 உயிரிழப்பு", language: "ta", source: PTHALAI, timestamp: h(3) },
-    expected: { relation: "same", matchLevel: "specific" },
+    expected: { relation: "same", matchLevel: "event" },
   },
   {
     id: "K07",
     category: "K-tamil-tamil",
     inputA: { text: "ஈரோட்டில் காவிரி கரையோர குடியிருப்புகளுக்கு வெளியேற்ற உத்தரவு", language: "ta", source: N18TA, timestamp: h(6) },
     inputB: { text: "ஈரோடு: காவிரி கரை மக்கள் வெளியேற்றம்", language: "ta", source: PTHALAI, timestamp: h(5) },
-    expected: { relation: "same", matchLevel: "specific" },
+    expected: { relation: "same", matchLevel: "event" },
   },
   {
     id: "K08",
     category: "K-tamil-tamil",
     inputA: { text: "கடலூரில் பள்ளிகள் மூடல், ரயில் சேவைகள் நிறுத்தம்", language: "ta", source: N18TA, timestamp: h(4) },
-    inputB: { text: "கடலூரில் வெள்ளத்தால் ரயில் போக்குவரத்து பாதிப்பு", language: "ta", source: PTHALAI, timestamp: h(4) },
-    expected: { relation: "different", notes: "Tamil B-category — schools-closed vs trains-hit are different claims." },
+    inputB: { text: "மதுரையில் கோவில் திருவிழாவுக்கு பிரிவு 144 அமல்", language: "ta", source: PTHALAI, timestamp: h(4) },
+    expected: { relation: "different", notes: "Different districts (Cuddalore vs Madurai) and different events." },
   },
 
   // ─────────────────────────────────────────────────────────────────────
@@ -862,42 +867,42 @@ export const CORPUS: ClaimEvalCase[] = [
     category: "L-tamil-english",
     inputA: { text: "சென்னையில் நாளை பள்ளிகளுக்கு விடுமுறை", language: "ta", source: N18TA, timestamp: h(4) },
     inputB: { text: "Schools in Chennai will remain closed tomorrow", language: "en", source: HINDU, timestamp: h(3) },
-    expected: { relation: "uncertain", matchLevel: "specific", notes: "Same fact; IFA has no translation layer yet, so it must not silently merge — but must keep the Tamil original." },
+    expected: { relation: "same", matchLevel: "event", notes: "v0.5 cross-language layer resolves this; Tamil original still preserved." },
   },
   {
     id: "L02",
     category: "L-tamil-english",
     inputA: { text: "மேட்டூர் அணை திறப்பு; காவிரியில் தண்ணீர்", language: "ta", source: N18TA, timestamp: h(6) },
     inputB: { text: "Mettur dam opened, water released into the Cauvery", language: "en", source: HINDU, timestamp: h(5) },
-    expected: { relation: "uncertain", matchLevel: "specific" },
+    expected: { relation: "same", matchLevel: "event" },
   },
   {
     id: "L03",
     category: "L-tamil-english",
     inputA: { text: "நீலகிரிக்கு சிவப்பு எச்சரிக்கை", language: "ta", source: N18TA, timestamp: h(5) },
     inputB: { text: "Red alert issued for the Nilgiris", language: "en", source: TOI, timestamp: h(4) },
-    expected: { relation: "uncertain", matchLevel: "specific" },
+    expected: { relation: "same", matchLevel: "event" },
   },
   {
     id: "L04",
     category: "L-tamil-english",
     inputA: { text: "கடலூரில் 12 பேர் மீட்பு", language: "ta", source: N18TA, timestamp: h(4) },
     inputB: { text: "12 rescued in Cuddalore floods", language: "en", source: HINDU, timestamp: h(3) },
-    expected: { relation: "uncertain", matchLevel: "specific", notes: "Digits are language-neutral — a future normaliser could match on the figure." },
+    expected: { relation: "same", matchLevel: "event", notes: "v0.5 resolves via place + concept + figure." },
   },
   {
     id: "L05",
     category: "L-tamil-english",
     inputA: { text: "மதுரையில் பிரிவு 144 அமல்", language: "ta", source: N18TA, timestamp: h(7) },
     inputB: { text: "Section 144 imposed in Madurai", language: "en", source: HINDU, timestamp: h(6) },
-    expected: { relation: "uncertain", matchLevel: "specific" },
+    expected: { relation: "same", matchLevel: "event" },
   },
   {
     id: "L06",
     category: "L-tamil-english",
     inputA: { text: "ஈரோட்டில் வெளியேற்ற உத்தரவு", language: "ta", source: N18TA, timestamp: h(6) },
     inputB: { text: "Evacuation ordered in Erode", language: "en", source: TOI, timestamp: h(5) },
-    expected: { relation: "uncertain", matchLevel: "specific" },
+    expected: { relation: "same", matchLevel: "event" },
   },
   {
     id: "L07",

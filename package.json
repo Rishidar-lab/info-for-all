@@ -21,7 +21,10 @@
     "validate:feed": "tsx scripts/validate-feed.ts",
     "eval:claims": "tsx scripts/eval-claims.ts",
     "eval:cgi": "tsx scripts/eval-cgi.ts",
+    "eval:identity": "tsx scripts/eval-identity.ts",
+    "eval:misses": "tsx scripts/analyze-misses.ts",
     "quality-gate": "tsx scripts/quality-gate.ts",
+    "audit:identity": "tsx scripts/identity-live-audit.ts",
     "verify": "npm run lint && npm run typecheck && npm run test && npm run build"
   },
   "dependencies": {

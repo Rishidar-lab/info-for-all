@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { CORPUS } from "../../evaluation/claims/corpus";
+import { FULL_CORPUS as CORPUS } from "../../evaluation/claims/corpus-all";
 import { validateCorpus } from "../../evaluation/claims/schema";
 import { runCorpus } from "../../evaluation/claims/harness";
 

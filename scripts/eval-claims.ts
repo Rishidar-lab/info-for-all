@@ -16,7 +16,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { runCorpus, type CorpusReport } from "../evaluation/claims/harness";
-import { CORPUS } from "../evaluation/claims/corpus";
+import { FULL_CORPUS as CORPUS } from "../evaluation/claims/corpus-all";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const REPORT_DIR = resolve(ROOT, "evaluation/reports");
@@ -49,6 +49,32 @@ function publicView(r: CorpusReport) {
     falseCorroboration: r.falseCorroboration,
     failureCounts: tallyFailures(r),
     sampleFailures: r.failures.slice(0, 12),
+    languageRecall: languageRecall(r),
+    /** Frozen v0.4 result (evaluation/reports/v0.5-baseline.md) for the A/B on the dashboard. */
+    v04: {
+      cases: 148,
+      matchingPrecision: 1.0,
+      matchingRecall: 0.591,
+      tamilMatching: 0.125,
+      contradictionRecall: 0.9,
+      falseCorroboration: 0,
+    },
+  };
+}
+
+function languageRecall(r: CorpusReport) {
+  const out = { english: { tp: 0, fn: 0 }, tamilTamil: { tp: 0, fn: 0 }, crossLanguage: { tp: 0, fn: 0 } };
+  for (const c of r.caseResults) {
+    if (c.relation !== "same") continue;
+    const bucket = c.category === "L-tamil-english" ? out.crossLanguage : c.category === "K-tamil-tamil" ? out.tamilTamil : out.english;
+    if (c.contributes["match-tp"]) bucket.tp++;
+    else if (c.contributes["match-fn"]) bucket.fn++;
+  }
+  const rate = (b: { tp: number; fn: number }) => (b.tp + b.fn ? b.tp / (b.tp + b.fn) : null);
+  return {
+    english: rate(out.english),
+    tamilTamil: rate(out.tamilTamil),
+    crossLanguage: rate(out.crossLanguage),
   };
 }
 

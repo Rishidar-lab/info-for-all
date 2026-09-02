@@ -11,7 +11,16 @@
  * is unambiguous. It never converts across dimensions and never guesses a unit.
  */
 
-export type QuantityDimension = "length" | "currency" | "count" | "speed" | "temperature" | "volume-rate" | "percent" | "unknown";
+export type QuantityDimension =
+  | "length"
+  | "currency"
+  | "count"
+  | "district-count"
+  | "speed"
+  | "temperature"
+  | "volume-rate"
+  | "percent"
+  | "unknown";
 
 export interface Quantity {
   /** Value normalised to the dimension's base unit. */
@@ -39,6 +48,7 @@ export function parseNumberToken(token: string): number | null {
     return Number.isFinite(n) ? n : null;
   }
   if (t in WORD_NUMBERS) return WORD_NUMBERS[t];
+  if (t === "a dozen" || t === "a couple") return t === "a dozen" ? 12 : 2;
   // "half a lakh", "a dozen"
   if (/^(a|an)$/.test(t)) return 1;
   return null;
@@ -107,6 +117,12 @@ export function parseQuantities(text: string): Quantity[] {
     const base = m[1] === "half a" ? 0.5 : parseNumberToken(m[1]);
     const mult = COUNT_MULT[m[2]];
     if (base != null && mult) add({ value: base * mult, unit: "1", dimension: "count", raw: m[0].trim() });
+  }
+
+  // ── "N districts" — a distinctive statewide-weather figure ──
+  for (const m of t.matchAll(/\b(\d{1,2})\s+(?:districts?|மாவட்டங்கள்|மாவட்டங்களுக்கு|மாவட்டங்களில்)\b/g)) {
+    const n = Number(m[1]);
+    if (Number.isFinite(n) && n >= 2) add({ value: n, unit: "districts", dimension: "district-count", raw: m[0].trim() });
   }
 
   return out;

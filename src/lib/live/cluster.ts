@@ -15,6 +15,12 @@ import {
   stripHeadlinePrefix,
   PERSON_ENTITIES,
 } from "./entities";
+import {
+  buildSignature,
+  decideIdentity,
+  candidatePairs,
+  type EventSignature,
+} from "@/lib/event-identity";
 
 /** Jaccard similarity of two token sets. */
 function jaccard(a: Set<string>, b: Set<string>): number {
@@ -146,10 +152,15 @@ function scorePair(a: LiveArticle, b: LiveArticle, sa: Sig, sb: Sig, sameWindowM
 
 const RANK: Record<ClusterConfidence, number> = { weak: 1, probable: 2, strong: 3 };
 
-export function clusterArticles(articles: LiveArticle[], now = Date.now()): {
+export function clusterArticles(
+  articles: LiveArticle[],
+  now = Date.now(),
+  opts: { semantic?: boolean } = {},
+): {
   clusters: LiveCluster[];
   weakMatchesRejected: number;
 } {
+  const useSemantic = opts.semantic !== false;
   const sorted = [...articles].sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt));
 
   // First pass: extract entities and count how many articles each appears in.
@@ -167,6 +178,7 @@ export function clusterArticles(articles: LiveArticle[], now = Date.now()): {
   const rareCutoff = Math.max(3, Math.ceil(sorted.length * 0.05));
 
   const sig = new Map<string, Sig>();
+  const esig = new Map<string, EventSignature>();
   for (const a of sorted) {
     const ents = rawEntities.get(a.id)!;
     const rare = new Set([...ents].filter((e) => (df.get(e) ?? 0) <= rareCutoff));
@@ -177,6 +189,17 @@ export function clusterArticles(articles: LiveArticle[], now = Date.now()): {
       figures: extractFigures(a.title + " " + (a.excerpt ?? "")),
       states: statesMentioned(a.title + " " + (a.excerpt ?? "") + " " + (a.cap?.areaDescription ?? "")),
     });
+    esig.set(
+      a.id,
+      buildSignature({
+        title: stripHeadlinePrefix(a.title),
+        excerpt: a.excerpt,
+        publishedAt: a.publishedAt,
+        language: a.language,
+        districts: a.districts,
+        crisisType: a.crisisType,
+      }),
+    );
   }
 
   const parent = new Map<string, string>();
@@ -193,6 +216,8 @@ export function clusterArticles(articles: LiveArticle[], now = Date.now()): {
 
   // Record every qualifying edge; used later to derive per-cluster confidence + reason.
   const edges: { a: string; b: string; edge: Edge; crossPublisher: boolean }[] = [];
+  const identityEdges = new Map<string, IdentityEdge>();
+  const crossRelations: { a: string; b: string; relation: "part-of" | "follow-up" | "related"; reason: string }[] = [];
   let weakMatchesRejected = 0;
 
   const isDigest = new Map<string, boolean>();
@@ -204,10 +229,26 @@ export function clusterArticles(articles: LiveArticle[], now = Date.now()): {
       const b = sorted[j];
       // Multi-topic digests / show segments never seed or join a cluster.
       if (isDigest.get(a.id) || isDigest.get(b.id)) continue;
-      const edge = scorePair(a, b, sig.get(a.id)!, sig.get(b.id)!, CLUSTER_WINDOW_MS);
+      let edge = scorePair(a, b, sig.get(a.id)!, sig.get(b.id)!, CLUSTER_WINDOW_MS);
       if (!edge) continue;
+      // Semantic VETO — the event-identity engine has a fuller location model
+      // (it resolves "Karaikal" → Puducherry even when the geo classifier does
+      // not). If it finds a hard geographic / hazard / date blocker, the lexical
+      // headline overlap does not get to override it.
+      if (useSemantic && edge.confidence !== "weak") {
+        const veto = decideIdentity(esig.get(a.id)!, esig.get(b.id)!);
+        if (veto.relation === "different" && veto.blockers.length > 0) {
+          edge = { confidence: "weak", reason: `Headline overlap, but ${veto.blockers[0]}.` };
+        }
+      }
       const crossPublisher = a.publisher !== b.publisher;
       edges.push({ a: a.id, b: b.id, edge, crossPublisher });
+      if (edge.confidence !== "weak" && crossPublisher) {
+        identityEdges.set(pairKey(a.id, b.id), {
+          a: a.id, b: b.id, relation: "same", confidence: edge.confidence === "strong" ? "high" : "moderate",
+          via: "lexical", reason: edge.reason, blockers: [],
+        });
+      }
 
       // Merge rule — 'probable' or 'strong' only, in BOTH cases:
       //  - same publisher: consolidates one outlet's several takes on the same event,
@@ -221,6 +262,42 @@ export function clusterArticles(articles: LiveArticle[], now = Date.now()): {
     }
   }
 
+  // ── v0.5: semantic second pass ─────────────────────────────────────────
+  // PERMISSIVE candidate generation (blocking by district / entity / place /
+  // crisis-type) then the CONSERVATIVE identity gate. Recovers paraphrases and
+  // Tamil pairs the lexical pass misses, without lowering the lexical bar.
+  const sigList = sorted.map((a) => esig.get(a.id)!);
+  for (const cand of useSemantic ? candidatePairs(sigList, { windowMs: CLUSTER_WINDOW_MS + 10 * 3600 * 1000 }) : []) {
+    const a = sorted[cand.i];
+    const b = sorted[cand.j];
+    if (isDigest.get(a.id) || isDigest.get(b.id)) continue;
+    if (find(a.id) === find(b.id)) continue; // already together
+    const key = pairKey(a.id, b.id);
+    if (identityEdges.has(key)) continue;
+    const decision = decideIdentity(esig.get(a.id)!, esig.get(b.id)!);
+    const crossPublisher = a.publisher !== b.publisher;
+
+    if (decision.relation === "same") {
+      const mergeOk =
+        decision.confidence === "high" ||
+        decision.confidence === "moderate" ||
+        (!crossPublisher && decision.confidence === "low");
+      if (mergeOk) {
+        union(a.id, b.id);
+        if (crossPublisher) {
+          identityEdges.set(key, {
+            a: a.id, b: b.id, relation: "same", confidence: decision.confidence,
+            via: "semantic", reason: decision.reasons[0] ?? "semantic match", blockers: [],
+          });
+        }
+      } else if (crossPublisher) {
+        weakMatchesRejected++;
+      }
+    } else if (decision.relation === "part-of" || decision.relation === "follow-up" || decision.relation === "related") {
+      crossRelations.push({ a: a.id, b: b.id, relation: decision.relation, reason: decision.reasons[0] ?? decision.relation });
+    }
+  }
+
   const groups = new Map<string, LiveArticle[]>();
   for (const a of sorted) {
     const root = find(a.id);
@@ -228,6 +305,7 @@ export function clusterArticles(articles: LiveArticle[], now = Date.now()): {
     groups.get(root)!.push(a);
   }
 
+  const rootOf = (id: string) => find(id);
   const clusters: LiveCluster[] = [];
   for (const members of groups.values()) {
     const memberIds = new Set(members.map((m) => m.id));
@@ -238,11 +316,62 @@ export function clusterArticles(articles: LiveArticle[], now = Date.now()): {
       if (!e.crossPublisher) continue;
       if (!best || RANK[e.edge.confidence] > RANK[best.confidence]) best = e.edge;
     }
-    clusters.push(buildCluster(members, now, best));
+    // If the group has no lexical cross-edge, fall back to the best semantic one.
+    let semanticBest: IdentityEdge | undefined;
+    for (const ie of identityEdges.values()) {
+      if (!memberIds.has(ie.a) || !memberIds.has(ie.b)) continue;
+      if (!semanticBest || CONF_RANK[ie.confidence] > CONF_RANK[semanticBest.confidence]) semanticBest = ie;
+    }
+    if (!best && semanticBest) {
+      best = {
+        confidence: semanticBest.confidence === "high" ? "strong" : semanticBest.confidence === "moderate" ? "probable" : "weak",
+        reason: `Semantic event-identity match — ${semanticBest.reason}.`,
+      };
+    }
+    const cluster = buildCluster(members, now, best);
+    const edgesForCluster = [...identityEdges.values()].filter((ie) => memberIds.has(ie.a) && memberIds.has(ie.b));
+    const relatedForCluster = crossRelations
+      .filter((r) => memberIds.has(r.a) !== memberIds.has(r.b))
+      .map((r) => {
+        const other = memberIds.has(r.a) ? r.b : r.a;
+        return { otherClusterId: rootOf(other), relation: r.relation, reason: r.reason };
+      });
+    if (edgesForCluster.length || relatedForCluster.length) {
+      cluster.identity = { edges: edgesForCluster, related: dedupeRelated(relatedForCluster) };
+    }
+    clusters.push(cluster);
   }
 
   clusters.sort((a, b) => b.crisisPriority - a.crisisPriority || Date.parse(b.updatedAt) - Date.parse(a.updatedAt));
   return { clusters, weakMatchesRejected };
+}
+
+interface IdentityEdge {
+  a: string;
+  b: string;
+  relation: "same" | "related" | "part-of" | "follow-up" | "different" | "uncertain";
+  confidence: "high" | "moderate" | "low";
+  via: "lexical" | "semantic";
+  reason: string;
+  blockers: string[];
+}
+
+const CONF_RANK: Record<"high" | "moderate" | "low", number> = { low: 1, moderate: 2, high: 3 };
+
+function pairKey(a: string, b: string): string {
+  return a < b ? `${a}|${b}` : `${b}|${a}`;
+}
+
+function dedupeRelated<T extends { otherClusterId: string; relation: string }>(rows: T[]): T[] {
+  const seen = new Set<string>();
+  const out: T[] = [];
+  for (const r of rows) {
+    const k = `${r.otherClusterId}:${r.relation}`;
+    if (seen.has(k)) continue;
+    seen.add(k);
+    out.push(r);
+  }
+  return out;
 }
 
 function mostCommon<T>(values: T[]): T | undefined {

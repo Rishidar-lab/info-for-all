@@ -400,10 +400,15 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
         </section>
       </div>
 
-      <div className="mt-10 border-t border-rule pt-4">
+      <div className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-rule pt-4">
         <Link href="/" className="ui text-[13px] font-semibold text-accent hover:underline">
           <span aria-hidden>←</span> Back to the live feed
         </Link>
+        {(cluster.identity || articles.length >= 2) && (
+          <Link href={`/methodology/clusters/${cluster.slug}`} className="ui text-[12px] text-ink-3 hover:text-accent">
+            Why were these grouped? — cluster audit
+          </Link>
+        )}
       </div>
     </article>
   );

@@ -172,6 +172,25 @@ export interface LiveCluster {
    * `src/lib/claims/`.
    */
   claims?: import("../claims/types").EventClaims;
+  /**
+   * v0.5 event-identity — the semantic decisions that joined (or explain the
+   * shape of) this cluster, and cross-cluster relationships (PART_OF / FOLLOW_UP
+   * / RELATED). Used by the cluster-audit view.
+   */
+  identity?: {
+    /** How each cross-publisher pair inside the cluster was decided. */
+    edges: {
+      a: string;
+      b: string;
+      relation: "same" | "related" | "part-of" | "follow-up" | "different" | "uncertain";
+      confidence: "high" | "moderate" | "low";
+      via: "lexical" | "semantic";
+      reason: string;
+      blockers: string[];
+    }[];
+    /** Relationships to OTHER clusters (not merged). */
+    related: { otherClusterId: string; relation: "part-of" | "follow-up" | "related"; reason: string }[];
+  };
 }
 
 export type FeedHealth = "live" | "degraded" | "stale" | "empty";

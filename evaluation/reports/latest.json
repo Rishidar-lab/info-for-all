@@ -1,31 +1,31 @@
 {
-  "generatedAt": "2026-09-02T02:11:47.878Z",
+  "generatedAt": "2026-09-02T03:45:52.178Z",
   "now": "2026-09-02T06:00:00.000Z",
   "provider": "rule-only",
   "totals": {
-    "cases": 148,
-    "passed": 127
+    "cases": 223,
+    "passed": 211
   },
   "byCategory": {
     "Same fact, different wording": {
-      "n": 18,
-      "passed": 12
+      "n": 27,
+      "passed": 26
     },
     "Related but different fact": {
-      "n": 12,
-      "passed": 12
+      "n": 13,
+      "passed": 13
     },
     "Numeric agreement (unit normalisation)": {
       "n": 8,
-      "passed": 5
+      "passed": 7
     },
     "Numeric contradiction": {
       "n": 10,
-      "passed": 9
+      "passed": 10
     },
     "Temporal update (supersedes)": {
-      "n": 10,
-      "passed": 10
+      "n": 12,
+      "passed": 12
     },
     "Attributed statement": {
       "n": 14,
@@ -44,57 +44,57 @@
       "passed": 9
     },
     "Syndication vs independence": {
-      "n": 10,
-      "passed": 8
+      "n": 13,
+      "passed": 12
     },
     "Tamil ↔ Tamil": {
-      "n": 8,
-      "passed": 1
+      "n": 26,
+      "passed": 22
     },
     "Tamil ↔ English": {
-      "n": 8,
-      "passed": 8
+      "n": 33,
+      "passed": 30
     },
     "Same people, different story": {
-      "n": 8,
-      "passed": 8
+      "n": 18,
+      "passed": 18
     },
     "Same location, different date": {
-      "n": 8,
-      "passed": 8
+      "n": 10,
+      "passed": 10
     },
     "Neighbouring districts": {
-      "n": 8,
-      "passed": 8
+      "n": 13,
+      "passed": 13
     }
   },
   "metrics": {
     "claimMatching": {
       "label": "Claim matching",
       "precision": 1,
-      "recall": 0.5909090909090909,
-      "f1": 0.7428571428571429,
-      "n": 85,
-      "detail": "TP 26 · FP 0 · FN 18 · TN 41"
+      "recall": 0.8924731182795699,
+      "f1": 0.9431818181818181,
+      "n": 164,
+      "detail": "TP 83 · FP 0 · FN 10 · TN 71"
     },
     "claimExtraction": {
       "label": "Claim extraction (expected type recovered)",
-      "accuracy": 0.9605263157894737,
-      "recall": 0.9605263157894737,
-      "n": 76
+      "accuracy": 0.963855421686747,
+      "recall": 0.963855421686747,
+      "n": 83
     },
     "contradiction": {
       "label": "Contradiction detection",
       "precision": 1,
-      "recall": 0.9,
-      "f1": 0.9473684210526316,
-      "n": 105,
-      "detail": "TP 9 · FP 0 · FN 1 · TN 95"
+      "recall": 1,
+      "f1": 1,
+      "n": 186,
+      "detail": "TP 10 · FP 0 · FN 0 · TN 176"
     },
     "temporalUpdate": {
       "label": "Temporal-update classification",
       "accuracy": 1,
-      "n": 10
+      "n": 12
     },
     "attribution": {
       "label": "Attribution retention",
@@ -112,93 +112,37 @@
     "independence": {
       "label": "Source-independence classification",
       "accuracy": 1,
-      "n": 10
+      "n": 13
     },
     "wireDetection": {
       "label": "Wire / agency credit detection",
       "accuracy": 1,
-      "n": 7
+      "n": 9
     },
     "tamilMatching": {
       "label": "Tamil ↔ Tamil matching",
-      "accuracy": 0.125,
-      "n": 8
+      "accuracy": 0.8461538461538461,
+      "n": 26
     },
     "crossLanguageHeld": {
       "label": "Tamil ↔ English held without silent merge",
       "accuracy": 1,
-      "n": 6
+      "n": 12
     },
     "tamilOriginalKept": {
       "label": "Tamil original text preserved",
       "accuracy": 1,
-      "n": 6
+      "n": 61
     }
   },
   "falseCorroboration": {
     "count": 0,
-    "denominator": 47,
+    "denominator": 71,
     "rate": 0,
     "cases": []
   },
   "failures": [
     {
-      "id": "A04",
-      "category": "Same fact, different wording",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
-    },
-    {
-      "id": "A06",
-      "category": "Same fact, different wording",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
-    },
-    {
-      "id": "A09",
-      "category": "Same fact, different wording",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
-    },
-    {
-      "id": "A12",
-      "category": "Same fact, different wording",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
-    },
-    {
-      "id": "A17",
-      "category": "Same fact, different wording",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
-    },
-    {
-      "id": "A18",
-      "category": "Same fact, different wording",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
-    },
-    {
-      "id": "A18",
-      "category": "Same fact, different wording",
-      "kind": "extraction-miss",
-      "expected": "statistic",
-      "actual": "event"
-    },
-    {
-      "id": "C04",
-      "category": "Numeric agreement (unit normalisation)",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
-    },
-    {
       "id": "C05",
       "category": "Numeric agreement (unit normalisation)",
       "kind": "missed-match",
@@ -211,20 +155,6 @@
       "kind": "extraction-miss",
       "expected": "statistic",
       "actual": "event"
-    },
-    {
-      "id": "C06",
-      "category": "Numeric agreement (unit normalisation)",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
-    },
-    {
-      "id": "D07",
-      "category": "Numeric contradiction",
-      "kind": "missed-contradiction",
-      "expected": "flagged disputed",
-      "actual": "not flagged"
     },
     {
       "id": "H07",
@@ -248,13 +178,6 @@
       "actual": "no evidence extracted"
     },
     {
-      "id": "J07",
-      "category": "Syndication vs independence",
-      "kind": "missed-match",
-      "expected": "A and B corroborate",
-      "actual": "kept separate"
-    },
-    {
       "id": "J10",
       "category": "Syndication vs independence",
       "kind": "missed-match",
@@ -262,53 +185,67 @@
       "actual": "kept separate"
     },
     {
-      "id": "K01",
+      "id": "P04",
       "category": "Tamil ↔ Tamil",
       "kind": "missed-match",
       "expected": "A and B corroborate",
       "actual": "kept separate"
     },
     {
-      "id": "K02",
+      "id": "P12",
       "category": "Tamil ↔ Tamil",
       "kind": "missed-match",
       "expected": "A and B corroborate",
       "actual": "kept separate"
     },
     {
-      "id": "K03",
+      "id": "P13",
       "category": "Tamil ↔ Tamil",
       "kind": "missed-match",
       "expected": "A and B corroborate",
       "actual": "kept separate"
     },
     {
-      "id": "K04",
+      "id": "P14",
       "category": "Tamil ↔ Tamil",
       "kind": "missed-match",
       "expected": "A and B corroborate",
       "actual": "kept separate"
     },
     {
-      "id": "K05",
-      "category": "Tamil ↔ Tamil",
+      "id": "Q06",
+      "category": "Tamil ↔ English",
       "kind": "missed-match",
       "expected": "A and B corroborate",
       "actual": "kept separate"
     },
     {
-      "id": "K06",
-      "category": "Tamil ↔ Tamil",
+      "id": "Q11",
+      "category": "Tamil ↔ English",
       "kind": "missed-match",
       "expected": "A and B corroborate",
       "actual": "kept separate"
     },
     {
-      "id": "K07",
-      "category": "Tamil ↔ Tamil",
+      "id": "Q14",
+      "category": "Tamil ↔ English",
       "kind": "missed-match",
       "expected": "A and B corroborate",
       "actual": "kept separate"
+    },
+    {
+      "id": "S10",
+      "category": "Same fact, different wording",
+      "kind": "missed-match",
+      "expected": "A and B corroborate",
+      "actual": "kept separate"
+    },
+    {
+      "id": "S10",
+      "category": "Same fact, different wording",
+      "kind": "extraction-miss",
+      "expected": "statistic",
+      "actual": "event"
     }
   ],
   "caseResults": [
@@ -355,16 +292,10 @@
       "id": "A04",
       "category": "A-same-fact-different-wording",
       "relation": "same",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-match",
-          "expected": "A and B corroborate",
-          "actual": "kept separate"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "match-fn": true,
+        "match-tp": true,
         "contradiction-tn": true,
         "extraction-den": true,
         "extraction-hit": true
@@ -387,16 +318,10 @@
       "id": "A06",
       "category": "A-same-fact-different-wording",
       "relation": "same",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-match",
-          "expected": "A and B corroborate",
-          "actual": "kept separate"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "match-fn": true,
+        "match-tp": true,
         "contradiction-tn": true,
         "extraction-den": true,
         "extraction-hit": true
@@ -432,16 +357,10 @@
       "id": "A09",
       "category": "A-same-fact-different-wording",
       "relation": "same",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-match",
-          "expected": "A and B corroborate",
-          "actual": "kept separate"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "match-fn": true,
+        "match-tp": true,
         "contradiction-tn": true,
         "extraction-den": true,
         "extraction-hit": true
@@ -477,16 +396,10 @@
       "id": "A12",
       "category": "A-same-fact-different-wording",
       "relation": "same",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-match",
-          "expected": "A and B corroborate",
-          "actual": "kept separate"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "match-fn": true,
+        "match-tp": true,
         "contradiction-tn": true,
         "extraction-den": true,
         "extraction-hit": true
@@ -548,16 +461,10 @@
       "id": "A17",
       "category": "A-same-fact-different-wording",
       "relation": "same",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-match",
-          "expected": "A and B corroborate",
-          "actual": "kept separate"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "match-fn": true,
+        "match-tp": true,
         "contradiction-tn": true,
         "extraction-den": true,
         "extraction-hit": true
@@ -567,23 +474,13 @@
       "id": "A18",
       "category": "A-same-fact-different-wording",
       "relation": "same",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-match",
-          "expected": "A and B corroborate",
-          "actual": "kept separate"
-        },
-        {
-          "kind": "extraction-miss",
-          "expected": "statistic",
-          "actual": "event"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "match-fn": true,
+        "match-tp": true,
         "contradiction-tn": true,
-        "extraction-den": true
+        "extraction-den": true,
+        "extraction-hit": true
       }
     },
     {
@@ -773,16 +670,10 @@
       "id": "C04",
       "category": "C-numeric-agreement",
       "relation": "same",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-match",
-          "expected": "A and B corroborate",
-          "actual": "kept separate"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "match-fn": true,
+        "match-tp": true,
         "contradiction-tn": true,
         "extraction-den": true,
         "extraction-hit": true
@@ -815,16 +706,10 @@
       "id": "C06",
       "category": "C-numeric-agreement",
       "relation": "same",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-match",
-          "expected": "A and B corroborate",
-          "actual": "kept separate"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "match-fn": true,
+        "match-tp": true,
         "contradiction-tn": true,
         "extraction-den": true,
         "extraction-hit": true
@@ -932,16 +817,10 @@
       "id": "D07",
       "category": "D-numeric-contradiction",
       "relation": "contradicts",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-contradiction",
-          "expected": "flagged disputed",
-          "actual": "not flagged"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "contradiction-fn": true,
+        "contradiction-tp": true,
         "extraction-den": true,
         "extraction-hit": true
       }
@@ -1717,16 +1596,10 @@
       "id": "J07",
       "category": "J-syndication",
       "relation": "same",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-match",
-          "expected": "A and B corroborate",
-          "actual": "kept separate"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "match-fn": true,
+        "match-tp": true,
         "contradiction-tn": true,
         "independence-den": true,
         "independence-hit": true
@@ -1785,126 +1658,105 @@
       "id": "K01",
       "category": "K-tamil-tamil",
       "relation": "same",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-match",
-          "expected": "A and B corroborate",
-          "actual": "kept separate"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "match-fn": true,
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
         "contradiction-tn": true,
-        "tamil-match-den": true
+        "tamil-match-den": true,
+        "tamil-match-hit": true
       }
     },
     {
       "id": "K02",
       "category": "K-tamil-tamil",
       "relation": "same",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-match",
-          "expected": "A and B corroborate",
-          "actual": "kept separate"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "match-fn": true,
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
         "contradiction-tn": true,
-        "tamil-match-den": true
+        "tamil-match-den": true,
+        "tamil-match-hit": true
       }
     },
     {
       "id": "K03",
       "category": "K-tamil-tamil",
       "relation": "same",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-match",
-          "expected": "A and B corroborate",
-          "actual": "kept separate"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "match-fn": true,
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
         "contradiction-tn": true,
-        "tamil-match-den": true
+        "tamil-match-den": true,
+        "tamil-match-hit": true
       }
     },
     {
       "id": "K04",
       "category": "K-tamil-tamil",
       "relation": "same",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-match",
-          "expected": "A and B corroborate",
-          "actual": "kept separate"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "match-fn": true,
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
         "contradiction-tn": true,
-        "tamil-match-den": true
+        "tamil-match-den": true,
+        "tamil-match-hit": true
       }
     },
     {
       "id": "K05",
       "category": "K-tamil-tamil",
       "relation": "same",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-match",
-          "expected": "A and B corroborate",
-          "actual": "kept separate"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "match-fn": true,
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
         "contradiction-tn": true,
-        "tamil-match-den": true
+        "tamil-match-den": true,
+        "tamil-match-hit": true
       }
     },
     {
       "id": "K06",
       "category": "K-tamil-tamil",
       "relation": "same",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-match",
-          "expected": "A and B corroborate",
-          "actual": "kept separate"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "match-fn": true,
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
         "contradiction-tn": true,
-        "tamil-match-den": true
+        "tamil-match-den": true,
+        "tamil-match-hit": true
       }
     },
     {
       "id": "K07",
       "category": "K-tamil-tamil",
       "relation": "same",
-      "passed": false,
-      "failures": [
-        {
-          "kind": "missed-match",
-          "expected": "A and B corroborate",
-          "actual": "kept separate"
-        }
-      ],
+      "passed": true,
+      "failures": [],
       "contributes": {
-        "match-fn": true,
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
         "contradiction-tn": true,
-        "tamil-match-den": true
+        "tamil-match-den": true,
+        "tamil-match-hit": true
       }
     },
     {
@@ -1916,6 +1768,8 @@
       "contributes": {
         "false-corroboration-den": true,
         "match-tn": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
         "contradiction-tn": true,
         "tamil-match-den": true,
         "tamil-match-hit": true
@@ -1924,85 +1778,79 @@
     {
       "id": "L01",
       "category": "L-tamil-english",
-      "relation": "uncertain",
+      "relation": "same",
       "passed": true,
       "failures": [],
       "contributes": {
-        "crosslang-den": true,
-        "false-corroboration-den": true,
-        "crosslang-held": true,
+        "match-tp": true,
         "crosslang-original-den": true,
-        "crosslang-original-kept": true
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
       }
     },
     {
       "id": "L02",
       "category": "L-tamil-english",
-      "relation": "uncertain",
+      "relation": "same",
       "passed": true,
       "failures": [],
       "contributes": {
-        "crosslang-den": true,
-        "false-corroboration-den": true,
-        "crosslang-held": true,
+        "match-tp": true,
         "crosslang-original-den": true,
-        "crosslang-original-kept": true
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
       }
     },
     {
       "id": "L03",
       "category": "L-tamil-english",
-      "relation": "uncertain",
+      "relation": "same",
       "passed": true,
       "failures": [],
       "contributes": {
-        "crosslang-den": true,
-        "false-corroboration-den": true,
-        "crosslang-held": true,
+        "match-tp": true,
         "crosslang-original-den": true,
-        "crosslang-original-kept": true
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
       }
     },
     {
       "id": "L04",
       "category": "L-tamil-english",
-      "relation": "uncertain",
+      "relation": "same",
       "passed": true,
       "failures": [],
       "contributes": {
-        "crosslang-den": true,
-        "false-corroboration-den": true,
-        "crosslang-held": true,
+        "match-tp": true,
         "crosslang-original-den": true,
-        "crosslang-original-kept": true
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
       }
     },
     {
       "id": "L05",
       "category": "L-tamil-english",
-      "relation": "uncertain",
+      "relation": "same",
       "passed": true,
       "failures": [],
       "contributes": {
-        "crosslang-den": true,
-        "false-corroboration-den": true,
-        "crosslang-held": true,
+        "match-tp": true,
         "crosslang-original-den": true,
-        "crosslang-original-kept": true
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
       }
     },
     {
       "id": "L06",
       "category": "L-tamil-english",
-      "relation": "uncertain",
+      "relation": "same",
       "passed": true,
       "failures": [],
       "contributes": {
-        "crosslang-den": true,
-        "false-corroboration-den": true,
-        "crosslang-held": true,
+        "match-tp": true,
         "crosslang-original-den": true,
-        "crosslang-original-kept": true
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
       }
     },
     {
@@ -2013,7 +1861,11 @@
       "failures": [],
       "contributes": {
         "false-corroboration-den": true,
+        "crosslang-den": true,
         "match-tn": true,
+        "crosslang-held": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
         "contradiction-tn": true
       }
     },
@@ -2025,7 +1877,11 @@
       "failures": [],
       "contributes": {
         "false-corroboration-den": true,
+        "crosslang-den": true,
         "match-tn": true,
+        "crosslang-held": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
         "contradiction-tn": true
       }
     },
@@ -2314,6 +2170,1081 @@
       "contributes": {
         "match-tp": true,
         "contradiction-tn": true
+      }
+    },
+    {
+      "id": "P01",
+      "category": "K-tamil-tamil",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true,
+        "tamil-match-den": true,
+        "tamil-match-hit": true
+      }
+    },
+    {
+      "id": "P02",
+      "category": "K-tamil-tamil",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true,
+        "tamil-match-den": true,
+        "tamil-match-hit": true
+      }
+    },
+    {
+      "id": "P03",
+      "category": "K-tamil-tamil",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true,
+        "tamil-match-den": true,
+        "tamil-match-hit": true
+      }
+    },
+    {
+      "id": "P04",
+      "category": "K-tamil-tamil",
+      "relation": "same",
+      "passed": false,
+      "failures": [
+        {
+          "kind": "missed-match",
+          "expected": "A and B corroborate",
+          "actual": "kept separate"
+        }
+      ],
+      "contributes": {
+        "match-fn": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true,
+        "tamil-match-den": true
+      }
+    },
+    {
+      "id": "P05",
+      "category": "K-tamil-tamil",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true,
+        "tamil-match-den": true,
+        "tamil-match-hit": true
+      }
+    },
+    {
+      "id": "P06",
+      "category": "K-tamil-tamil",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true,
+        "tamil-match-den": true,
+        "tamil-match-hit": true
+      }
+    },
+    {
+      "id": "P07",
+      "category": "K-tamil-tamil",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true,
+        "tamil-match-den": true,
+        "tamil-match-hit": true
+      }
+    },
+    {
+      "id": "P08",
+      "category": "K-tamil-tamil",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true,
+        "tamil-match-den": true,
+        "tamil-match-hit": true
+      }
+    },
+    {
+      "id": "P09",
+      "category": "K-tamil-tamil",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true,
+        "tamil-match-den": true,
+        "tamil-match-hit": true
+      }
+    },
+    {
+      "id": "P10",
+      "category": "K-tamil-tamil",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true,
+        "tamil-match-den": true,
+        "tamil-match-hit": true
+      }
+    },
+    {
+      "id": "P11",
+      "category": "K-tamil-tamil",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true,
+        "tamil-match-den": true,
+        "tamil-match-hit": true
+      }
+    },
+    {
+      "id": "P12",
+      "category": "K-tamil-tamil",
+      "relation": "same",
+      "passed": false,
+      "failures": [
+        {
+          "kind": "missed-match",
+          "expected": "A and B corroborate",
+          "actual": "kept separate"
+        }
+      ],
+      "contributes": {
+        "match-fn": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true,
+        "tamil-match-den": true
+      }
+    },
+    {
+      "id": "P13",
+      "category": "K-tamil-tamil",
+      "relation": "same",
+      "passed": false,
+      "failures": [
+        {
+          "kind": "missed-match",
+          "expected": "A and B corroborate",
+          "actual": "kept separate"
+        }
+      ],
+      "contributes": {
+        "match-fn": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true,
+        "tamil-match-den": true
+      }
+    },
+    {
+      "id": "P14",
+      "category": "K-tamil-tamil",
+      "relation": "same",
+      "passed": false,
+      "failures": [
+        {
+          "kind": "missed-match",
+          "expected": "A and B corroborate",
+          "actual": "kept separate"
+        }
+      ],
+      "contributes": {
+        "match-fn": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true,
+        "tamil-match-den": true
+      }
+    },
+    {
+      "id": "P15",
+      "category": "K-tamil-tamil",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true,
+        "tamil-match-den": true,
+        "tamil-match-hit": true
+      }
+    },
+    {
+      "id": "P16",
+      "category": "K-tamil-tamil",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "match-tn": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true,
+        "tamil-match-den": true,
+        "tamil-match-hit": true
+      }
+    },
+    {
+      "id": "P17",
+      "category": "O-neighbouring-districts",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "match-tn": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "P18",
+      "category": "K-tamil-tamil",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "match-tn": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true,
+        "tamil-match-den": true,
+        "tamil-match-hit": true
+      }
+    },
+    {
+      "id": "P19",
+      "category": "N-same-location-different-date",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "match-tn": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "P20",
+      "category": "K-tamil-tamil",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "match-tn": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true,
+        "tamil-match-den": true,
+        "tamil-match-hit": true
+      }
+    },
+    {
+      "id": "Q01",
+      "category": "L-tamil-english",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "Q02",
+      "category": "L-tamil-english",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "Q03",
+      "category": "L-tamil-english",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "Q04",
+      "category": "L-tamil-english",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "Q05",
+      "category": "L-tamil-english",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "Q06",
+      "category": "L-tamil-english",
+      "relation": "same",
+      "passed": false,
+      "failures": [
+        {
+          "kind": "missed-match",
+          "expected": "A and B corroborate",
+          "actual": "kept separate"
+        }
+      ],
+      "contributes": {
+        "match-fn": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "Q07",
+      "category": "L-tamil-english",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "Q08",
+      "category": "L-tamil-english",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "Q09",
+      "category": "L-tamil-english",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "Q10",
+      "category": "L-tamil-english",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "Q11",
+      "category": "L-tamil-english",
+      "relation": "same",
+      "passed": false,
+      "failures": [
+        {
+          "kind": "missed-match",
+          "expected": "A and B corroborate",
+          "actual": "kept separate"
+        }
+      ],
+      "contributes": {
+        "match-fn": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "Q12",
+      "category": "L-tamil-english",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "Q13",
+      "category": "L-tamil-english",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "Q14",
+      "category": "L-tamil-english",
+      "relation": "same",
+      "passed": false,
+      "failures": [
+        {
+          "kind": "missed-match",
+          "expected": "A and B corroborate",
+          "actual": "kept separate"
+        }
+      ],
+      "contributes": {
+        "match-fn": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "Q15",
+      "category": "L-tamil-english",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "Q16",
+      "category": "L-tamil-english",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "crosslang-den": true,
+        "match-tn": true,
+        "crosslang-held": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "Q17",
+      "category": "L-tamil-english",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "crosslang-den": true,
+        "match-tn": true,
+        "crosslang-held": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "Q18",
+      "category": "L-tamil-english",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "crosslang-den": true,
+        "match-tn": true,
+        "crosslang-held": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "Q19",
+      "category": "L-tamil-english",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "crosslang-den": true,
+        "match-tn": true,
+        "crosslang-held": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "Q20",
+      "category": "L-tamil-english",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "crosslang-den": true,
+        "match-tn": true,
+        "crosslang-held": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "Q21",
+      "category": "L-tamil-english",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "crosslang-den": true,
+        "match-tn": true,
+        "crosslang-held": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "Q22",
+      "category": "L-tamil-english",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "crosslang-den": true,
+        "match-tn": true,
+        "crosslang-held": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "Q23",
+      "category": "L-tamil-english",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "crosslang-den": true,
+        "match-tn": true,
+        "crosslang-held": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "Q24",
+      "category": "L-tamil-english",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "crosslang-den": true,
+        "match-tn": true,
+        "crosslang-held": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "Q25",
+      "category": "L-tamil-english",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "crosslang-den": true,
+        "match-tn": true,
+        "crosslang-held": true,
+        "crosslang-original-den": true,
+        "crosslang-original-kept": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "R01",
+      "category": "M-same-people-different-story",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "match-tn": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "R02",
+      "category": "M-same-people-different-story",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "match-tn": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "R03",
+      "category": "M-same-people-different-story",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "match-tn": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "R04",
+      "category": "M-same-people-different-story",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "match-tn": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "R05",
+      "category": "M-same-people-different-story",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "match-tn": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "R06",
+      "category": "M-same-people-different-story",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "match-tn": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "R07",
+      "category": "M-same-people-different-story",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "match-tn": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "R08",
+      "category": "M-same-people-different-story",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "match-tn": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "R09",
+      "category": "M-same-people-different-story",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "match-tn": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "R10",
+      "category": "M-same-people-different-story",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "match-tn": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "S01",
+      "category": "A-same-fact-different-wording",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "contradiction-tn": true,
+        "extraction-den": true,
+        "extraction-hit": true
+      }
+    },
+    {
+      "id": "S02",
+      "category": "A-same-fact-different-wording",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "S03",
+      "category": "B-related-but-different",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "match-tn": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "S04",
+      "category": "A-same-fact-different-wording",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "S05",
+      "category": "A-same-fact-different-wording",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "contradiction-tn": true,
+        "extraction-den": true,
+        "extraction-hit": true
+      }
+    },
+    {
+      "id": "S06",
+      "category": "A-same-fact-different-wording",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "S07",
+      "category": "A-same-fact-different-wording",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "contradiction-tn": true,
+        "extraction-den": true,
+        "extraction-hit": true
+      }
+    },
+    {
+      "id": "S08",
+      "category": "A-same-fact-different-wording",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "S09",
+      "category": "A-same-fact-different-wording",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "contradiction-tn": true,
+        "extraction-den": true,
+        "extraction-hit": true
+      }
+    },
+    {
+      "id": "S10",
+      "category": "A-same-fact-different-wording",
+      "relation": "same",
+      "passed": false,
+      "failures": [
+        {
+          "kind": "missed-match",
+          "expected": "A and B corroborate",
+          "actual": "kept separate"
+        },
+        {
+          "kind": "extraction-miss",
+          "expected": "statistic",
+          "actual": "event"
+        }
+      ],
+      "contributes": {
+        "match-fn": true,
+        "contradiction-tn": true,
+        "extraction-den": true
+      }
+    },
+    {
+      "id": "T01",
+      "category": "O-neighbouring-districts",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "match-tn": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "T02",
+      "category": "O-neighbouring-districts",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "match-tn": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "T03",
+      "category": "N-same-location-different-date",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "match-tn": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "T04",
+      "category": "O-neighbouring-districts",
+      "relation": "different",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "false-corroboration-den": true,
+        "match-tn": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "T05",
+      "category": "J-syndication",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "contradiction-tn": true,
+        "independence-den": true,
+        "independence-hit": true,
+        "wire-den": true,
+        "wire-hit": true
+      }
+    },
+    {
+      "id": "T06",
+      "category": "J-syndication",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "contradiction-tn": true,
+        "independence-den": true,
+        "independence-hit": true,
+        "wire-den": true,
+        "wire-hit": true
+      }
+    },
+    {
+      "id": "T07",
+      "category": "J-syndication",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "contradiction-tn": true,
+        "independence-den": true,
+        "independence-hit": true
+      }
+    },
+    {
+      "id": "T08",
+      "category": "O-neighbouring-districts",
+      "relation": "same",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "match-tp": true,
+        "contradiction-tn": true
+      }
+    },
+    {
+      "id": "T09",
+      "category": "E-temporal-update",
+      "relation": "supersedes",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "temporal-den": true,
+        "temporal-hit": true,
+        "contradiction-tn": true,
+        "extraction-den": true,
+        "extraction-hit": true
+      }
+    },
+    {
+      "id": "T10",
+      "category": "E-temporal-update",
+      "relation": "supersedes",
+      "passed": true,
+      "failures": [],
+      "contributes": {
+        "temporal-den": true,
+        "temporal-hit": true,
+        "contradiction-tn": true,
+        "extraction-den": true,
+        "extraction-hit": true
       }
     }
   ]

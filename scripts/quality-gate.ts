@@ -15,7 +15,7 @@ import { readFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { runCorpus } from "../evaluation/claims/harness";
-import { CORPUS } from "../evaluation/claims/corpus";
+import { FULL_CORPUS as CORPUS } from "../evaluation/claims/corpus-all";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const DATA = resolve(ROOT, "src/data/generated/live-feed.json");

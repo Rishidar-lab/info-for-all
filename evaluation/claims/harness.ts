@@ -179,10 +179,13 @@ export function observe(testCase: ClaimEvalCase): CaseObservation {
   const attributedFamily = fromA.some(
     (c) => c.status === "attributed" || c.type === "attribution" || c.type === "allegation" || c.type === "prediction",
   );
+  const tamilArticleId = testCase.inputA.language === "ta" ? artA.id : testCase.inputB?.language === "ta" ? arts[1]?.id : undefined;
   const tamilOriginalRetained =
-    testCase.inputA.language === "ta" &&
-    fromA.some(
-      (c) => !!c.canonicalTextOriginal || c.provenance.some((p) => p.articleId === artA.id && !!p.sourceTextOriginal),
+    !tamilArticleId ||
+    ec.claims.some(
+      (c) =>
+        (c.canonicalLanguage === "ta" && !!c.canonicalTextOriginal) ||
+        c.provenance.some((p) => p.articleId === tamilArticleId && (!!p.sourceTextOriginal || p.language === "ta")),
     );
 
   const focusClaim = bestMatch(fromA.length ? fromA : ec.claims, testCase.inputA.text);
@@ -282,6 +285,12 @@ export function scoreCase(testCase: ClaimEvalCase, o: CaseObservation): CaseResu
   const level = expected.matchLevel ?? "specific";
   const engineMatched = level === "event" ? o.sharedEvent : !!o.sharedSpecific;
 
+  const crossLang =
+    !!testCase.inputB &&
+    testCase.inputA.language !== testCase.inputB.language &&
+    (testCase.inputA.language === "ta" || testCase.inputB.language === "ta");
+  const tamilInvolved = testCase.inputA.language === "ta" || testCase.inputB?.language === "ta";
+
   // ── matching + false corroboration ───────────────────────────────────
   if (expected.relation === "same") {
     if (engineMatched) contributes["match-tp"] = true;
@@ -289,13 +298,15 @@ export function scoreCase(testCase: ClaimEvalCase, o: CaseObservation): CaseResu
       contributes["match-fn"] = true;
       failures.push({ kind: "missed-match", expected: "A and B corroborate", actual: "kept separate" });
     }
-  } else if (expected.relation === "different") {
+  } else if (expected.relation === "different" || expected.relation === "uncertain") {
     contributes["false-corroboration-den"] = true;
+    if (crossLang) contributes["crosslang-den"] = true;
     if (engineMatched) {
       contributes["match-fp"] = true;
       failures.push({ kind: "false-match", expected: "A and B stay separate", actual: `merged (${o.sharedStatus})` });
     } else {
       contributes["match-tn"] = true;
+      if (crossLang) contributes["crosslang-held"] = true;
     }
     const fabricated =
       engineMatched && (o.sharedStatus === "corroborated" || o.sharedStatus === "partially-corroborated");
@@ -303,23 +314,13 @@ export function scoreCase(testCase: ClaimEvalCase, o: CaseObservation): CaseResu
       contributes["false-corroboration-hit"] = true;
       failures.push({ kind: "false-corroboration", expected: "no corroboration", actual: `${o.sharedStatus}` });
     }
-  } else if (expected.relation === "uncertain") {
-    // cross-language without translation: must NOT silently merge, must keep original
-    contributes["crosslang-den"] = true;
-    contributes["false-corroboration-den"] = true;
-    if (!engineMatched) contributes["crosslang-held"] = true;
-    else {
-      failures.push({ kind: "false-match", expected: "hold (no translation layer)", actual: `merged (${o.sharedStatus})` });
-      if (o.sharedStatus === "corroborated" || o.sharedStatus === "partially-corroborated") {
-        contributes["false-corroboration-hit"] = true;
-        failures.push({ kind: "false-corroboration", expected: "no corroboration across languages", actual: `${o.sharedStatus}` });
-      }
-    }
-    if (testCase.inputA.language === "ta") {
-      contributes["crosslang-original-den"] = true;
-      if (o.tamilOriginalRetained) contributes["crosslang-original-kept"] = true;
-      else failures.push({ kind: "tamil-original-lost", expected: "Tamil original retained", actual: "not retained" });
-    }
+  }
+
+  // ── Tamil original text preserved (any Tamil input, any relation) ─────
+  if (tamilInvolved) {
+    contributes["crosslang-original-den"] = true;
+    if (o.tamilOriginalRetained) contributes["crosslang-original-kept"] = true;
+    else failures.push({ kind: "tamil-original-lost", expected: "Tamil original retained", actual: "not retained" });
   }
 
   // ── contradiction / temporal ─────────────────────────────────────────
