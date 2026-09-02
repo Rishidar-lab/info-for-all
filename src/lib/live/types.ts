@@ -306,6 +306,18 @@ export interface ClusterTrendData {
     updateSignificance?: string;
     lastMeaningfulUpdateAt: string;
   };
+  /**
+   * v0.9 — temporal structure: when the event happened / applies, vs when it
+   * was reported. Every instant keeps its original phrase.
+   */
+  temporal?: {
+    tense: "past" | "present" | "future" | "mixed";
+    eventOccurredAt?: { phrase: string; iso?: string; certainty: "explicit" | "relative" | "inferred" };
+    scheduledFor?: { phrase: string; iso?: string; certainty: "explicit" | "relative" | "inferred" };
+    effectiveFrom?: { phrase: string; iso?: string; certainty: "explicit" | "relative" | "inferred" };
+    effectiveUntil?: { phrase: string; iso?: string; certainty: "explicit" | "relative" | "inferred" };
+    notes: string[];
+  };
   /** v0.8 — EVENT severity (how bad the event is), NOT a probability of truth. */
   severity?: {
     level: "informational" | "watch" | "significant" | "severe" | "critical";

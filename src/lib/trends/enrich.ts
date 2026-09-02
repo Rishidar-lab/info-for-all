@@ -24,6 +24,7 @@ import { buildSituation } from "./situation";
 import { TREND_MIN } from "./weights";
 import type { IndependenceSummary } from "./types";
 import { assessNovelty, buildEventState } from "./novelty";
+import { resolveTemporal } from "@/lib/domain/temporal";
 import { assessSeverity } from "@/lib/domain/severity";
 import { computeEditorialPriority, buildSurfaces } from "@/lib/editorial";
 
@@ -156,6 +157,15 @@ export function enrichDataset(dataset: LiveDataset, opts: EnrichOptions = {}): E
     const { noveltyClass, quietGapHours } = novelty;
     const sev = assessSeverity(cluster, articles);
 
+    // v0.9 Phase F — when did the event happen / when does it apply, vs when it
+    // was published. Scanned over the lead headline + the excerpt blob.
+    const temporal = resolveTemporal({
+      title: cluster.title,
+      excerpt: `${titleBlob} ${excerptBlob}`.slice(0, 700),
+      publishedAt: earliest,
+      updatedAt: lastSeenAt !== earliest ? lastSeenAt : undefined,
+    });
+
     const windows = trendWindows(articles, familyOf, now);
     const vel = velocityScore(articles, familyOf, now);
     const ageHours = (now - Date.parse(lastMeaningfulUpdateAt)) / 3_600_000;
@@ -205,6 +215,14 @@ export function enrichDataset(dataset: LiveDataset, opts: EnrichOptions = {}): E
       },
       eventState: buildEventState(cluster, articles, lastMeaningfulUpdateAt, novelty),
       severity: { level: sev.severity, reason: sev.reason, peak: sev.peak },
+      temporal: {
+        tense: temporal.tense,
+        eventOccurredAt: temporal.eventOccurredAt,
+        scheduledFor: temporal.scheduledFor,
+        effectiveFrom: temporal.effectiveFrom,
+        effectiveUntil: temporal.effectiveUntil,
+        notes: temporal.notes,
+      },
     };
     cluster.trendData = trendData;
 

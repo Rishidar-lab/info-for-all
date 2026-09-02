@@ -135,6 +135,37 @@ export function EventCard({
         )}
         <span>·</span>
         <span>updated {relative(cluster.trendData?.lastMeaningfulUpdateAt ?? cluster.updatedAt)}</span>
+        {(() => {
+          const tp = cluster.trendData?.temporal;
+          if (!tp) return null;
+          if (tp.scheduledFor)
+            return (
+              <>
+                <span>·</span>
+                <span className="text-accent" title={`Scheduled: "${tp.scheduledFor.phrase}"`}>
+                  scheduled {tp.scheduledFor.iso ?? tp.scheduledFor.phrase}
+                </span>
+              </>
+            );
+          if (tp.effectiveFrom || tp.effectiveUntil)
+            return (
+              <>
+                <span>·</span>
+                <span title="When the rule / order applies">
+                  effective {tp.effectiveFrom?.iso ?? tp.effectiveFrom?.phrase ?? "now"}
+                  {tp.effectiveUntil ? `–${tp.effectiveUntil.iso ?? tp.effectiveUntil.phrase}` : ""}
+                </span>
+              </>
+            );
+          if (tp.eventOccurredAt?.iso && tp.eventOccurredAt.iso !== (cluster.trendData?.firstSeenAt ?? "").slice(0, 10) && tp.eventOccurredAt.certainty !== "inferred")
+            return (
+              <>
+                <span>·</span>
+                <span title={`Event occurred: "${tp.eventOccurredAt.phrase}"`}>happened {tp.eventOccurredAt.iso}</span>
+              </>
+            );
+          return null;
+        })()}
       </div>
 
       <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 ui text-[11.5px] text-ink-2">
