@@ -7,6 +7,7 @@ import { GEO_TIER_LABEL, type GeoTier } from "@/lib/domain/geo-tiers";
 import { TREND_STATE_LABEL, type TrendState } from "@/lib/trends/types";
 import { categoryOf, tierOf } from "@/lib/live/trends-view";
 import { TrendWhy } from "./trend-why";
+import { EditorialWhy } from "./editorial-why";
 import { cn } from "@/lib/format";
 
 function relative(iso: string): string {
@@ -37,6 +38,14 @@ const CAT_TONE: Record<CategoryId, string> = {
   celebrity: "text-ink-3",
 };
 
+const BAND_TONE: Record<string, string> = {
+  urgent: "text-dispute bg-dispute-bg",
+  high: "text-caution bg-caution-bg",
+  standard: "text-ink-2 bg-surface-2",
+  background: "text-ink-3 bg-surface-2",
+  suppressed: "text-ink-3 bg-surface-2",
+};
+
 export function EventCard({
   cluster,
   emphasis = false,
@@ -49,6 +58,7 @@ export function EventCard({
   rank?: number;
 }) {
   const cat = categoryOf(cluster);
+  const ed = cluster.trendData?.editorial;
   const tier = tierOf(cluster) as GeoTier;
   const t = cluster.trendData?.trend;
   const ind = cluster.trendData?.independence;
@@ -67,7 +77,12 @@ export function EventCard({
     >
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1 ui text-[11px]">
         {rank != null && <span className="mono text-ink-3">#{rank}</span>}
-        {t && (
+        {ed && (ed.band === "urgent" || ed.band === "high") && (
+          <span className={cn("pill", BAND_TONE[ed.band])} title={`Editorial priority — ${ed.reasons.slice(0, 2).join("; ")}. A ranking score, not a probability of truth.`}>
+            {ed.band}
+          </span>
+        )}
+        {t && state !== "stable" && state !== "fading" && (
           <span className={cn("pill", STATE_TONE[state])}>
             {TREND_STATE_LABEL[state]}
           </span>
@@ -97,7 +112,11 @@ export function EventCard({
         <span className="text-ink-3">·</span>
         <span className="text-ink-2">{GEO_TIER_LABEL[tier]}</span>
         <span className="grow" />
-        {t && <span className="mono text-ink-3" title="Trend score">{t.score.toFixed(0)}</span>}
+        {ed ? (
+          <span className="mono text-ink-3" title="Editorial priority score (ranking, not a truth probability)">{ed.score.toFixed(0)}</span>
+        ) : (
+          t && <span className="mono text-ink-3" title="Trend score">{t.score.toFixed(0)}</span>
+        )}
       </div>
 
       <h3 className={cn("mt-2 font-serif leading-snug", emphasis ? "text-[19px]" : "text-[16px]")}>
@@ -158,8 +177,14 @@ export function EventCard({
         </p>
       )}
 
-      {showWhy ? (
+      {showWhy && ed ? (
+        <EditorialWhy cluster={cluster} />
+      ) : showWhy ? (
         <TrendWhy cluster={cluster} />
+      ) : ed ? (
+        <p className="mt-2 ui text-[11px] leading-snug text-ink-3">
+          {ed.reasons.slice(0, 2).join(" · ")}
+        </p>
       ) : (
         t && (
           <p className="mt-2 ui text-[11px] leading-snug text-ink-3">

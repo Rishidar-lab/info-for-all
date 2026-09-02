@@ -25,6 +25,7 @@ import { TREND_MIN } from "./weights";
 import type { IndependenceSummary } from "./types";
 import { assessNovelty, buildEventState } from "./novelty";
 import { assessSeverity } from "@/lib/domain/severity";
+import { computeEditorialPriority, buildSurfaces } from "@/lib/editorial";
 
 const OFFICIAL_PRIMARY = new Set(["official-alert", "primary-document"]);
 
@@ -151,7 +152,7 @@ export function enrichDataset(dataset: LiveDataset, opts: EnrichOptions = {}): E
         : earliest
       : earliest;
 
-    const novelty = assessNovelty(cluster, articles, prev, hasPrev);
+    const novelty = assessNovelty(cluster, articles, prev, hasPrev, now);
     const { noveltyClass, quietGapHours } = novelty;
     const sev = assessSeverity(cluster, articles);
 
@@ -205,6 +206,9 @@ export function enrichDataset(dataset: LiveDataset, opts: EnrichOptions = {}): E
     };
     cluster.trendData = trendData;
 
+    // ── v0.9: editorial priority (which events deserve prominence) ──
+    cluster.trendData.editorial = computeEditorialPriority({ cluster, articles, now });
+
     byCategory[cat.category] = (byCategory[cat.category] ?? 0) + 1;
     situationInput.push({
       slug: cluster.slug,
@@ -223,13 +227,16 @@ export function enrichDataset(dataset: LiveDataset, opts: EnrichOptions = {}): E
 
   const { trending, watching } = rankTrendingWatching(dataset.clusters);
   const situation = buildSituation(situationInput, dataset.generatedAt);
+  const editorial = buildSurfaces(dataset.clusters);
 
   const enriched: EnrichedDataset = {
     ...dataset,
     counts: { ...dataset.counts, byCategory },
-    trending,
-    watching,
+    // v0.7 trending/watching kept for continuity; v0.9 surfaces are authoritative
+    trending: editorial.rightNow.length ? editorial.rightNow : trending,
+    watching: editorial.watching.length ? editorial.watching : watching,
     situation,
+    editorial,
   };
   return enriched;
 }

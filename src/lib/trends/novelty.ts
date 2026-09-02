@@ -102,11 +102,20 @@ export function assessNovelty(
   articles: LiveArticle[],
   prev: LiveCluster | undefined,
   hasPreviousSnapshot: boolean,
+  now: number = Date.now(),
 ): NoveltyResult {
   if (!hasPreviousSnapshot) {
     return { noveltyClass: "unknown", updateKind: "unknown", meaningfulUpdateScore: 0.5, changes: ["first observation — nothing to compare against"], quietGapHours: 0 };
   }
   if (!prev) {
+    // No matched prior cluster. If the event's own reporting is all several
+    // hours old, the match probably just failed (slug / membership shift) — it
+    // is not genuinely "new". Be honest.
+    const earliest = Math.min(...articles.map((a) => Date.parse(a.publishedAt)));
+    const ageHours = (now - earliest) / 3_600_000;
+    if (ageHours > 8) {
+      return { noveltyClass: "unknown", updateKind: "unknown", meaningfulUpdateScore: 0.4, changes: ["not matched to a prior snapshot; reporting is several hours old"], quietGapHours: 0 };
+    }
     return { noveltyClass: "new-event", updateKind: "major-development", meaningfulUpdateScore: 1, changes: ["a new event"], quietGapHours: 0 };
   }
 

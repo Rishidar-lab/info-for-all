@@ -159,7 +159,7 @@ const FINANCE: CategoryMatcher[] = [
 
 // ── SPORTS ─────────────────────────────────────────────────────────────
 const SPORTS: CategoryMatcher[] = [
-  { category: "sports", subCategory: "cricket", any: ["cricket", "test match", "test series", "odi series", "t20i", "ipl", "csk", "rcb", "mumbai indians", "bcci", "ranji trophy", "wtc final", "wtc test", "asia cup", "scores a century", "hits a century", "took a fifer", "wickets", "batting collapse", "run chase", "four-dayers", "hand a t20i debut"] },
+  { category: "sports", subCategory: "cricket", any: ["cricket", "test match", "test series", "odi series", "t20i", "ipl", "csk", "rcb", "mumbai indians", "bcci", "ranji trophy", "duleep trophy", "irani cup", "vijay hazare trophy", "syed mushtaq ali", "wtc final", "wtc test", "asia cup", "scores a century", "hits a century", "took a fifer", "wickets", "batting collapse", "run chase", "four-dayers", "hand a t20i debut"] },
   { category: "sports", subCategory: "football", any: ["football", "isl", "fifa", "premier league", "la liga", "champions league", "goal in the"] },
   { category: "sports", subCategory: "chess", any: ["candidates tournament", "chess olympiad", "world chess championship", "chess title", "checkmate", "fide rating"] },
   { category: "sports", subCategory: "hockey", any: ["hockey", "fih", "hockey india", "penalty corner"] },

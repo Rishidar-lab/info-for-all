@@ -42,57 +42,98 @@ function fromSlugs(slugs: string[] | undefined): LiveCluster[] {
   return slugs.map((s) => bySlug.get(s)).filter((c): c is LiveCluster => !!c);
 }
 
-/** trend score desc, then recency. */
-export function byTrend(a: LiveCluster, b: LiveCluster): number {
-  return trendScore(b) - trendScore(a) || Date.parse(b.updatedAt) - Date.parse(a.updatedAt);
+/** v0.9 editorial score, falling back to trend score. */
+export function editorialScore(c: LiveCluster): number {
+  return c.trendData?.editorial?.score ?? trendScore(c);
+}
+export function editorialBand(c: LiveCluster): string {
+  return c.trendData?.editorial?.band ?? "standard";
 }
 
-export function trendingClusters(limit = 24): LiveCluster[] {
-  const explicit = fromSlugs(dataset.trending);
-  if (explicit.length) return explicit.slice(0, limit);
-  return [...dataset.clusters].filter(isDefaultVisible).sort(byTrend).slice(0, limit);
+/** editorial score desc, then meaningful recency. */
+export function byEditorial(a: LiveCluster, b: LiveCluster): number {
+  return (
+    editorialScore(b) - editorialScore(a) ||
+    Date.parse(b.trendData?.lastMeaningfulUpdateAt ?? b.updatedAt) -
+      Date.parse(a.trendData?.lastMeaningfulUpdateAt ?? a.updatedAt)
+  );
 }
+/** legacy name — now editorial order. */
+export const byTrend = byEditorial;
+
+const ES = () => dataset.editorial;
+
+export function urgentClusters(): LiveCluster[] {
+  return fromSlugs(ES()?.urgent);
+}
+export function trendingClusters(limit = 24): LiveCluster[] {
+  const explicit = fromSlugs(ES()?.rightNow ?? dataset.trending);
+  if (explicit.length) return explicit.slice(0, limit);
+  return [...dataset.clusters].filter(isDefaultVisible).sort(byEditorial).slice(0, limit);
+}
+export const rightNowClusters = trendingClusters;
 
 export function watchingClusters(limit = 16): LiveCluster[] {
-  const explicit = fromSlugs(dataset.watching);
+  const explicit = fromSlugs(ES()?.watching ?? dataset.watching);
   if (explicit.length) return explicit.slice(0, limit);
   const trending = new Set(trendingClusters(30).map((c) => c.slug));
   return [...dataset.clusters]
     .filter((c) => isDefaultVisible(c) && !trending.has(c.slug))
-    .filter((c) => (c.isCrisis && (c.lifecycle === "developing" || c.lifecycle === "active")) || trendScore(c) >= 14)
-    .sort(byTrend)
+    .filter((c) => (c.isCrisis && (c.lifecycle === "developing" || c.lifecycle === "active")) || editorialScore(c) >= 14)
+    .sort(byEditorial)
     .slice(0, limit);
+}
+
+export function backgroundClusters(limit = 30): LiveCluster[] {
+  const explicit = fromSlugs(ES()?.background);
+  if (explicit.length) return explicit.slice(0, limit);
+  const shown = new Set([...trendingClusters(30), ...watchingClusters(20)].map((c) => c.slug));
+  return [...dataset.clusters].filter((c) => isDefaultVisible(c) && !shown.has(c.slug)).sort(byEditorial).slice(0, limit);
 }
 
 const RISING = new Set(["new", "rising", "fast-rising", "resurging"]);
 
 export function fastRisingClusters(limit = 12): LiveCluster[] {
+  const explicit = fromSlugs(ES()?.fastRising);
+  if (explicit.length) return explicit.slice(0, limit);
   return trendingClusters(40)
     .filter((c) => RISING.has(c.trendData?.trend?.state ?? ""))
     .slice(0, limit);
 }
 
 export function clustersByCategory(cat: CategoryId, limit = 30): LiveCluster[] {
+  const explicit = fromSlugs(ES()?.byCategory?.[cat]);
+  if (explicit.length) return explicit.slice(0, limit);
   return [...dataset.clusters]
     .filter((c) => categoryOf(c) === cat && tierOf(c) !== "out")
-    .sort(byTrend)
+    .sort(byEditorial)
     .slice(0, limit);
 }
 
 export function clustersByTier(tier: GeoTier | "P0+P1", limit = 30): LiveCluster[] {
+  const explicit =
+    tier === "P0" ? fromSlugs(ES()?.tamilNadu) : tier === "P1" ? fromSlugs(ES()?.india) : [];
+  if (explicit.length && limit <= 14) return explicit.slice(0, limit);
   return [...dataset.clusters]
     .filter((c) => {
       const t = tierOf(c);
       if (tier === "P0+P1") return t === "P0" || t === "P1";
       return t === tier;
     })
-    .filter((c) => DEFAULT_ENABLED[categoryOf(c)] !== false)
-    .sort(byTrend)
+    .filter((c) => DEFAULT_ENABLED[categoryOf(c)] !== false && editorialBand(c) !== "suppressed")
+    .sort(byEditorial)
     .slice(0, limit);
 }
 
 export function situation(): SituationSnapshot | undefined {
   return dataset.situation;
+}
+
+export function editorialBands(): Record<string, number> {
+  return ES()?.bands ?? {};
+}
+export function concentrationNotes(): string[] {
+  return ES()?.concentrationNotes ?? [];
 }
 
 export function categoryCounts(): Record<CategoryId, number> {

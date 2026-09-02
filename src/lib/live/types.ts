@@ -295,6 +295,18 @@ export interface ClusterTrendData {
     reason: string;
     peak: { deaths: number; injured: number; evacuated: number };
   };
+  /**
+   * v0.9 — EDITORIAL priority: a ranking score deciding PROMINENCE. NOT a
+   * probability of truth / reliability. Every factor and penalty is exposed.
+   */
+  editorial?: {
+    score: number;
+    band: "urgent" | "high" | "standard" | "background" | "suppressed";
+    factors: { name: string; value: number; weight: number; contribution: number }[];
+    reasons: string[];
+    penalties: { name: string; amount: number; reason: string }[];
+    suppressedByRule?: string;
+  };
 }
 
 export interface SituationSnapshot {
@@ -334,4 +346,20 @@ export interface LiveDataset {
   watching?: string[];
   /** v0.7 — the Current Situation bar. */
   situation?: SituationSnapshot;
+  /**
+   * v0.9 — editorial surfaces (which events deserve prominence). The home page
+   * reads these, not raw trend order.
+   */
+  editorial?: {
+    urgent: string[];
+    rightNow: string[];
+    fastRising: string[];
+    tamilNadu: string[];
+    india: string[];
+    byCategory: Record<string, string[]>;
+    watching: string[];
+    background: string[];
+    bands: Record<string, number>;
+    concentrationNotes: string[];
+  };
 }

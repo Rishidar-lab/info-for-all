@@ -63,11 +63,13 @@ test.describe("IFFA event-first UI", () => {
     expect(await cards.count()).toBeGreaterThan(3);
   });
 
-  test("a trend 'why' breakdown opens", async ({ page }) => {
-    await page.goto("/trends/");
-    const why = page.locator("details summary", { hasText: /trend score/i }).first();
+  test("a ranking 'why' breakdown opens", async ({ page }) => {
+    await page.goto("/");
+    const why = page.locator("details summary", { hasText: /score/i }).first();
     await why.click();
-    await expect(why.locator("..").locator("text=/independent source famil|updated in the last hour|relevance/i").first()).toBeVisible();
+    await expect(
+      why.locator("..").locator("text=/independent|relevance|consequence|updated|Priority domain|new information/i").first(),
+    ).toBeVisible();
   });
 
   test("an event page shows the timeline and coverage comparison", async ({ page }) => {
