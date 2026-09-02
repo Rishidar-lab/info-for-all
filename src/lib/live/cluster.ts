@@ -21,6 +21,61 @@ import {
   candidatePairs,
   type EventSignature,
 } from "@/lib/event-identity";
+import { detectFixture, sameSportsFixture } from "@/lib/domain/sports";
+import { parseMarketMoves } from "@/lib/domain/finance";
+
+/**
+ * v0.8 — domain-specialist SPLIT guard. Runs AFTER the generic identity engine
+ * says "same" and can only PREVENT a merge (improve precision), never create
+ * one. Same design as the existing semantic veto.
+ *
+ * - sports: two DIFFERENT fixtures (different date, competition, or men's vs
+ *   women's) are never one event, however similar the headlines.
+ * - finance: two INCOMPATIBLE market moves for the same instrument (opposite
+ *   direction, or the same unit with a very different magnitude) are not one
+ *   event.
+ */
+export function specialistVeto(a: LiveArticle, b: LiveArticle): string | null {
+  const ta = stripHeadlinePrefix(a.title) + " " + (a.excerpt ?? "");
+  const tb = stripHeadlinePrefix(b.title) + " " + (b.excerpt ?? "");
+
+  // ── sports ── only an EXPLICIT date in the text splits on date; otherwise
+  // rely on competition / teams / men's-vs-women's / junior-vs-senior.
+  const explicitDate = (t: string) =>
+    t.match(/\b(20\d{2})-(\d{2})-(\d{2})\b/)?.[0] ??
+    t.match(/\b(IPL|world cup|test)\s?20\d{2}\b/i)?.[0];
+  const fa = detectFixture(ta, explicitDate(ta));
+  const fb = detectFixture(tb, explicitDate(tb));
+  // Only act when BOTH sides clearly describe a fixture (a competition, or an
+  // explicit season/date). Bare country names are not enough.
+  const bothFixtures =
+    (fa.competition || fa.date) && (fb.competition || fb.date) && fa.teams.length >= 1 && fb.teams.length >= 1;
+  if (bothFixtures && !sameSportsFixture(fa, fb)) {
+    if (fa.competition !== fb.competition || fa.women !== fb.women || fa.junior !== fb.junior || (fa.date && fb.date && fa.date !== fb.date)) {
+      return "different sports fixture (competition / season / category / date)";
+    }
+  }
+
+  // ── finance ──
+  const ma = parseMarketMoves(ta);
+  const mb = parseMarketMoves(tb);
+  if (ma.length && mb.length) {
+    const compatible = ma.some((x) =>
+      mb.some((y) => {
+        if (x.instrument && y.instrument && x.instrument !== y.instrument) return false;
+        if (x.direction !== "flat" && y.direction !== "flat" && x.direction !== y.direction) return false;
+        if (x.unit === y.unit) {
+          const big = Math.max(Math.abs(x.value), Math.abs(y.value)) || 1;
+          if (Math.abs(x.value - y.value) / big > 0.5) return false;
+        }
+        return true;
+      }),
+    );
+    if (!compatible) return "incompatible market move (instrument / direction / magnitude)";
+  }
+
+  return null;
+}
 
 /** Jaccard similarity of two token sets. */
 function jaccard(a: Set<string>, b: Set<string>): number {
@@ -241,6 +296,11 @@ export function clusterArticles(
           edge = { confidence: "weak", reason: `Headline overlap, but ${veto.blockers[0]}.` };
         }
       }
+      // v0.8 domain-specialist split guard (sports fixture / finance move)
+      if (useSemantic && edge.confidence !== "weak") {
+        const sv = specialistVeto(a, b);
+        if (sv) edge = { confidence: "weak", reason: `Headline overlap, but ${sv}.` };
+      }
       const crossPublisher = a.publisher !== b.publisher;
       edges.push({ a: a.id, b: b.id, edge, crossPublisher });
       if (edge.confidence !== "weak" && crossPublisher) {
@@ -278,10 +338,12 @@ export function clusterArticles(
     const crossPublisher = a.publisher !== b.publisher;
 
     if (decision.relation === "same") {
+      const sv = specialistVeto(a, b);
       const mergeOk =
-        decision.confidence === "high" ||
-        decision.confidence === "moderate" ||
-        (!crossPublisher && decision.confidence === "low");
+        !sv &&
+        (decision.confidence === "high" ||
+          decision.confidence === "moderate" ||
+          (!crossPublisher && decision.confidence === "low"));
       if (mergeOk) {
         union(a.id, b.id);
         if (crossPublisher) {

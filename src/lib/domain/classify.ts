@@ -288,8 +288,13 @@ export function classifyEvent(input: ClassifyInput): CategoryResultV2 {
   for (const inst of instruments) add("finance", SCORE.financeInstrument, `instrument: ${inst}`, { strong: true });
   const comp = detectCompetition(rawFull + " " + gloss);
   if (comp) add("sports", SCORE.sportsEntity, `competition: ${comp.canonical}`, { strong: true });
+  // teams alone ("India", "Australia") are also country names — require a
+  // sporting context (a competition, or a match/result verb).
   const teams = detectTeams(rawFull + " " + gloss);
-  if (teams.length >= 2) add("sports", SCORE.sportsEntity, `teams: ${teams.join(" v ")}`, { strong: true });
+  const sportVerb = /\b(beat|beats|defeat\w*|thrash\w*|clinch\w*|won by|win by|lost by|drew|draw with|innings|wicket|over the line|run chase|series \d|-\d series|century|half-century|hat-trick|penalty|final|semi-final|quarter-final|knock out|test|odi|t20|match|fixture|scored|score of|not out|all out|declared)\b/i;
+  if (teams.length >= 2 && (comp || sportVerb.test(rawFull + " " + gloss))) {
+    add("sports", SCORE.sportsEntity, `teams: ${teams.join(" v ")}`, { strong: true });
+  }
 
   // 9. the "government actor + governance action" pattern (the biggest v0.7 miss)
   const govActor = GOVT_ACTOR.test(rawFull) || GOVT_ACTOR_TA.test(rawFull) || GOVT_ACTOR.test(gloss);
