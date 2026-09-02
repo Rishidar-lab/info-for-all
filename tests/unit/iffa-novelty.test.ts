@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { normalizeItem } from "@/lib/live/normalize";
-import { assessNovelty, buildEventState } from "@/lib/trends/novelty";
+import { assessNovelty, buildEventState, classifyUpdateSignificance } from "@/lib/trends/novelty";
 import type { FeedSource } from "@/data/feeds";
 import type { LiveArticle, LiveCluster } from "@/lib/live/types";
 
@@ -92,6 +92,44 @@ describe("IFFA claim-aware novelty v2 (v0.8 Phase D)", () => {
     );
     expect(s.affectedLocations).toEqual(["Chennai", "Chengalpattu"]);
     expect(s.unresolvedQuestions.length).toBe(1);
+    expect(s.openQuestions).toEqual(s.unresolvedQuestions);
     expect(s.latestNumbers.length).toBeGreaterThan(0);
+  });
+});
+
+describe("IFFA update significance (v0.9 Phase E)", () => {
+  it("maps update kinds to a development band, not an importance score", () => {
+    expect(classifyUpdateSignificance("retraction", 0.95)).toBe("critical");
+    expect(classifyUpdateSignificance("major-development", 0.9, { severeEvent: true })).toBe("critical");
+    expect(classifyUpdateSignificance("major-development", 0.9)).toBe("major");
+    expect(classifyUpdateSignificance("new-official-confirmation", 0.85)).toBe("major");
+    expect(classifyUpdateSignificance("new-number", 0.72)).toBe("major");
+    expect(classifyUpdateSignificance("new-source-only", 0.3)).toBe("minor");
+    expect(classifyUpdateSignificance("rephrasing", 0.15)).toBe("none");
+    expect(classifyUpdateSignificance("duplicate", 0.1)).toBe("none");
+  });
+
+  it("a correction that overturns a previously-official fact is CRITICAL", () => {
+    expect(classifyUpdateSignificance("correction", 0.9, { overturnsPriorFact: true })).toBe("critical");
+    expect(classifyUpdateSignificance("correction", 0.9)).toBe("major");
+  });
+
+  it("assessNovelty attaches updateSignificance + whatChangedSincePreviousSnapshot", () => {
+    const arts = [
+      mk({ publisher: "A", title: "Reports of a wall collapse in Salem", hoursAgo: 6 }),
+      mk({ publisher: "District Administration", title: "Salem Collector confirms wall collapse; 2 dead", hoursAgo: 0.5, official: true, excerpt: "Two deaths confirmed." }),
+    ];
+    const prev = cluster({ articleIds: ["x"], officialCount: 0, updatedAt: at(5.5), trendData: { lastSeenAt: at(5.5) } });
+    const now = cluster({ articleIds: ["x", "y"], districts: ["Salem"], officialCount: 1 });
+    const r = assessNovelty(now, arts, prev, true);
+    expect(["meaningful", "major", "critical"]).toContain(r.updateSignificance);
+    expect(r.whatChangedSincePreviousSnapshot).toEqual(r.changes);
+  });
+
+  it("a quiet duplicate is NONE significance", () => {
+    const arts = [mk({ publisher: "A", title: "Cuddalore rain: schools closed", hoursAgo: 6 })];
+    const prev = cluster({ articleIds: ["x"], updatedAt: at(5.9), trendData: { lastSeenAt: at(5.9) } });
+    const r = assessNovelty(cluster({ articleIds: ["x"] }), arts, prev, true);
+    expect(r.updateSignificance).toBe("none");
   });
 });

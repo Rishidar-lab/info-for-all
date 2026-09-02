@@ -200,9 +200,10 @@ export function enrichDataset(dataset: LiveDataset, opts: EnrichOptions = {}): E
       novelty: {
         updateKind: novelty.updateKind,
         meaningfulUpdateScore: novelty.meaningfulUpdateScore,
+        updateSignificance: novelty.updateSignificance,
         changes: novelty.changes,
       },
-      eventState: buildEventState(cluster, articles, lastMeaningfulUpdateAt),
+      eventState: buildEventState(cluster, articles, lastMeaningfulUpdateAt, novelty),
       severity: { level: sev.severity, reason: sev.reason, peak: sev.peak },
     };
     cluster.trendData = trendData;

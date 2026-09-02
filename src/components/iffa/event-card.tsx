@@ -173,6 +173,12 @@ export function EventCard({
       {cluster.trendData?.novelty && cluster.trendData.novelty.updateKind !== "duplicate" && cluster.trendData.novelty.changes.length > 0 && (
         <p className="mt-1.5 ui text-[11px] leading-snug">
           <span className="font-semibold text-accent">What changed:</span>{" "}
+          {cluster.trendData.novelty.updateSignificance &&
+            !["none", "minor"].includes(cluster.trendData.novelty.updateSignificance) && (
+              <span className="mr-1 rounded bg-accent/10 px-1 py-px text-[10px] font-semibold uppercase tracking-wide text-accent">
+                {cluster.trendData.novelty.updateSignificance}
+              </span>
+            )}
           <span className="text-ink-2">{cluster.trendData.novelty.changes[0]}</span>
         </p>
       )}

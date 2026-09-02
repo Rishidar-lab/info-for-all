@@ -286,16 +286,24 @@ export interface ClusterTrendData {
   novelty?: {
     updateKind: string;
     meaningfulUpdateScore: number;
+    /** v0.9 — NONE | MINOR | MEANINGFUL | MAJOR | CRITICAL (development, not importance). */
+    updateSignificance?: string;
     changes: string[];
   };
-  /** v0.8 — the compact canonical current state of the event. */
+  /** v0.9 — the compact canonical current state of the event (Event State v3). */
   eventState?: {
     confirmedFacts: string[];
     disputedClaims: string[];
+    counterClaims?: string[];
     latestNumbers: string[];
     affectedLocations: string[];
     officialActions: string[];
+    corrections?: string[];
+    resolvedQuestions?: string[];
+    openQuestions?: string[];
     unresolvedQuestions: string[];
+    whatChangedSincePreviousSnapshot?: string[];
+    updateSignificance?: string;
     lastMeaningfulUpdateAt: string;
   };
   /** v0.8 — EVENT severity (how bad the event is), NOT a probability of truth. */

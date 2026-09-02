@@ -31,14 +31,32 @@ export type UpdateKind =
   | "major-development"
   | "unknown";
 
-/** A compact canonical view of what an event currently establishes. */
+/**
+ * How much the latest snapshot actually moved the story on. This is a measure
+ * of NEWS DEVELOPMENT, not of how important or how true the event is.
+ */
+export type UpdateSignificance = "none" | "minor" | "meaningful" | "major" | "critical";
+
+/** A compact canonical view of what an event currently establishes (v3). */
 export interface EventState {
   confirmedFacts: string[];
   disputedClaims: string[];
+  /** claims one source makes that another source rejects / denies */
+  counterClaims: string[];
   latestNumbers: string[];
   affectedLocations: string[];
   officialActions: string[];
+  /** figures / claims a later report explicitly corrected or retracted */
+  corrections: string[];
+  /** questions the reporting has now answered */
+  resolvedQuestions: string[];
+  /** questions still open */
+  openQuestions: string[];
+  /** unresolvedQuestions kept as an alias of openQuestions for back-compat */
   unresolvedQuestions: string[];
+  /** the plain-language diff vs the previous snapshot */
+  whatChangedSincePreviousSnapshot: string[];
+  updateSignificance: UpdateSignificance;
   lastMeaningfulUpdateAt: string;
 }
 
@@ -47,9 +65,35 @@ export interface NoveltyResult {
   updateKind: UpdateKind;
   /** 0–1, interpretable. */
   meaningfulUpdateScore: number;
+  /** NONE / MINOR / MEANINGFUL / MAJOR / CRITICAL — development, not importance. */
+  updateSignificance: UpdateSignificance;
   /** Human-readable, most important first. */
   changes: string[];
+  /** alias of `changes`, named to match the event-state contract. */
+  whatChangedSincePreviousSnapshot: string[];
   quietGapHours: number;
+}
+
+/**
+ * Map (updateKind, score) → a coarse development band. `critical` is reserved
+ * for a retraction / contradiction that overturns a previously-reported fact,
+ * or a major development on a high-severity event.
+ */
+export function classifyUpdateSignificance(
+  updateKind: UpdateKind,
+  score: number,
+  opts?: { severeEvent?: boolean; overturnsPriorFact?: boolean },
+): UpdateSignificance {
+  if (updateKind === "retraction") return "critical";
+  if (opts?.overturnsPriorFact && (updateKind === "correction" || updateKind === "new-contradiction")) return "critical";
+  if (updateKind === "major-development") return opts?.severeEvent ? "critical" : "major";
+  if (["new-official-confirmation", "new-contradiction", "correction"].includes(updateKind)) return "major";
+  if (["new-fact", "new-number", "new-location", "new-counterclaim", "new-authority-statement"].includes(updateKind)) {
+    return score >= 0.7 ? "major" : "meaningful";
+  }
+  if (updateKind === "new-source-only" || updateKind === "minor-detail") return "minor";
+  if (updateKind === "rephrasing" || updateKind === "duplicate") return "none";
+  return score >= 0.6 ? "meaningful" : score >= 0.3 ? "minor" : "none";
 }
 
 const CORRECTION_RE = /\b(correct(?:ion|ed|s)?|revis(?:e|es|ed|ing)|updated? (?:to|the (?:toll|figure|number))|clarif\w+|amends?|rectif\w+|toll (?:cut|lowered|reduced)|scaled? (?:down|back) the)\b/i;
@@ -71,8 +115,13 @@ function tokenSig(articles: LiveArticle[]): Set<string> {
   return out;
 }
 
-/** Build the canonical current-state view of an event. */
-export function buildEventState(cluster: LiveCluster, articles: LiveArticle[], lastMeaningfulUpdateAt: string): EventState {
+/** Build the canonical current-state view of an event (v3). */
+export function buildEventState(
+  cluster: LiveCluster,
+  articles: LiveArticle[],
+  lastMeaningfulUpdateAt: string,
+  novelty?: NoveltyResult,
+): EventState {
   const claims = cluster.claims?.claims ?? [];
   const confirmed = claims.filter((c) => c.status === "corroborated").map((c) => c.canonicalText);
   const disputed = claims.filter((c) => c.status === "disputed").map((c) => c.canonicalText);
@@ -81,16 +130,38 @@ export function buildEventState(cluster: LiveCluster, articles: LiveArticle[], l
     .filter((a) => OFFICIAL_ROLES.has(a.evidenceRole))
     .map((a) => stripHeadlinePrefix(a.title))
     .slice(0, 4);
+
+  // counter-claims: a source explicitly denying / rejecting / disputing
+  const counterClaims = articles
+    .filter((a) => COUNTER_RE.test(`${a.title} ${a.excerpt ?? ""}`))
+    .map((a) => stripHeadlinePrefix(a.title))
+    .slice(0, 4);
+  // corrections: an article that corrected or retracted an earlier figure
+  const corrections = articles
+    .filter((a) => CORRECTION_RE.test(`${a.title} ${a.excerpt ?? ""}`) || RETRACTION_RE.test(`${a.title} ${a.excerpt ?? ""}`))
+    .map((a) => stripHeadlinePrefix(a.title))
+    .slice(0, 3);
+
+  const openQuestions = (cluster.unknowns ?? []).slice(0, 4);
+
   return {
     confirmedFacts: (confirmed.length ? confirmed : cluster.commonGround ?? []).slice(0, 6),
     disputedClaims: disputed.slice(0, 4),
+    counterClaims,
     latestNumbers,
     affectedLocations: [...cluster.districts],
     officialActions,
-    unresolvedQuestions: (cluster.unknowns ?? []).slice(0, 4),
+    corrections,
+    resolvedQuestions: [], // populated once we diff unknowns across snapshots
+    openQuestions,
+    unresolvedQuestions: openQuestions,
+    whatChangedSincePreviousSnapshot: novelty?.changes ?? [],
+    updateSignificance: novelty?.updateSignificance ?? "none",
     lastMeaningfulUpdateAt,
   };
 }
+
+type NoveltyCore = Omit<NoveltyResult, "updateSignificance" | "whatChangedSincePreviousSnapshot">;
 
 /**
  * Compare the current cluster against its previous-snapshot version.
@@ -104,6 +175,29 @@ export function assessNovelty(
   hasPreviousSnapshot: boolean,
   now: number = Date.now(),
 ): NoveltyResult {
+  const core = assessNoveltyCore(cluster, articles, prev, hasPreviousSnapshot, now);
+  const severeEvent = ["severe", "critical"].includes(cluster.trendData?.severity?.level ?? "");
+  const overturnsPriorFact =
+    !!prev &&
+    (cluster.claims?.disputes?.length ?? 0) > (prev.claims?.disputes?.length ?? 0) &&
+    (prev.officialCount ?? 0) > 0;
+  return {
+    ...core,
+    updateSignificance: classifyUpdateSignificance(core.updateKind, core.meaningfulUpdateScore, {
+      severeEvent,
+      overturnsPriorFact,
+    }),
+    whatChangedSincePreviousSnapshot: core.changes,
+  };
+}
+
+function assessNoveltyCore(
+  cluster: LiveCluster,
+  articles: LiveArticle[],
+  prev: LiveCluster | undefined,
+  hasPreviousSnapshot: boolean,
+  now: number = Date.now(),
+): NoveltyCore {
   if (!hasPreviousSnapshot) {
     return { noveltyClass: "unknown", updateKind: "unknown", meaningfulUpdateScore: 0.5, changes: ["first observation — nothing to compare against"], quietGapHours: 0 };
   }
