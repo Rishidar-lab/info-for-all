@@ -1,5 +1,5 @@
 {
-  "corpusSize": 114,
+  "corpusSize": 144,
   "accuracy": 1,
   "macroF1": 1,
   "perCat": [
@@ -15,8 +15,8 @@
     },
     {
       "cat": "politics",
-      "support": 38,
-      "tp": 38,
+      "support": 55,
+      "tp": 55,
       "fp": 0,
       "fn": 0,
       "precision": 1,
@@ -25,8 +25,8 @@
     },
     {
       "cat": "finance",
-      "support": 16,
-      "tp": 16,
+      "support": 22,
+      "tp": 22,
       "fp": 0,
       "fn": 0,
       "precision": 1,
@@ -35,8 +35,8 @@
     },
     {
       "cat": "sports",
-      "support": 10,
-      "tp": 10,
+      "support": 17,
+      "tp": 17,
       "fp": 0,
       "fn": 0,
       "precision": 1,
@@ -86,7 +86,7 @@
     },
     "politics": {
       "crisis": 0,
-      "politics": 38,
+      "politics": 55,
       "finance": 0,
       "sports": 0,
       "other-relevant": 0,
@@ -96,7 +96,7 @@
     "finance": {
       "crisis": 0,
       "politics": 0,
-      "finance": 16,
+      "finance": 22,
       "sports": 0,
       "other-relevant": 0,
       "entertainment": 0,
@@ -106,7 +106,7 @@
       "crisis": 0,
       "politics": 0,
       "finance": 0,
-      "sports": 10,
+      "sports": 17,
       "other-relevant": 0,
       "entertainment": 0,
       "celebrity": 0
@@ -140,6 +140,10 @@
     }
   },
   "misses": [],
-  "secondaryHit": 2,
-  "secondaryTotal": 13
+  "secondaryHit": 10,
+  "secondaryTotal": 10,
+  "secTP": 21,
+  "secFP": 0,
+  "secFN": 0,
+  "secErrors": []
 }

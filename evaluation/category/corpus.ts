@@ -19,6 +19,12 @@ export interface CategoryCase {
   language?: "ta" | "en";
   primary: CategoryId;
   secondary?: CategoryId;
+  /**
+   * The FULL expected secondary set (may be empty). When present, the eval
+   * scores secondary precision *and* recall strictly against this list — used
+   * by the dedicated multi-domain section. `secondary` alone is recall-only.
+   */
+  secondaries?: CategoryId[];
   /** true ⇒ a multi-topic digest / bulletin that should NOT be filed under a domain. */
   digest?: boolean;
   note?: string;
@@ -70,7 +76,7 @@ export const CATEGORY_CORPUS: CategoryCase[] = [
   { title: "SIR voter roll deadline extended in Maharashtra, Karnataka, Delhi, Telangana", primary: "politics", note: "election commission" },
   { title: "TRB Rajaa | RED Alert காட்டும் தமிழ்நாட்டின் வருவாய்.. - டிஆர்பி ராஜா ஷாக் ரிப்போர்ட்", language: "ta", primary: "politics", note: "minister's report on state revenue — 'red alert' is a metaphor" },
   { title: "“தமிழ்நாட்டின் GST வசூல் சரிவு! இது சிவப்பு எச்சரிக்கை” – டி.ஆர்.பி. ராஜா", language: "ta", primary: "finance", secondary: "politics", note: "GST collection is the topic; a minister is the speaker" },
-  { title: "Wild elephant electrocuted in Chittoor district; Pawan Kalyan orders inquiry", primary: "politics", secondary: "crisis" },
+  { title: "Wild elephant electrocuted in Chittoor district; Pawan Kalyan orders inquiry", primary: "politics" },
   { title: "Krishna Jayanthi | ஹைகோர்ட் அதிரடி - கிருஷ்ணரை சமுதாய ரீதியாக பார்க்கக் கூடாது", language: "ta", primary: "politics", note: "High Court order" },
   { title: "சிந்து நதி நீர் ஒப்பந்தம்: பாகிஸ்தானுக்கு ஆதரவாக நடுவர் நீதிமன்றம் தீர்ப்பு", language: "ta", primary: "politics", note: "Indus Waters Treaty arbitration — foreign policy" },
   { title: "'Can remove Pak from world picture': Pakistan PMO crops Modi out of SCO pic, gets warned", primary: "politics" },
@@ -79,7 +85,7 @@ export const CATEGORY_CORPUS: CategoryCase[] = [
   { title: "RBI keeps repo rate unchanged at 6.5% in monetary policy review", primary: "finance" },
   { title: "Why stock market is down today: Fresh US strikes, inflation fears", primary: "finance" },
   { title: "Gold Rate Down | நாளுக்கு நாள் Surprise கொடுக்கும் தங்கம் விலை", language: "ta", primary: "finance" },
-  { title: "வரி ஏய்ப்பு புகார்.. சென்னை, மதுரை தனியார் கருத்தரிப்பு மையங்களில் ஐடி சோதனை!", language: "ta", primary: "finance", secondary: "politics", note: "income-tax raids" },
+  { title: "வரி ஏய்ப்பு புகார்.. சென்னை, மதுரை தனியார் கருத்தரிப்பு மையங்களில் ஐடி சோதனை!", language: "ta", primary: "finance", note: "income-tax raids on private clinics — enforcement, no political actor" },
   { title: "Sensex ends 900 points lower as IT stocks drag; Nifty below 24,800", primary: "finance" },
   { title: "GST Council cuts rate on 30 items; states seek compensation extension", primary: "finance", secondary: "politics" },
   { title: "Petrol, diesel prices cut by Rs 2 a litre from midnight", primary: "finance" },
@@ -139,18 +145,52 @@ export const CATEGORY_CORPUS: CategoryCase[] = [
   { title: "'19th Century Views': Kerala Chief Minister rejects Grand Mufti's remarks on women", primary: "politics" },
   { title: "India A to play three four-dayers in New Zealand before the WTC Test series", primary: "sports" },
   { title: "PM Modi gifts Sindarov's World Cup-winning scoresheet to the Uzbekistan President", primary: "politics", note: "diplomacy, not a sports result" },
-  { title: "Sri Lanka lose Women's Champions Trophy hosting rights", primary: "sports", secondary: "politics" },
+  { title: "Sri Lanka lose Women's Champions Trophy hosting rights over government interference in the board", primary: "sports", secondary: "politics" },
   { title: "TVS Motor Company extends its partnership with Angkor Tiger Football Club", primary: "other-relevant", note: "a corporate sponsorship, not a match" },
   { title: "Thailand bowl; India hand a T20I debut to Pratika Rawal", primary: "sports" },
   { title: "Smartphone ban at 52 Tamil Nadu temples with a ₹5-rule and an exception", primary: "politics", note: "a government order" },
   { title: "Conservancy workers boycott work over assault on supervisor in Erode", primary: "politics", secondary: "crisis", note: "a labour protest" },
   { title: "NHAI restores two-way traffic movement around Green Circle in Vellore town", primary: "other-relevant" },
-  { title: "Chennai Port to push for more non-containerised cargo in a bid to boost trade", primary: "other-relevant", secondary: "finance" },
+  { title: "Chennai Port to push for more non-containerised cargo in a bid to boost trade", primary: "other-relevant" },
   { title: "Historic Shivappa Nayaka Palace in Shivamogga renovated, needs staff for maintenance", primary: "other-relevant" },
   { title: "A spicy dish from Burma naturalised in Madras", primary: "other-relevant" },
   { title: "RBI cuts CRR by 50 bps in a phased manner to ease liquidity", primary: "finance" },
   { title: "Chennai corporation demolishes 40 encroachments along the Cooum ahead of monsoon", primary: "politics", secondary: "crisis" },
   { title: "Two-wheeler sales fall 8% in August as rural demand stays weak", primary: "finance" },
+
+  // ── MULTI-DOMAIN (v0.9 Phase B) — full secondary set declared; scored for
+  //    strict precision + recall. Includes single-domain controls (secondaries: [])
+  //    so an over-eager cross-domain rule shows up as a false positive.
+  { title: "DMK, Congress corner Centre in Lok Sabha over falling GDP growth and rising unemployment", primary: "politics", secondaries: ["finance"], note: "economic data as the substance of a parliamentary clash" },
+  { title: "Nirmala Sitharaman defends GST rate cuts as Opposition alleges revenue loss to states", primary: "finance", secondaries: ["politics"], note: "filed by subject (the GST cut); the political row is the secondary frame" },
+  { title: "GST Council slashes rates on 33 items; FMCG and cement stocks rally", primary: "finance", secondaries: [], note: "policy → market reaction, both finance" },
+  { title: "Tamil Nadu finance minister says Centre owes state ₹18,000 crore in GST compensation", primary: "finance", secondaries: ["politics"] },
+  { title: "வேலைவாய்ப்பின்மை உயர்வு: மத்திய அரசை எதிர்க்கட்சிகள் கடும் விமர்சனம்", language: "ta", primary: "politics", secondaries: ["finance"], note: "unemployment rise, opposition criticises Centre" },
+  { title: "Adani group shares slide 6% after new short-seller allegations; Congress demands JPC probe", primary: "politics", secondaries: ["finance"], note: "the news hook is the JPC demand; the share move is context" },
+  { title: "RBI holds repo rate at 6.25% for a fourth straight review", primary: "finance", secondaries: [], note: "pure monetary policy, no political angle" },
+  { title: "Sensex closes 400 points lower on weak global cues", primary: "finance", secondaries: [], note: "market move only" },
+  { title: "Madras High Court stays SEBI order against a Chennai brokerage in an insider-trading case", primary: "finance", secondaries: ["politics"], note: "a court ruling on a market matter" },
+  { title: "Enforcement Directorate raids premises of a former DMK minister in a ₹200-crore sand-mining case", primary: "politics", secondaries: ["finance"], note: "political figure + alleged financial wrongdoing" },
+  { title: "Cabinet clears ₹6,300-crore Parandur airport project; land acquisition to begin next month", primary: "politics", secondaries: ["finance"] },
+  { title: "Bill to set up a Tamil Nadu Investment Promotion Agency with single-window clearance tabled in Assembly", primary: "politics", secondaries: ["finance"] },
+  { title: "CM inaugurates a new bus terminus in Kilambakkam", primary: "politics", secondaries: [], note: "routine launch, no fiscal or crisis angle stated" },
+  { title: "Opposition walks out of Assembly over the government's handling of the Chennai water crisis", primary: "politics", secondaries: ["crisis"] },
+  { title: "State government orders a safety audit of all school buildings after the Villupuram classroom-roof collapse", primary: "politics", secondaries: ["crisis"] },
+  { title: "Madurai bench pulls up the state over unpaid flood-relief compensation from 2023", primary: "politics", secondaries: ["crisis"], note: "court + flood relief" },
+  { title: "Greater Chennai Corporation razes 120 riverbank huts ahead of the northeast monsoon; residents allege no rehab", primary: "politics", secondaries: ["crisis"] },
+  { title: "Sanitation workers strike in Coimbatore after a supervisor is assaulted by a contractor's men", primary: "politics", secondaries: ["crisis"], note: "labour protest triggered by an assault" },
+  { title: "Home Minister announces tighter fireworks rules after the Sivakasi factory blast that killed 8", primary: "politics", secondaries: ["crisis"] },
+  { title: "Assembly passes a bill to regulate app-based cab aggregators", primary: "politics", secondaries: [], note: "legislation, no crisis/finance substance" },
+  { title: "Wild elephant electrocuted on a farm fence in Hosur; Forest Department suspends two staff", primary: "politics", secondaries: [], note: "a departmental administrative action — consistent with the Chittoor elephant case above" },
+  { title: "Chess Olympiad: India's men hold USA to stay in medal contention", primary: "sports", secondaries: [], note: "pure result" },
+  { title: "IOA suspends the state cricket association after a government-appointed panel takes over its finances", primary: "sports", secondaries: ["politics"] },
+  { title: "India's Asian Games football fixture against China postponed as smog blankets the venue city", primary: "sports", secondaries: ["crisis"] },
+  { title: "IPL play-off in Bengaluru moved to Hyderabad after heavy rain floods the outfield", primary: "sports", secondaries: ["crisis"] },
+  { title: "Sports Ministry derecognises the wrestling federation, cites unresolved governance dispute", primary: "sports", secondaries: ["politics"] },
+  { title: "Vaibhav Suryavanshi hits a 35-ball ton on Ranji debut for Bihar", primary: "sports", secondaries: [], note: "control — 'ton'/'debut' but no cross-domain angle" },
+  { title: "Tamil Nadu Premier League final dras a record 38,000 crowd to Coimbatore", primary: "sports", secondaries: [], note: "control — attendance, not governance" },
+  { title: "Doctors' association flags the recurring cost of the state's newborn gold-coin scheme to the Health Secretary", primary: "politics", secondaries: ["finance"] },
+  { title: "Coimbatore civic body's ₹900-crore underground drainage project stalled over a funding dispute with the Centre", primary: "politics", secondaries: ["finance"] },
 ];
 
 export const CATEGORY_CORPUS_META = {

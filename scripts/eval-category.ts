@@ -37,6 +37,11 @@ const misses: Miss[] = [];
 let correct = 0;
 let secondaryHit = 0;
 let secondaryTotal = 0;
+// strict precision/recall over cases that declare their FULL secondary set
+let secTP = 0;
+let secFP = 0;
+let secFN = 0;
+const secErrors: string[] = [];
 
 for (const c of CATEGORY_CORPUS) {
   // digests are handled by the pipeline before classification; mirror that here
@@ -55,6 +60,26 @@ for (const c of CATEGORY_CORPUS) {
     secondaryTotal++;
     const r = classifyEvent({ title: c.title, excerpt: c.excerpt, language: c.language });
     if (r.secondaryCategories.includes(c.secondary) || r.primaryCategory === c.secondary) secondaryHit++;
+  }
+
+  if (c.secondaries) {
+    const r = classifyEvent({ title: c.title, excerpt: c.excerpt, language: c.language });
+    const expected = new Set(c.secondaries);
+    const got = new Set(r.secondaryCategories.filter((s) => s !== r.primaryCategory));
+    for (const g of got) {
+      if (expected.has(g)) {
+        secTP++;
+      } else {
+        secFP++;
+        secErrors.push(`FP  ${g}\t${c.title.slice(0, 66)}`);
+      }
+    }
+    for (const e of expected) {
+      if (!got.has(e)) {
+        secFN++;
+        secErrors.push(`FN  ${e}\t${c.title.slice(0, 66)}`);
+      }
+    }
   }
 }
 
@@ -81,6 +106,17 @@ md.push(`- generated: ${new Date().toISOString()}`);
 md.push(`- corpus: ${CATEGORY_CORPUS.length} hand-labelled real headlines`);
 md.push(`- **accuracy ${pct(accuracy)} · macro-F1 ${pct(macroF1)}**`);
 md.push(`- secondary-category recall: ${secondaryTotal ? pct(secondaryHit / secondaryTotal) : "—"} (${secondaryHit}/${secondaryTotal})`);
+const secP = secTP + secFP ? secTP / (secTP + secFP) : null;
+const secR = secTP + secFN ? secTP / (secTP + secFN) : null;
+md.push(
+  `- secondary-set strict precision ${pct(secP)} · recall ${pct(secR)} (TP ${secTP} / FP ${secFP} / FN ${secFN}, over cases with a declared secondary set)`,
+);
+if (secErrors.length) {
+  md.push("");
+  md.push("### Secondary-set errors");
+  md.push("");
+  for (const e of secErrors) md.push(`- \`${e}\``);
+}
 md.push("");
 md.push("| Category | Support | Precision | Recall | F1 |");
 md.push("|---|---:|---:|---:|---:|");
@@ -103,7 +139,7 @@ writeFileSync(resolve(ROOT, "evaluation/reports/category-latest.md"), mdOut);
 writeFileSync(
   resolve(ROOT, "evaluation/reports/category-latest.json"),
   JSON.stringify(
-    { corpusSize: CATEGORY_CORPUS.length, accuracy, macroF1, perCat, confusion, misses, secondaryHit, secondaryTotal },
+    { corpusSize: CATEGORY_CORPUS.length, accuracy, macroF1, perCat, confusion, misses, secondaryHit, secondaryTotal, secTP, secFP, secFN, secErrors },
     null,
     2,
   ) + "\n",

@@ -189,6 +189,7 @@ export function enrichDataset(dataset: LiveDataset, opts: EnrichOptions = {}): E
       secondaryCategories: cat.secondaryCategories,
       categoryConfidence: cat.confidenceClass,
       categorySignals: cat.matchedSignals,
+      categoryEvidence: cat.categoryEvidence,
       geoTier: tier.tier,
       trend,
       independence,

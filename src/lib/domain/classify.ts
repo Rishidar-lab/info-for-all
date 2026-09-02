@@ -44,9 +44,24 @@ export interface ClassifyInput {
   crisisType?: string;
 }
 
+/** Structured, per-category evidence — why a category was (or wasn't) assigned. */
+export interface CategoryEvidence {
+  category: CategoryId;
+  role: "primary" | "secondary";
+  score: number;
+  /** count of distinctive (non-background) signals */
+  distinctiveSignals: number;
+  /** count of plain keyword hits */
+  keywordHits: number;
+  /** the human-readable reasons, most specific first */
+  signals: string[];
+}
+
 export interface CategoryResultV2 extends CategoryClassification {
   primaryCategory: CategoryId;
   secondaryCategories: CategoryId[];
+  /** primary + each secondary, with the evidence that put it there */
+  categoryEvidence: CategoryEvidence[];
   confidenceClass: ConfidenceClass;
   matchedSignals: string[];
   competingCategories: { category: CategoryId; score: number }[];
@@ -139,8 +154,8 @@ const TAMIL_KEYWORDS: Record<CategoryId, string[]> = {
 };
 
 // ── the "government actor takes a governance action" high-signal pattern ──
-const GOVT_ACTOR = /\b(cm|chief minister|dy cm|deputy cm|minister|state government|tamil nadu government|governor|secretariat|collector|assembly|cabinet|corporation|panchayat|centre|union government|speaker|pm modi|prime minister|president|dmk|aiadmk|bjp|congress|tvk|vck|pmk|opposition)\b/i;
-const GOVT_ACTION = /\b(announce[sd]?|propose[sd]?|launch(?:e[sd])?|introduce[sd]?|table[sd]?|clear[sd]?|pass(?:e[sd])?|approve[sd]?|inaugurat\w+|unveil\w+|declare[sd]?|order[sd]?|sanction\w*|allocat\w+|formulate[sd]?|withdraw[sd]?|slam[s]?|criticis\w+|accus\w+|allege[sd]?|demand[sd]?|assure[sd]?|reject[sd]?|gifts?|to set up|to form|tighten\w*|comes into effect)\b/i;
+const GOVT_ACTOR = /\b(cm|chief minister|dy cm|deputy cm|minister|state government|tamil nadu government|governor|secretariat|collector|assembly|cabinet|corporation|municipal(?:ity)?|civic body|panchayat|centre|union government|speaker|pm modi|prime minister|president|forest department|revenue department|health department|police department|dmk|aiadmk|bjp|congress|tvk|vck|pmk|opposition)\b/i;
+const GOVT_ACTION = /\b(announce[sd]?|propose[sd]?|launch(?:e[sd])?|introduce[sd]?|table[sd]?|clear[sd]?|pass(?:e[sd])?|approve[sd]?|inaugurat\w+|unveil\w+|declare[sd]?|order[sd]?|sanction\w*|allocat\w+|formulate[sd]?|withdraw[sd]?|suspend[sd]?|dismiss(?:e[sd])?|transfer(?:red)?|slam[s]?|criticis\w+|accus\w+|allege[sd]?|demand[sd]?|assure[sd]?|reject[sd]?|gifts?|to set up|to form|tighten\w*|comes into effect)\b/i;
 const GOVT_ACTOR_TA = /அரசு|முதல்வர்|அமைச்சர்|சட்டசபை|பேரவை|ஆட்சியர்|கவர்னர்|ஆளுநர்|செயலகம்|மாநகராட்சி|நகராட்சி|திமுக|அதிமுக|பாஜக|காங்கிரஸ்|தவெக|எதிர்க்கட்சி/;
 const GOVT_ACTION_TA = /அறிவித்த|அறிவிப்பு|தொடங்கி|தொடங்க|திறந்து வைத்|அறிமுக|நிறைவேற்ற|ஒப்புதல்|உத்தரவிட்ட|ஒதுக்கீடு|வலியுறுத்த|குற்றம்சாட்ட|கண்டித்|வாபஸ்|திட்டம்/;
 
@@ -212,12 +227,24 @@ export function classifyEvent(input: ClassifyInput): CategoryResultV2 {
   const strongHits = EMPTY_SCORES();
   const keywordHits = EMPTY_SCORES();
   const subByCat: Partial<Record<CategoryId, Map<string, number>>> = {};
+  /**
+   * Categories a cross-domain pattern flagged as a legitimate SECONDARY angle.
+   * Deliberately does NOT feed `strongHits` — a secondary angle must never
+   * promote itself to primary or trip crisis-precedence.
+   */
+  const secondaryEligible = new Set<CategoryId>();
 
-  const add = (cat: CategoryId, pts: number, why: string, opts?: { sub?: string; strong?: boolean; keyword?: boolean }) => {
+  const add = (
+    cat: CategoryId,
+    pts: number,
+    why: string,
+    opts?: { sub?: string; strong?: boolean; keyword?: boolean; secondary?: boolean },
+  ) => {
     scores[cat] += pts;
     signals[cat].push(why);
     if (opts?.strong) strongHits[cat] += 1;
     if (opts?.keyword) keywordHits[cat] += 1;
+    if (opts?.secondary) secondaryEligible.add(cat);
     if (opts?.sub) {
       const m = (subByCat[cat] ??= new Map());
       m.set(opts.sub, (m.get(opts.sub) ?? 0) + pts);
@@ -299,8 +326,30 @@ export function classifyEvent(input: ClassifyInput): CategoryResultV2 {
   // 9. the "government actor + governance action" pattern (the biggest v0.7 miss)
   const govActor = GOVT_ACTOR.test(rawFull) || GOVT_ACTOR_TA.test(rawFull) || GOVT_ACTOR.test(gloss);
   const govAction = GOVT_ACTION.test(rawFull) || GOVT_ACTION_TA.test(rawFull) || GOVT_ACTION.test(gloss);
-  if (govActor && govAction) {
+  // 9a. a fiscal / monetary body taking a fiscal action is a FINANCE decision,
+  //     not a political one — the generic pattern above would misfile it.
+  const fiscalBody =
+    /\b(gst council|rbi|reserve bank|sebi|monetary policy committee|mpc|finance ministry|ministry of finance|cbdt|cbic|fifteenth finance commission|finance commission|trai|cci|competition commission)\b/i.test(
+      rawFull + " " + gloss,
+    );
+  const fiscalAction =
+    /\b(cuts?|slashes?|hikes?|raises?|lowers?|revises?|holds?|retains?|trims?|eases?|tightens?)\b.*\b(rate|rates|repo|crr|slr|duty|cess|tax|levy|tariff|liquidity|stance)\b|\b(rate cut|rate hike|repo rate|policy rate|rate (?:unchanged|on hold)|imposes? (?:a )?(?:duty|levy|penalty)|penalis\w+|bars? .* from the (?:market|securities))\b/i.test(
+      rawFull + " " + gloss,
+    );
+  if (fiscalBody && fiscalAction) {
+    add("finance", SCORE.entity, "a fiscal / monetary authority taking a fiscal action", { strong: true });
+    // "GST Council" also matches a politics/centre-state keyword — discount it
+    // when the story is plainly the rate action, not an inter-governmental row.
+    if (!/\b(state[s]?|centre|opposition|congress|bjp|dispute|row|protest|walk(?:s|ed)? out|demand)\b/i.test(rawFull)) {
+      scores.politics = Math.max(0, scores.politics - 2.2);
+      keywordHits.politics = Math.max(0, keywordHits.politics - 1);
+    }
+  }
+  if (govActor && govAction && !(fiscalBody && fiscalAction)) {
     add("politics", SCORE.govtActorAction, "a government actor taking a governance action", { strong: true });
+  } else if (govActor && govAction) {
+    // still a governance dimension, just not the lead
+    add("politics", SCORE.conceptWeak, "a government actor involved", { secondary: true });
   }
 
   // 10. metaphor guard — "red alert" / "எச்சரிக்கை" about revenue / GST / a
@@ -325,7 +374,121 @@ export function classifyEvent(input: ClassifyInput): CategoryResultV2 {
     }
   }
 
+  // 12. explicit CROSS-DOMAIN patterns (v0.9 Phase B) — a real second-domain
+  //     angle of the LEAD story, not a loose keyword and not a signal borrowed
+  //     from an unrelated merged cluster member. The pipeline passes every
+  //     member headline joined by "  ·  "; the cross-domain check runs on the
+  //     lead headline (+ the excerpt blob), so a minority member cannot inject
+  //     a spurious secondary.
+  const leadTitle = input.title.split(/\s+·\s+/)[0] ?? input.title;
+  const hay = ` ${`${leadTitle} ${input.excerpt ?? ""}`.toLowerCase()} ${gloss} `;
+  const has = (re: RegExp) => re.test(hay);
+  /** flags a legitimate second-domain angle without letting it become primary. */
+  const SEC = { secondary: true } as const;
+  // finance decision / economic topic argued in the political arena
+  if (
+    (has(/\b(gst|repo rate|rbi|budget|fiscal|tax(?:ation)?|disinvestment|tariff|import duty|gdp|economy|economic (?:growth|policy|data)|growth rate|inflation|unemployment|revenue (?:shortfall|collection|loss)|compensation cess)\b/) ||
+      has(/வேலைவாய்ப்பின்மை|வேலையின்மை|பணவீக்கம்|விலைவாசி|ஜிஎஸ்டி|வருவாய்|பொருளாதார|நிதிநிலை/)) &&
+    (has(/\b(opposition|parliament|assembly|minister|cm |chief minister|centre|state government|congress|bjp|dmk|aiadmk|criticis|slams?|hits? out|jibe|welcomes?|demand|row over|vs )\b/) ||
+      has(/எச்சரிக்கை|எதிர்க்கட்சி|மத்திய அரச|மாநில அரச|திமுக|அதிமுக|பாஜக|காங்கிரஸ்|அமைச்சர்|விமர்சன|கண்டன/) ||
+      has(/[–—]\s+[\p{Lu}஀-௿]/u))
+  ) {
+    add("politics", SCORE.conceptStrong, "an economic topic argued in the political arena", SEC);
+    add("finance", SCORE.conceptStrong, "an economic / fiscal topic", SEC);
+  }
+  // an attack / assault on a person alongside a governance / labour story
+  if (has(/\b(assault(?:ed)?(?: on| of| by)?|attack(?:ed)? on|thrashed|manhandled|attacked (?:the|a) (?:supervisor|official|teacher|doctor|staff))\b/)) {
+    add("crisis", SCORE.conceptStrong, "an assault on a person", SEC);
+  }
+  // a demolition / eviction drive (governance) that displaces people (crisis angle)
+  if (has(/\b(demolish\w*|encroachment removal|eviction drive|raze[sd]?|razing|bulldoz\w+|clears? (?:the )?(?:huts|encroachments|hutments))\b/) && has(/\b(residents|families|homes|huts|shops|displaced|ahead of (?:the )?(?:northeast |southwest )?monsoon|slum|hutment|riverbank|rehab)\b/)) {
+    add("crisis", SCORE.conceptStrong, "displacement from a demolition drive", SEC);
+  }
+  // political figure + financial wrongdoing
+  if (
+    has(/\b(minister|mla|mp |cm |chief minister|politician|leader|former minister|ex-minister|dmk|aiadmk|bjp|congress)\b/) &&
+    (has(/\b(bank fraud|financial fraud|money laundering|disproportionate assets|investment scam|chit fund|ponzi|hawala|shell (?:company|firm)|tax evasion|benami|it raid|income tax raid|sand[- ]mining (?:case|scam)?|mining (?:lease|scam)|land scam|kickbacks?|graft|slush fund|proceeds of crime|attachment of (?:assets|property)|short[- ]seller|hindenburg|stock (?:rout|manipulation)|shares? (?:slide|slump|tank|crash|plunge)|₹[\d,]+[ -]?crore (?:case|scam|kickback))\b/) ||
+      has(/வரி ஏய்ப்பு|ஐடி சோதனை/))
+  ) {
+    add("politics", SCORE.conceptStrong, "a political figure and alleged financial wrongdoing", SEC);
+    add("finance", SCORE.conceptStrong, "alleged financial wrongdoing", SEC);
+  }
+  // crisis disrupting a sporting event — sport is the arena, crisis the cause
+  if (
+    has(/\b(cyclone|flood|heavy rain|storm|earthquake|heatwave|smog|air quality)\b/) &&
+    has(/\b(ipl|match|tournament|fixture|test|odi|t20|stadium|world cup|isl|ranji)\b/) &&
+    has(/\b(cancel\w*|postpon\w*|abandon\w*|call(?:ed)? off|delay\w*|reschedul\w*|move[sd]?|shift\w*)\b/)
+  ) {
+    add("crisis", SCORE.conceptStrong, "weather disrupting a sporting event", SEC);
+    add("sports", SCORE.sportsEntity, "a sporting event affected", { strong: true });
+  }
+  // a court ruling on a financial / market matter — the market matter leads
+  if (
+    has(/\b(high court|supreme court|tribunal|nclt|nclat|sat |securities appellate|bench)\b/) &&
+    has(/\b(sebi|insider trading|ipo|merger|bankruptcy|insolvency|delisting|debenture|shareholder|market regulator|brokerage|stock (?:exchange|manipulation)|front[- ]running)\b/)
+  ) {
+    // the court is procedural here — discount raw "high court" politics keywords
+    scores.politics = Math.max(0, scores.politics - 3.0);
+    keywordHits.politics = Math.max(0, keywordHits.politics - 2);
+    add("finance", SCORE.entity, "a securities / market legal matter", { strong: true });
+    add("finance", SCORE.conceptStrong, "a market-regulation dispute", { strong: true });
+    add("politics", SCORE.conceptWeak, "adjudicated by a court", SEC);
+  }
+  // a court / tribunal pulling up the government (governance / accountability leads)
+  if (
+    has(/\b(high court|supreme court|madras high court|madurai bench|tribunal|bench|ngt|national green tribunal)\b/) &&
+    has(/\b(pulls? up|raps?|slams?|directs? the (?:state|government)|orders? the (?:state|government)|comes? down on|questions? the (?:state|government)|seeks? (?:a )?(?:reply|response|report) from the (?:state|government)|contempt|unpaid|failure to)\b/)
+  ) {
+    // the accountability angle is the story — keep the disaster as context only
+    const isDisasterCtx = has(/\b(flood|relief|compensation|drought|cyclone|disaster|rehabilitation|evacuat\w+|death toll)\b/);
+    if (isDisasterCtx) {
+      scores.crisis = Math.max(0, scores.crisis - 2.4);
+      keywordHits.crisis = Math.max(0, keywordHits.crisis - 1);
+    }
+    add("politics", SCORE.govtActorAction, "a court holding the government to account", { strong: true });
+    if (isDisasterCtx) add("crisis", SCORE.conceptStrong, "a disaster-aftermath grievance", SEC);
+  }
+  // government scheme with a stated cost, or an investment-promotion body
+  if (
+    (has(/\b(scheme|programme|project|yojana)\b/) &&
+      has(/(₹|rs\.?)\s?[\d,]+\s?(?:crore|lakh)|\b(?:allocat|sanction|budget of|outlay|costing|worth|(?:security|logistics|operational|recurring|administrative|implementation) costs?|financial (?:burden|implication)|cost overrun|funding (?:dispute|row|gap|shortfall)|stalled over)\b/)) ||
+    has(/\binvestment promotion (?:commission|board|agency)|fast-track clearances|ease of doing business|single[- ]window clearance|industrial (?:policy|corridor)\b/)
+  ) {
+    add("politics", SCORE.govtActorAction, "a government economic scheme / body", { strong: true });
+    add("finance", SCORE.conceptStrong, "an economic-development measure with a fiscal dimension", SEC);
+  }
+  // a sports body / event entangled with government or political interference
+  if (
+    has(/\b(cricket board|football federation|olympic (?:association|committee)|sports (?:body|federation|ministry)|hockey india|bcci|aiff|ioa|icc|fifa|selection committee|team management|champions trophy|world cup|asia cup|world championship|premier league)\b/) &&
+    has(/\b(government interference|political interference|ministry (?:steps? in|intervenes?)|court-appointed|coa |sports code|de-?recognis\w+|ban(?:s|ned)? by (?:fifa|icc)|election dispute|hosting rights|minister|parliament|government)\b/)
+  ) {
+    add("sports", SCORE.sportsEntity, "a sports-governance matter", { strong: true });
+    add("politics", SCORE.conceptStrong, "government / political interference in sport", SEC);
+  }
+  // government tightens rules in response to a crime / safety incident
+  if (
+    has(/\b(tighter?|tighten\w*|new (?:safety )?(?:rules?|norms?)|norms? after|guidelines? after|orders? (?:a )?safety audit|makes? .* mandatory)\b/) &&
+    has(/\b(gangrape|rape|murder|accident|mishap|assault|fire|blast|explosion|collapse|death|deaths|killed|attack|stampede|drowning)\b/)
+  ) {
+    add("politics", SCORE.govtActorAction, "a regulatory / policy response", { strong: true });
+    add("crisis", SCORE.conceptStrong, "prompted by a safety / crime incident", SEC);
+  }
+  // a labour strike / protest with a triggering grievance
+  if (has(/\b(strike|go(?:es|ing)? on strike|walk(?:s|ed)? out|walkout|work boycott|boycott(?:s|ed)? work|downs? tools|stir|dharna|gherao|indefinite fast|hunger strike|road roko|rail roko)\b/)) {
+    add("politics", SCORE.govtActorAction, "a labour / protest action", { strong: true });
+    if (has(/\b(assault\w*|attack\w*|beaten|thrashed|death|died|killed|electrocut\w+|water crisis|drought|power cut|shortage|contamination|famine|unsafe)\b/)) {
+      add("crisis", SCORE.conceptStrong, "a triggering safety / service grievance", SEC);
+    }
+  }
+
   // ── decide ──
+  // A category whose ONLY evidence is a cross-domain "secondary angle" flag
+  // (no distinctive signal, no keyword) must not out-score a real primary —
+  // clamp it so it can rank as a secondary but rarely lead.
+  for (const c of secondaryEligible) {
+    if (strongHits[c] === 0 && keywordHits[c] === 0) scores[c] = Math.min(scores[c], 2.6);
+  }
+
   const ranked = CATEGORY_ORDER
     .filter((c) => c !== "other-relevant")
     .map((c) => ({ category: c, score: Math.round(scores[c] * 100) / 100 }))
@@ -368,19 +531,25 @@ export function classifyEvent(input: ClassifyInput): CategoryResultV2 {
   else if (strongHits[primary] >= 1 || keywordHits[primary] >= 2 || maxScore >= 4.5) confidenceClass = "MODERATE";
   else confidenceClass = "WEAK";
 
-  // secondary: a real second-domain angle — enough score AND a distinctive signal
+  // secondary: a real second-domain angle — either a cross-domain pattern
+  // flagged it (secondaryEligible), OR it has a distinctive signal / solid
+  // keyword presence and at least ~1/5 of the primary's score.
   const secondaryCategories =
     primary === "other-relevant"
       ? []
       : ranked
-          .filter(
-            (r) =>
-              r.category !== primary &&
-              r.score >= 0.3 * maxScore &&
-              (strongHits[r.category] >= 1 || keywordHits[r.category] >= 1) &&
-              r.score >= 1.8,
-          )
-          .map((r) => r.category);
+          .filter((r) => {
+            if (r.category === primary) return false;
+            // a cross-domain pattern explicitly vouched for this angle — it just
+            // needs a real (non-trivial) score, not a fixed ratio of the primary.
+            if (secondaryEligible.has(r.category) && r.score >= 1.4) return true;
+            const evidenced =
+              (strongHits[r.category] >= 1 && r.score >= 2.0) ||
+              (keywordHits[r.category] >= 2 && r.score >= 2.6);
+            return evidenced && r.score >= 0.18 * maxScore;
+          })
+          .map((r) => r.category)
+          .slice(0, 2);
 
   // sub-category = the highest-scoring sub within the primary
   const subMap = subByCat[primary];
@@ -392,6 +561,18 @@ export function classifyEvent(input: ClassifyInput): CategoryResultV2 {
     primary === "other-relevant"
       ? ["no crisis / politics / finance / sports signal above threshold"]
       : signals[primary].slice(0, 8);
+
+  const categoryEvidence: CategoryEvidence[] =
+    primary === "other-relevant"
+      ? []
+      : [primary, ...secondaryCategories].map((c) => ({
+          category: c,
+          role: c === primary ? ("primary" as const) : ("secondary" as const),
+          score: Math.round(scores[c] * 100) / 100,
+          distinctiveSignals: strongHits[c],
+          keywordHits: keywordHits[c],
+          signals: signals[c].slice(0, 6),
+        }));
 
   const reason =
     primary === "other-relevant"
@@ -408,6 +589,7 @@ export function classifyEvent(input: ClassifyInput): CategoryResultV2 {
     // v2
     primaryCategory: primary,
     secondaryCategories,
+    categoryEvidence,
     confidenceClass,
     matchedSignals,
     competingCategories: ranked.slice(0, 3),

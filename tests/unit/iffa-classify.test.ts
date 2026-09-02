@@ -73,3 +73,56 @@ describe("IFFA classifier v2 — multi-signal (v0.8 Phase A)", () => {
     expect(classifyEvent({ title: t })).toEqual(classifyEvent({ title: t }));
   });
 });
+
+describe("IFFA secondary-category engine (v0.9 Phase B)", () => {
+  const sec = (title: string, language?: "ta" | "en") => {
+    const r = classifyEvent({ title, language });
+    return { primary: r.primaryCategory, all: [r.primaryCategory, ...r.secondaryCategories] };
+  };
+
+  it("surfaces a real second domain via a cross-domain pattern, not a loose keyword", () => {
+    // economic data as the substance of a political clash
+    const a = sec("DMK, Congress corner Centre in Lok Sabha over falling GDP growth and rising unemployment");
+    expect(a.primary).toBe("politics");
+    expect(a.all).toContain("finance");
+
+    // a court ruling whose substance is a market matter
+    const b = sec("Madras High Court stays SEBI order against a Chennai brokerage in an insider-trading case");
+    expect(b.primary).toBe("finance");
+
+    // a demolition drive that displaces people
+    const c = sec("Greater Chennai Corporation razes 120 riverbank huts ahead of the northeast monsoon; residents allege no rehab");
+    expect(c.primary).toBe("politics");
+    expect(c.all).toContain("crisis");
+  });
+
+  it("does NOT invent a secondary for a single-domain story", () => {
+    expect(sec("RBI holds repo rate at 6.25% for a fourth straight review").all).toEqual(["finance"]);
+    expect(sec("Thailand bowl; India hand a T20I debut to Pratika Rawal").all).toEqual(["sports"]);
+    expect(sec("GST Council slashes rates on 33 items; FMCG and cement stocks rally").all).toEqual(["finance"]);
+  });
+
+  it("a cross-domain angle never out-ranks a real primary", () => {
+    // 'flood' is a real keyword but the story is a court holding the govt to account
+    const r = classifyEvent({ title: "Madurai bench pulls up the state over unpaid flood-relief compensation from 2023" });
+    expect(r.primaryCategory).toBe("politics");
+    expect(r.secondaryCategories).toContain("crisis");
+  });
+
+  it("exposes structured per-category evidence for the primary and each secondary", () => {
+    const r = classifyEvent({ title: "Enforcement Directorate raids premises of a former DMK minister in a ₹200-crore sand-mining case" });
+    expect(r.categoryEvidence[0].role).toBe("primary");
+    expect(r.categoryEvidence[0].category).toBe(r.primaryCategory);
+    for (const ev of r.categoryEvidence) {
+      expect(ev.signals.length).toBeGreaterThan(0);
+      expect(typeof ev.score).toBe("number");
+    }
+    expect(r.categoryEvidence.map((e) => e.category)).toEqual([r.primaryCategory, ...r.secondaryCategories]);
+  });
+
+  it("reads a Tamil cross-domain story (unemployment debated politically)", () => {
+    const r = sec("வேலைவாய்ப்பின்மை உயர்வு: மத்திய அரசை எதிர்க்கட்சிகள் கடும் விமர்சனம்", "ta");
+    expect(r.primary).toBe("politics");
+    expect(r.all).toContain("finance");
+  });
+});

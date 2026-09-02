@@ -235,6 +235,15 @@ export interface ClusterTrendData {
   categoryConfidence?: string;
   /** v0.8 — the signals that drove the classification. */
   categorySignals?: string[];
+  /** v0.9 — structured per-category evidence (primary + each secondary). */
+  categoryEvidence?: {
+    category: string;
+    role: "primary" | "secondary";
+    score: number;
+    distinctiveSignals: number;
+    keywordHits: number;
+    signals: string[];
+  }[];
   /** Geo priority tier — GeoTier from src/lib/domain/geo-tiers.ts. */
   geoTier?: string;
   /** TrendSignal from src/lib/trends/types.ts (kept loose here to avoid a circular import). */
