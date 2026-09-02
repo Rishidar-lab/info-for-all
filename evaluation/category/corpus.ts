@@ -191,6 +191,45 @@ export const CATEGORY_CORPUS: CategoryCase[] = [
   { title: "Tamil Nadu Premier League final dras a record 38,000 crowd to Coimbatore", primary: "sports", secondaries: [], note: "control — attendance, not governance" },
   { title: "Doctors' association flags the recurring cost of the state's newborn gold-coin scheme to the Health Secretary", primary: "politics", secondaries: ["finance"] },
   { title: "Coimbatore civic body's ₹900-crore underground drainage project stalled over a funding dispute with the Centre", primary: "politics", secondaries: ["finance"] },
+
+  // ── v0.9 Phase R — realistic Tamil Nadu classification + consequence framing ──
+  { title: "Cuddalore, Mayiladuthurai on red alert as depression intensifies off the coast; schools shut for two days", primary: "crisis", secondaries: [], note: "warning + realised closure" },
+  { title: "IMD issues an orange alert for eight southern districts; no rain reported yet", primary: "crisis", secondaries: [], note: "warning only — still crisis category" },
+  { title: "Two fishermen from Rameswaram detained by the Sri Lankan Navy near Katchatheevu", primary: "other-relevant", secondaries: [], note: "a fishermen incident with no stated government / political response in the headline — becomes politics only once an actor responds" },
+  { title: "Chennai Metro Rail opens the Phase-2 corridor to Poonamallee for public services", primary: "other-relevant", secondaries: [], note: "civic infrastructure, no crisis/finance/politics substance" },
+  { title: "Tiruppur knitwear exporters report a 12% fall in orders as US tariffs bite", primary: "finance", secondaries: [], note: "TN economic relevance, no political actor" },
+  { title: "Madras High Court orders the state to clear ₹430 crore in pending scholarship dues within eight weeks", primary: "politics", secondaries: ["finance"], note: "court + fiscal direction to government" },
+  { title: "A 25-year-old woman killed, three hurt as a lorry rams a bus stop in Salem", primary: "crisis", secondaries: [], note: "road accident — isolated, still crisis category" },
+  { title: "Sivaganga collector bans the sale of loose sweets during Deepavali after a food-poisoning scare", primary: "politics", secondaries: ["crisis"], note: "administrative order prompted by a safety incident" },
+  { title: "TNSTC to add 1,200 buses for the Deepavali rush; special fares notified", primary: "other-relevant", secondaries: [], note: "transport logistics, routine" },
+  { title: "Cauvery water release from Mettur reaches the delta; samba transplantation picks up in Thanjavur", primary: "other-relevant", secondaries: [], note: "agriculture / irrigation, no dispute framing" },
+  { title: "Karur borewell rescue enters a second day; NDRF widens the parallel shaft", primary: "crisis", secondaries: [], note: "active rescue" },
+  { title: "Anna University postpones semester exams in Chennai and Chengalpattu after the rain holiday", primary: "other-relevant", secondaries: ["crisis"], note: "exam reschedule caused by weather" },
+  { title: "State cabinet approves a 3% DA hike for government employees, effective from October 1", primary: "politics", secondaries: ["finance"] },
+  { title: "Greater Chennai Corporation floats tenders for 400 km of stormwater drains ahead of the monsoon", primary: "other-relevant", secondaries: [], note: "civic works, pre-monsoon — no impact yet" },
+  { title: "Puducherry Assembly passes a resolution against the three-language formula", primary: "politics", secondaries: [] },
+  { title: "TVK holds its first state conference in Vikravandi; Vijay attacks both DMK and BJP", primary: "politics", secondaries: [], note: "campaign / criticism" },
+  { title: "Coimbatore airport handles a record 2.1 million passengers this fiscal, AAI data shows", primary: "other-relevant", secondaries: ["finance"], note: "traffic milestone with a mild economic frame" },
+  { title: "Nilgiris landslip cuts off the Ooty–Coonoor road; 200 tourists stranded overnight", primary: "crisis", secondaries: [], note: "realised impact, transport" },
+  { title: "Tamil Nadu records the highest GST collection among southern states in August", primary: "finance", secondaries: [], note: "state economic data" },
+  { title: "Southern Railway cancels 18 trains from Chennai Egmore for a yard-remodelling block", primary: "other-relevant", secondaries: [], note: "planned engineering, not a crisis" },
+
+  // ── temporal-flavoured (event time ≠ publication time) — still a category test ──
+  { title: "Schools to remain closed tomorrow in Cuddalore and Nagapattinam as rain continues", primary: "crisis", secondaries: [] },
+  { title: "Schools reopened today across the delta districts after a three-day rain break", primary: "other-relevant", secondaries: [], note: "return to normal, not a crisis" },
+  { title: "Assembly to reconvene on Monday to take up the online-gaming Bill", primary: "politics", secondaries: [] },
+
+  // ── finance event-state controls ──
+  { title: "RBI cuts the repo rate by 25 bps to 6% in a surprise inter-meeting move", primary: "finance", secondaries: [], note: "policy decision" },
+  { title: "Rupee hits a record low of 89.4 against the dollar; RBI seen intervening", primary: "finance", secondaries: [], note: "market + intervention, still finance" },
+  { title: "Nifty and Sensex snap a five-day losing streak after the RBI decision", primary: "finance", secondaries: [], note: "market reaction to policy" },
+  { title: "Reliance Industries posts a 9% rise in quarterly net profit", primary: "finance", secondaries: [], note: "corporate results" },
+
+  // ── sports fixture controls ──
+  { title: "India beat Australia by six wickets in the second ODI to take an unbeatable series lead", primary: "sports", secondaries: [], note: "completed result" },
+  { title: "Chennai Test against South Africa heads into a tense final day", primary: "sports", secondaries: [], note: "live fixture" },
+  { title: "Duleep Trophy final in Bengaluru abandoned without a ball bowled on day one", primary: "sports", secondaries: [], note: "abandoned" },
+  { title: "Tamil Nadu name an unchanged squad for the Vijay Hazare Trophy quarter-final", primary: "sports", secondaries: [], note: "scheduled / squad" },
 ];
 
 export const CATEGORY_CORPUS_META = {

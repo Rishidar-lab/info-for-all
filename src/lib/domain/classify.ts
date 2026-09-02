@@ -155,7 +155,7 @@ const TAMIL_KEYWORDS: Record<CategoryId, string[]> = {
 
 // ── the "government actor takes a governance action" high-signal pattern ──
 const GOVT_ACTOR = /\b(cm|chief minister|dy cm|deputy cm|minister|state government|tamil nadu government|governor|secretariat|collector|assembly|cabinet|corporation|municipal(?:ity)?|civic body|panchayat|centre|union government|speaker|pm modi|prime minister|president|forest department|revenue department|health department|police department|dmk|aiadmk|bjp|congress|tvk|vck|pmk|opposition)\b/i;
-const GOVT_ACTION = /\b(announce[sd]?|propose[sd]?|launch(?:e[sd])?|introduce[sd]?|table[sd]?|clear[sd]?|pass(?:e[sd])?|approve[sd]?|inaugurat\w+|unveil\w+|declare[sd]?|order[sd]?|sanction\w*|allocat\w+|formulate[sd]?|withdraw[sd]?|suspend[sd]?|dismiss(?:e[sd])?|transfer(?:red)?|slam[s]?|criticis\w+|accus\w+|allege[sd]?|demand[sd]?|assure[sd]?|reject[sd]?|gifts?|to set up|to form|tighten\w*|comes into effect)\b/i;
+const GOVT_ACTION = /\b(announce[sd]?|propose[sd]?|launch(?:e[sd])?|introduce[sd]?|table[sd]?|clear[sd]?|pass(?:e[sd])?|approve[sd]?|inaugurat\w+|unveil\w+|declare[sd]?|order[sd]?|sanction\w*|allocat\w+|formulate[sd]?|withdraw[sd]?|suspend[sd]?|dismiss(?:e[sd])?|transfer(?:red)?|slam[s]?|criticis\w+|accus\w+|allege[sd]?|demand[sd]?|assure[sd]?|reject[sd]?|gifts?|to set up|to form|tighten\w*|comes into effect|bans?|prohibit\w+|to (?:take up|reconvene|convene|move|consider|debate)|reconvene[sd]?|takes? up (?:the )?bill)\b/i;
 const GOVT_ACTOR_TA = /அரசு|முதல்வர்|அமைச்சர்|சட்டசபை|பேரவை|ஆட்சியர்|கவர்னர்|ஆளுநர்|செயலகம்|மாநகராட்சி|நகராட்சி|திமுக|அதிமுக|பாஜக|காங்கிரஸ்|தவெக|எதிர்க்கட்சி/;
 const GOVT_ACTION_TA = /அறிவித்த|அறிவிப்பு|தொடங்கி|தொடங்க|திறந்து வைத்|அறிமுக|நிறைவேற்ற|ஒப்புதல்|உத்தரவிட்ட|ஒதுக்கீடு|வலியுறுத்த|குற்றம்சாட்ட|கண்டித்|வாபஸ்|திட்டம்/;
 
@@ -321,6 +321,9 @@ export function classifyEvent(input: ClassifyInput): CategoryResultV2 {
   const sportVerb = /\b(beat|beats|defeat\w*|thrash\w*|clinch\w*|won by|win by|lost by|drew|draw with|innings|wicket|over the line|run chase|series \d|-\d series|century|half-century|hat-trick|penalty|final|semi-final|quarter-final|knock out|test|odi|t20|match|fixture|scored|score of|not out|all out|declared)\b/i;
   if (teams.length >= 2 && (comp || sportVerb.test(rawFull + " " + gloss))) {
     add("sports", SCORE.sportsEntity, `teams: ${teams.join(" v ")}`, { strong: true });
+  } else if (teams.length === 1 && /\b(test|odi|t20i?|ranji|duleep|test match|test series|final|semi-?final|innings|wickets?|squad|playing xi|series (?:opener|decider|finale)|the series)\b/i.test(rawFull + " " + gloss)) {
+    // one national team + an unambiguous cricket-format word
+    add("sports", SCORE.sportsEntity, `national team + format: ${teams[0]}`, { strong: true });
   }
 
   // 9. the "government actor + governance action" pattern (the biggest v0.7 miss)
@@ -479,6 +482,32 @@ export function classifyEvent(input: ClassifyInput): CategoryResultV2 {
     if (has(/\b(assault\w*|attack\w*|beaten|thrashed|death|died|killed|electrocut\w+|water crisis|drought|power cut|shortage|contamination|famine|unsafe)\b/)) {
       add("crisis", SCORE.conceptStrong, "a triggering safety / service grievance", SEC);
     }
+  }
+
+  // 12b. raw-text safety net for priority-domain signals the entity/concept
+  //      extractor can miss on a bare headline (v0.9 Phase R).
+  if (
+    has(/\b(borewell rescue|trapped in a borewell|fell into a borewell|ndrf (?:team|teams|personnel|widen|deploy)|sdrf team|rescue operation|search[- ]and[- ]rescue|wall collapse[sd]?|building collapse[sd]?|roof collapse[sd]?|marooned|inundat\w+|cloudburst|flash flood)\b/)
+  ) {
+    add("crisis", SCORE.entity, "an active rescue / structural-failure event", { strong: true });
+  }
+  if (
+    has(/\b(schools?|colleges?)\b/) &&
+    has(/\b(closed|shut|holiday declared|remain closed|declared a holiday)\b/) &&
+    has(/\b(rain|rains|rainfall|flood|flooding|cyclone|storm|heavy downpour|inclement weather|waterlogging)\b/)
+  ) {
+    add("crisis", SCORE.entity, "a weather-driven closure", { strong: true });
+  }
+  if (
+    has(/\b\d+\s+(?:killed|dead|hurt|injured)\b|\b(?:one|two|three|four|five|six|several)\s+(?:killed|dead|hurt|injured)\b/) &&
+    has(/\b(accident|road accident|lorry|truck|bus|van|two-wheeler|car|collision|rams?|ploughs? into|mowed down|overturn\w*|ran over|hit-and-run|head-on)\b/)
+  ) {
+    add("crisis", SCORE.entity, "a road accident with casualties", { strong: true });
+  }
+  if (
+    has(/\b(exporters?|export orders?|export (?:demand|growth)|shipments?|tariffs?|import dut(?:y|ies)|trade deficit|current account deficit|forex reserves|foreign exchange reserves|fdi inflows?|merchandise exports?)\b/)
+  ) {
+    add("finance", SCORE.entity, "external-sector / trade economics", { strong: true });
   }
 
   // ── decide ──
