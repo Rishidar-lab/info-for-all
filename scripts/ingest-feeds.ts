@@ -25,6 +25,7 @@ import { parseFeed, parseSachetJson, type RawItem } from "../src/lib/live/parse"
 import { normalizeItem } from "../src/lib/live/normalize";
 import { clusterArticles } from "../src/lib/live/cluster";
 import { buildEventClaims } from "../src/lib/claims";
+import { enrichDataset } from "../src/lib/trends";
 import { stripLoneSurrogates } from "../src/lib/live/text";
 import { crisisPriority, capWeight, detectCrisisType, verificationFor } from "../src/lib/live/crisis";
 import { normalisedTitleKey } from "../src/lib/live/text";
@@ -264,7 +265,7 @@ async function main() {
 
   const scopedItemCount = articles.filter((a) => a.scope === "tamil-nadu" || a.scope === "india" || a.scope === "india-relevant").length;
 
-  const dataset: LiveDataset = {
+  const baseDataset: LiveDataset = {
     generatedAt: fetchedAt,
     lastSuccessAt,
     health: health(feeds, scopedItemCount),
@@ -284,6 +285,12 @@ async function main() {
     },
   };
 
+  // ── v0.7: Trend Intelligence enrichment ────────────────────────────────
+  // category / geo tier / independence / timeline / trend score per cluster,
+  // plus dataset-level trending / watching / situation. First-seen tracking
+  // uses the previous snapshot carried between runs by actions/cache.
+  const dataset = enrichDataset(baseDataset, { now, previous });
+
   mkdirSync(dirname(OUT), { recursive: true });
   // Defensive: every text field is already cleaned, but a lone UTF-16 surrogate
   // anywhere in the snapshot makes it invalid JSON to Turbopack's parser.
@@ -294,7 +301,10 @@ async function main() {
       `active-crisis=${dataset.counts.activeCrisis}  TN=${dataset.counts.tamilNadu}  India=${dataset.counts.india}  ` +
       `publishers=${dataset.counts.distinctPublishers}  verified-comparisons=${dataset.counts.comparisons}  ` +
       `weak-rejected=${dataset.counts.weakMatchesRejected}  feeds ok=${dataset.counts.workingFeeds}/${feeds.length}\n  ` +
-      `claim-events=${claimEvents}  claims=${totalClaims}`,
+      `claim-events=${claimEvents}  claims=${totalClaims}\n  ` +
+      `trending=${dataset.trending?.length ?? 0}  watching=${dataset.watching?.length ?? 0}  ` +
+      `situation=TN:${dataset.situation?.tamilNadu ?? "?"}/IN:${dataset.situation?.india ?? "?"}  ` +
+      `by-category=${JSON.stringify(dataset.counts.byCategory ?? {})}`,
   );
 
   // Never fail the run just because some feeds failed — that is expected and handled.

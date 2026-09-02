@@ -191,9 +191,72 @@ export interface LiveCluster {
     /** Relationships to OTHER clusters (not merged). */
     related: { otherClusterId: string; relation: "part-of" | "follow-up" | "related"; reason: string }[];
   };
+
+  /**
+   * v0.7 Trend Intelligence enrichment (category, geo tier, trend score,
+   * independence summary, first-seen, timeline). Written by
+   * `src/lib/trends/enrich.ts` during ingestion.
+   */
+  trendData?: ClusterTrendData;
 }
 
 export type FeedHealth = "live" | "degraded" | "stale" | "empty";
+
+/**
+ * v0.7 Trend Intelligence enrichment, written onto each cluster by
+ * `src/lib/trends/enrich.ts` during ingestion. Optional so the UI stays robust
+ * to a snapshot generated before v0.7.
+ */
+export interface ClusterTrendData {
+  /** IFFA news domain — CategoryId from src/lib/domain/categories.ts. */
+  category?: string;
+  categoryReason?: string;
+  /** Geo priority tier — GeoTier from src/lib/domain/geo-tiers.ts. */
+  geoTier?: string;
+  /** TrendSignal from src/lib/trends/types.ts (kept loose here to avoid a circular import). */
+  trend?: {
+    score: number;
+    state: string;
+    noveltyClass: string;
+    recencyScore: number;
+    velocityScore: number;
+    sourceDiversityScore: number;
+    geoScore: number;
+    categoryScore: number;
+    consequenceScore: number;
+    noveltyScore: number;
+    corroborationScore: number;
+    windows: { m15: number; h1: number; h3: number; h6: number; h12: number; h24: number };
+    acceleration: number;
+    explanation: string[];
+  };
+  independence?: {
+    families: number;
+    reports: number;
+    syndicated: number;
+    wireCredits: string[];
+    label: string;
+  };
+  firstSeenAt?: string;
+  lastSeenAt?: string;
+  lastMeaningfulUpdateAt?: string;
+  timeline?: {
+    at: string;
+    sourceName: string;
+    publisher: string;
+    language: "ta" | "en" | "unknown";
+    headline: string;
+    addedNewFact: boolean;
+    official: boolean;
+  }[];
+}
+
+export interface SituationSnapshot {
+  tamilNadu: "normal" | "watch" | "elevated" | "crisis";
+  india: "normal" | "watch" | "elevated" | "crisis";
+  derivedFrom: { slug: string; title: string; tier: string; level: string }[];
+  generatedAt: string;
+}
 
 export interface LiveDataset {
   /** ISO timestamp of the run that produced this file. */
@@ -216,5 +279,13 @@ export interface LiveDataset {
     distinctPublishers: number;
     workingFeeds: number;
     failedFeeds: number;
+    /** v0.7 — cluster count per IFFA news domain. */
+    byCategory?: Record<string, number>;
   };
+  /** v0.7 — cluster slugs, trend-ranked. Present once the trend engine has run. */
+  trending?: string[];
+  /** v0.7 — cluster slugs that matter but lack the evidence to be "trending" yet. */
+  watching?: string[];
+  /** v0.7 — the Current Situation bar. */
+  situation?: SituationSnapshot;
 }
