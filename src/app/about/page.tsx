@@ -37,6 +37,27 @@ export default function AboutPage() {
       </section>
 
       <section>
+        <h2 className="font-serif text-[20px] font-semibold">Category, novelty &amp; severity (v0.8)</h2>
+        <p className="mt-2 text-[14.5px] leading-relaxed text-ink-2">
+          Every event is filed into a <strong>news domain</strong> — crisis, politics, finance,
+          sports, or general — by a deterministic classifier that reads the headline, the
+          excerpt, a Tamil-to-English gloss, the extracted entities, and signals like a
+          financial instrument or a sports competition. It reports a confidence <em>class</em>
+          (strong / moderate / weak / unknown), never a fake probability, and the{" "}
+          <Link href="/methodology/quality" className="text-accent hover:underline">
+            quality dashboard
+          </Link>{" "}
+          shows its precision and recall against a hand-labelled corpus. A separate <strong>
+          novelty</strong> check compares each new report against what the event already
+          established — a headline rewrite is not a meaningful update; a corrected death toll or
+          a first official confirmation is. Crisis events also carry an <strong>event
+          severity</strong> (informational → watch → significant → severe → critical) derived
+          from casualty counts and confirmed impact — this describes <em>how bad the event
+          is</em>, not whether the reports are true; provenance is tracked separately.
+        </p>
+      </section>
+
+      <section>
         <h2 className="font-serif text-[20px] font-semibold">Trend ranking (v0.7)</h2>
         <p className="mt-2 text-[14.5px] leading-relaxed text-ink-2">
           IFFA ranks <strong>events</strong>, not articles, and by <strong>what is changing</strong>,

@@ -5,6 +5,13 @@
 Live: **https://rishidar-lab.github.io/info-for-all**
 (formerly *Info For All / IFA*; the repository and URL are unchanged.)
 
+**Current version: v0.8 — Live Signal Intelligence.** v0.8 made the v0.7 event/trend
+architecture genuinely useful against live Tamil Nadu + India news: a multi-signal category
+classifier (OTHER_RELEVANT 77% → ~51%, Tamil headlines now classified), +8 live finance/sports
+feeds, claim-aware novelty, evidence-aware event severity, domain specialists wired into event
+clustering, 5-state source health, and a real browser E2E suite. The v0.6 claim/identity
+engine is byte-unchanged — its corpus numbers (222/223, 0/71) hold.
+
 ## What IFFA is
 
 A **Tamil Nadu-first, India-aware real-time news and current-trend intelligence platform.**
@@ -57,11 +64,29 @@ and a city inside it are *part-of*, not *same*. When unsure, IFFA keeps reports 
 running one PTI dispatch count as **one** confirmation. `15 reports · 3 independent source
 families` — [src/lib/independence/](src/lib/independence/).
 
+### Category classification (v0.8)
+
+A deterministic multi-signal classifier — headline + excerpt + an English gloss of Tamil +
+extracted entities + semantic concepts + finance instruments + sports competitions + a
+"government actor takes a governance action" pattern + casualty-count detection. Returns a
+primary category, a confidence CLASS (STRONG/MODERATE/WEAK/UNKNOWN — not a probability), the
+signals that matched, and the runners-up. Measured against 114 hand-labelled real headlines
+(`npm run eval:category`): honest first-pass 91%, ~99% after principled tuning.
+
 ### Trend ranking
 
 `trendScore = 100 · Π (subScore_i ^ w_i)` over eight visible factors (recency, velocity,
 diversity, geo, category, consequence, novelty, corroboration). Weights in one documented
 table; every sub-score shown on the card. [docs/TREND-MODEL.md](docs/TREND-MODEL.md).
+
+### Novelty & severity (v0.8)
+
+Claim-aware novelty compares the *factual units* between snapshots — a headline rewrite scores
+~0.15, an official confirmation ~0.85, a corrected toll ~0.9 — and classifies the update
+(duplicate / new-fact / new-number / new-official-confirmation / correction / retraction / …).
+Event **severity** (informational → watch → significant → severe → critical) is derived from
+casualty counts, CAP severity and confirmed impact — it is *how bad the event is*, never a
+statement about whether the reports are true.
 
 ### Claims and political allegations
 
@@ -91,19 +116,23 @@ comparison) · `/sources` · `/about` · `/methodology/quality` · `/methodology
 - The claim / identity engine's labelled-corpus recall and precision are both 100 % on 223
   cases, but the corpus is small; on live data the engine still holds some genuine matches
   apart (as *uncertain*).
-- Novelty tracking is a v0.7 first pass (slug / article-overlap match against the previous
-  snapshot); full semantic novelty is v0.8.
-- Finance and sports feed coverage is thin — this edition's feeds are Tamil Nadu crisis /
-  governance heavy. Candidate official feeds are listed on `/sources`.
+- The classifier is keyword + signal based and can err. ~51% of events are "other-relevant"
+  (genuine general / regional news with no crisis / politics / finance / sports angle);
+  secondary-category detection is weak (~15% recall) — a v0.9 target.
+- Novelty compares snapshots and can miss a fact expressed only in prose; on the very first
+  ingest it is honestly "unknown".
+- Sports and finance live volume is now real (~20 / ~15 clusters) but still smaller than
+  crisis + politics — this edition's feeds are Tamil Nadu heavy.
+- PWA: installable, offline shell + cached-snapshot fallback (it never claims cached data is
+  live). Background sync is not implemented.
 - **IFFA is not an emergency service.** For any emergency, follow the issuing authority's own
   instructions.
 
-## Current version
+## Not v1.0 yet
 
-**v0.7 — Trend Intelligence.** Not v1.0: that is reserved for when live sources, the trend
-engine, cross-language clustering, crisis mode, political claim provenance, finance and
-sports semantics, the mobile UI and production monitoring are all verified in live operation
-over time.
+v1.0 is reserved for when live sources, the trend engine, cross-language clustering, crisis
+mode, political claim provenance, finance and sports semantics, the mobile UI and production
+monitoring are all verified in *live* operation over time.
 
 ## Develop
 

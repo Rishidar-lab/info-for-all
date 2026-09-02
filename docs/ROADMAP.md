@@ -1,8 +1,8 @@
 # IFFA Roadmap
 
-**Status:** current as of **v0.7 — Trend Intelligence**. (Product renamed from
-*Info For All / IFA* to **IFFA — Info Free For All** in v0.7; repository, GitHub
-Pages base path and every route are unchanged.)
+**Status:** current as of **v0.8 — Live Signal Intelligence**. (Product renamed
+from *Info For All / IFA* to **IFFA — Info Free For All** in v0.7; repository,
+GitHub Pages base path and every route unchanged.)
 
 IFA shipped as an MVP service (Drizzle / SQLite / Next.js API routes / Docker),
 then **pivoted to a fully static Next.js 16 site** on GitHub Pages before launch.
@@ -55,21 +55,23 @@ Everything below reflects that static architecture — see `docs/ARCHITECTURE.md
 | v0.4 | claim quality, the gold corpus + evaluation harness, evidence intelligence |
 | v0.5 | semantic recall & multilingual event identity (structured signature, candidate/decision split, Tamil + cross-language) |
 | v0.6 | recall hardening & production-truth pass: 10/10 known false negatives resolved, precision and 0-false-corroboration held, docs/dependency drift removed |
-| **v0.7** | Trend Intelligence + rebrand to IFFA: news-domain taxonomy, geo tiers, first-class TN districts, typed source registry, interpretable trend/velocity/novelty engine, event-first UI, timelines, coverage comparison. v0.6 engine untouched — its corpus numbers hold identical. |
+| v0.7 | Trend Intelligence + rebrand to IFFA: news-domain taxonomy, geo tiers, first-class TN districts, typed source registry, interpretable trend/velocity/novelty engine, event-first UI, timelines, coverage comparison. |
+| **v0.8** | Live Signal Intelligence: multi-signal category classifier (OTHER_RELEVANT 77%→~51%, Tamil headlines classified, 114-case gold corpus + `eval:category` gate), +8 live finance/sports feeds, 5-state source health, claim-aware novelty v2, evidence-aware event severity, domain specialists wired into event clustering (split-only guard), real browser E2E (Playwright), PWA offline shell. v0.6 claim/identity engine byte-unchanged. |
 
-## Near-term (candidate, not committed) — v0.8
+## Near-term (candidate, not committed) — v0.9
 
-- **Full semantic novelty scoring** — replace the v0.7 slug / article-overlap
-  first pass with per-claim novelty (duplicate / rephrasing / minor-detail /
-  new-fact / major-development / correction / contradiction).
-- **PWA offline shell** — v0.7 ships the installable manifest only; add a service
-  worker with a last-fetched-state view (never claiming live updates offline).
+- **Secondary-category detection** — v0.8 classifies the PRIMARY domain at ~99%
+  on the gold corpus but secondary recall is ~15%. A budget story is finance +
+  politics; surface both.
 - **Search** across entities / locations / politicians / instruments / teams,
   client-side over the static JSON.
+- **Grow the category corpus** past 114 cases toward the ~430-case spec set, with
+  a held-out split that is never tuned against.
+- **Politics identity specialist** — split "CM announces scheme" from "CM
+  criticises opposition's scheme" (v0.8 wired sports + finance specialists only).
+- **PWA background refresh** — v0.8 ships the offline shell; add a "new snapshot
+  available" prompt on reopen.
 - **Compare Coverage as its own route**; correction-system UI beyond the timeline.
-- **Finance & sports feed expansion** — validate and enable RBI / SEBI / Hindu
-  Business & Sport / Sportstar (candidates listed on `/sources`).
-- **Grow the corpus** toward the full ~430-case adversarial spec set.
 - Reduce remaining event-identity misses surfaced by the live audit (e.g. detect
   an action from a quoted-headline form like `'… opens Mettur dam …'`).
 - CGI v0.2: per-claim rather than per-event convergence; sensitivity analysis on

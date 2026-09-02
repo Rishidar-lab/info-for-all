@@ -1,9 +1,31 @@
 # IFFA Architecture
 
-**Status:** current as of **v0.7 — Trend Intelligence**. This document describes
-what the repository actually builds and deploys today. An earlier revision
-described a Drizzle / SQLite / Next.js-API-route service that was **abandoned**
-before launch — see [Superseded design](#superseded-design) at the end.
+**Status:** current as of **v0.8 — Live Signal Intelligence**. This document
+describes what the repository actually builds and deploys today. An earlier
+revision described a Drizzle / SQLite / Next.js-API-route service that was
+**abandoned** before launch — see [Superseded design](#superseded-design).
+
+> **v0.8 additions (all additive — the v0.6 claim / identity engine is
+> byte-unchanged; `cluster.ts` gains a split-ONLY specialist guard):**
+> - `src/lib/domain/classify.ts` — multi-signal category classifier
+>   (`classifyEvent`): headline + excerpt + Tamil gloss + signature
+>   entities/concepts/actions + finance instruments + sports competitions + a
+>   "government actor + governance action" pattern + casualty-count detection.
+>   Returns primary + secondary + confidence CLASS + matched signals. Wired into
+>   `enrich.ts` over ALL cluster member headlines.
+> - `src/lib/domain/severity.ts` — event severity (informational → critical),
+>   separate from provenance.
+> - `src/lib/trends/novelty.ts` — claim-aware novelty v2 (`assessNovelty`,
+>   `buildEventState`): compares factual units between snapshots.
+> - `src/lib/live/cluster.ts::specialistVeto` — sports-fixture / finance-move
+>   split guard, applied after the frozen engine says "same" (never merges).
+> - `src/data/feeds.ts` — +8 live finance/sports feeds, `ownershipGroup`,
+>   5-state source health in `scripts/ingest-feeds.ts` (`FeedStatus.health`,
+>   `httpState`, `itemsSeen/Accepted/Rejected`, `lastItemAt`, `medianLagMinutes`).
+> - `evaluation/category/` + `scripts/eval-category.ts` — 114-case gold corpus,
+>   per-category P/R/F1, confusion matrix, release gate.
+> - `playwright.config.ts` + `tests/e2e/` — real browser E2E (desktop + 390px).
+> - `public/sw.js` + `src/components/iffa/pwa.tsx` — offline shell.
 
 > **v0.7 additions (all additive — the v0.6 identity / claim / clustering engine
 > is untouched, and its corpus numbers hold identical):**
