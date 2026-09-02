@@ -23,6 +23,8 @@ import {
 } from "@/lib/event-identity";
 import { detectFixture, sameSportsFixture } from "@/lib/domain/sports";
 import { parseMarketMoves } from "@/lib/domain/finance";
+import { detectPoliticalEvent, samePoliticalEvent } from "@/lib/domain/politics";
+import { classifyEvent } from "@/lib/domain/classify";
 
 /**
  * v0.8 — domain-specialist SPLIT guard. Runs AFTER the generic identity engine
@@ -72,6 +74,18 @@ export function specialistVeto(a: LiveArticle, b: LiveArticle): string | null {
       }),
     );
     if (!compatible) return "incompatible market move (instrument / direction / magnitude)";
+  }
+
+  // ── politics ── different political actions / speech acts are different
+  // developments, however much the entities overlap.
+  const catA = classifyEvent({ title: a.title, excerpt: a.excerpt }).primaryCategory;
+  const catB = classifyEvent({ title: b.title, excerpt: b.excerpt }).primaryCategory;
+  if (catA === "politics" && catB === "politics") {
+    const pa = detectPoliticalEvent(ta);
+    const pb = detectPoliticalEvent(tb);
+    if (pa.action !== "other" && pb.action !== "other" && !samePoliticalEvent(pa, pb)) {
+      return `different political development (${pa.action} vs ${pb.action})`;
+    }
   }
 
   return null;
