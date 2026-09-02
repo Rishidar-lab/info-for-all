@@ -1,7 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { FEED_SOURCES } from "@/data/feeds";
+import { FEED_SOURCES, DESCRIBED_FEEDS, CANDIDATE_FEEDS } from "@/data/feeds";
+import { CATEGORY_LABEL } from "@/lib/domain/categories";
 import { dataset, istTimestamp } from "@/lib/live/dataset";
+
+const AUTHORITY_LABEL: Record<string, string> = {
+  "primary-authority": "Primary authority",
+  "accredited-media": "Accredited media",
+  specialist: "Specialist",
+  aggregator: "Aggregator",
+};
 
 export const metadata: Metadata = {
   title: "Sources",
@@ -131,65 +139,117 @@ export default function SourcesPage() {
         </div>
       </section>
 
-      <div className="card w-full min-w-0 overflow-x-auto">
-        <table className="w-full min-w-[720px] border-collapse text-left">
-          <thead>
-            <tr className="border-b border-rule-strong bg-surface-2 ui text-[11px] uppercase tracking-wider text-ink-3">
-              <th className="px-4 py-2.5 font-semibold">Source</th>
-              <th className="px-4 py-2.5 font-semibold">Type</th>
-              <th className="px-4 py-2.5 font-semibold">Role</th>
-              <th className="px-4 py-2.5 font-semibold">Status</th>
-              <th className="px-4 py-2.5 font-semibold">Items</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-rule">
-            {FEED_SOURCES.map((f) => {
-              const st = statusById.get(f.id);
-              const status = !f.enabled ? "disabled" : (st?.status ?? "not run");
-              return (
-                <tr key={f.id} className="align-top">
-                  <td className="px-4 py-3">
-                    <div className="ui text-[13.5px] font-semibold text-ink">{f.name}</div>
-                    <a
-                      href={f.homepage}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="ui text-[12px] text-accent hover:underline"
-                    >
-                      {new URL(f.homepage).hostname} <span aria-hidden>↗</span>
-                    </a>
-                    {f.note && <p className="mt-1 ui text-[11.5px] leading-snug text-ink-3">{f.note}</p>}
-                  </td>
-                  <td className="px-4 py-3 ui text-[12.5px] text-ink-2">{KIND_LABEL[f.kind] ?? f.kind}</td>
-                  <td className="px-4 py-3 ui text-[12.5px] text-ink-2">
-                    {f.official ? "Official / primary" : "Independent"}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={
-                        "ui text-[12px] font-semibold " +
-                        (status === "ok"
-                          ? "text-agree"
-                          : status === "stale"
-                            ? "text-caution"
-                            : status === "disabled"
-                              ? "text-ink-3"
-                              : "text-dispute")
-                      }
-                    >
-                      {status === "ok" ? "responding" : status}
-                    </span>
-                    {st?.error && status !== "ok" && (
-                      <p className="mt-0.5 ui text-[11px] text-ink-3">{st.error}</p>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 mono text-[13px] text-ink">{st?.itemCount ?? "—"}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <section>
+        <div className="mb-3 border-b border-rule-strong pb-2">
+          <div className="label mb-1">Registry</div>
+          <h2 className="font-serif text-[19px] font-semibold text-ink">Configured feeds</h2>
+          <p className="ui mt-1 text-[12px] leading-relaxed text-ink-3">
+            Each feed is typed by <strong>authority class</strong> (primary authority vs accredited
+            media vs specialist), <strong>source type</strong>, the news <strong>domains</strong> it
+            covers and an advisory poll cadence. No numeric &ldquo;trust score&rdquo; is assigned to
+            any publisher — reliability is contextual (evidence role + the independence engine).
+          </p>
+        </div>
+        <div className="card w-full min-w-0 overflow-x-auto">
+          <table className="w-full min-w-[820px] border-collapse text-left">
+            <thead>
+              <tr className="border-b border-rule-strong bg-surface-2 ui text-[11px] uppercase tracking-wider text-ink-3">
+                <th className="px-4 py-2.5 font-semibold">Source</th>
+                <th className="px-4 py-2.5 font-semibold">Authority</th>
+                <th className="px-4 py-2.5 font-semibold">Kind</th>
+                <th className="px-4 py-2.5 font-semibold">Covers</th>
+                <th className="px-4 py-2.5 font-semibold">Poll</th>
+                <th className="px-4 py-2.5 font-semibold">Status</th>
+                <th className="px-4 py-2.5 font-semibold">Items</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-rule">
+              {DESCRIBED_FEEDS.map((f) => {
+                const st = statusById.get(f.id);
+                const status = !f.enabled ? "disabled" : (st?.status ?? "not run");
+                return (
+                  <tr key={f.id} className="align-top">
+                    <td className="px-4 py-3">
+                      <div className="ui text-[13.5px] font-semibold text-ink">{f.name}</div>
+                      <a
+                        href={f.homepage}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="ui text-[12px] text-accent hover:underline"
+                      >
+                        {new URL(f.homepage).hostname} <span aria-hidden>↗</span>
+                      </a>
+                      {f.note && <p className="mt-1 ui text-[11.5px] leading-snug text-ink-3">{f.note}</p>}
+                    </td>
+                    <td className="px-4 py-3 ui text-[12px] text-ink-2">
+                      {AUTHORITY_LABEL[f.authorityClass]}
+                      <div className="text-[11px] text-ink-3">{f.region}</div>
+                    </td>
+                    <td className="px-4 py-3 ui text-[12px] text-ink-2">{KIND_LABEL[f.kind] ?? f.kind}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex flex-wrap gap-1">
+                        {f.categorySupport.map((c) => (
+                          <span key={c} className="pill text-ink-3">{CATEGORY_LABEL[c]}</span>
+                        ))}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 mono text-[12px] text-ink-3">{f.pollIntervalMinutes}m</td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={
+                          "ui text-[12px] font-semibold " +
+                          (status === "ok"
+                            ? "text-agree"
+                            : status === "stale"
+                              ? "text-caution"
+                              : status === "disabled"
+                                ? "text-ink-3"
+                                : "text-dispute")
+                        }
+                      >
+                        {status === "ok" ? "responding" : status}
+                      </span>
+                      {st?.error && status !== "ok" && (
+                        <p className="mt-0.5 ui text-[11px] text-ink-3">{st.error}</p>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 mono text-[13px] text-ink">{st?.itemCount ?? "—"}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <div className="mb-3 border-b border-rule-strong pb-2">
+          <div className="label mb-1">Discovery</div>
+          <h2 className="font-serif text-[19px] font-semibold text-ink">Feeds under investigation</h2>
+          <p className="ui mt-1 text-[12px] leading-relaxed text-ink-3">
+            Candidate public / official feeds for finance, politics and sports coverage. Enabled
+            only after automated validation confirms a reachable, parseable document. IFFA never
+            bypasses paywalls, CAPTCHAs, authentication or rate limits.
+          </p>
+        </div>
+        <ul className="flex flex-col gap-2">
+          {CANDIDATE_FEEDS.map((c) => (
+            <li key={c.id} className="card flex flex-wrap items-baseline gap-x-3 gap-y-1 px-4 py-2.5">
+              <span className="ui text-[13px] font-semibold text-ink">{c.publisher}</span>
+              <span className="pill text-ink-3">{CATEGORY_LABEL[c.category]}</span>
+              <span
+                className={
+                  "ui text-[11.5px] font-semibold " +
+                  (c.status === "to-validate" ? "text-caution" : "text-ink-3")
+                }
+              >
+                {c.status}
+              </span>
+              <span className="ui w-full text-[11.5px] leading-snug text-ink-3">{c.note}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
 
       <p className="ui text-[12.5px] text-ink-3">
         Evidence-role and verification labels are explained in the{" "}

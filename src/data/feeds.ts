@@ -1,21 +1,44 @@
 import type { EvidenceRole } from "@/lib/live/types";
+import type { CategoryId } from "@/lib/domain/categories";
 
 /**
- * IFA live-feed registry — India / Tamil Nadu.
+ * IFFA live-feed registry — India / Tamil Nadu.
  *
  * Every enabled entry was validated by `scripts/validate-sources.ts` (see
  * `docs/source-registry.md` for the last run: HTTP status, item count, newest
- * item, canonical-link coverage, redirects). IFA stores only the feed's own
+ * item, canonical-link coverage, redirects). IFFA stores only the feed's own
  * headline, timestamp, short excerpt and canonical URL, always attributes the
  * publisher, and always links out to the original report. It never copies full
- * article bodies or bypasses access controls.
+ * article bodies or bypasses paywalls, CAPTCHAs, auth, rate limits or anti-bot
+ * systems — RSS / Atom / official CAP / open public endpoints only.
  *
  * `publisher` groups multiple feeds from one organisation (e.g. The Hindu's
  * several desks) so that a "coverage comparison" genuinely means *distinct
  * publishers*, not distinct feeds.
+ *
+ * v0.7: the typed metadata below (`sourceType`, `authorityClass`,
+ * `categorySupport`, `region`, `pollIntervalMinutes`) is derived from the
+ * existing fields by `describeFeed()` unless a feed overrides it. There is
+ * deliberately NO numeric per-publisher "trust score" — reliability stays
+ * contextual (evidence role + the independence engine).
  */
 
 export type FeedKind = "rss" | "atom" | "sachet-json";
+
+export type SourceType =
+  | "official"
+  | "public_broadcaster"
+  | "wire"
+  | "newspaper"
+  | "digital_native"
+  | "financial"
+  | "sports"
+  | "local"
+  | "data_feed";
+
+export type AuthorityClass = "primary-authority" | "accredited-media" | "specialist" | "aggregator";
+
+export type SourceRegion = "tamil-nadu" | "india" | "kerala" | "global";
 
 export interface FeedSource {
   id: string;
@@ -41,6 +64,66 @@ export interface FeedSource {
    */
   trustFeedScope?: boolean;
   note?: string;
+
+  // ── v0.7 typed registry metadata (optional; describeFeed() fills the gaps) ──
+  sourceType?: SourceType;
+  authorityClass?: AuthorityClass;
+  /** News domains this feed usefully covers. */
+  categorySupport?: CategoryId[];
+  region?: SourceRegion;
+  /** Advisory poll cadence in minutes. Ingestion still runs on the workflow's 15-min schedule. */
+  pollIntervalMinutes?: number;
+}
+
+export interface DescribedFeed extends FeedSource {
+  sourceType: SourceType;
+  authorityClass: AuthorityClass;
+  categorySupport: CategoryId[];
+  region: SourceRegion;
+  pollIntervalMinutes: number;
+}
+
+/** Fill in the typed registry metadata for a feed from its existing fields. */
+export function describeFeed(f: FeedSource): DescribedFeed {
+  const authorityClass: AuthorityClass =
+    f.authorityClass ?? (f.official ? "primary-authority" : f.role === "specialist" ? "specialist" : "accredited-media");
+
+  const sourceType: SourceType =
+    f.sourceType ??
+    (f.kind === "sachet-json"
+      ? "data_feed"
+      : f.official
+        ? "official"
+        : f.publisher.includes("BBC")
+          ? "public_broadcaster"
+          : /News18|Puthiyathalaimurai/.test(f.publisher)
+            ? "digital_native"
+            : f.role === "specialist"
+              ? "digital_native"
+              : "newspaper");
+
+  const region: SourceRegion =
+    f.region ??
+    (f.focus === "tamil-nadu"
+      ? "tamil-nadu"
+      : f.id.includes("kerala")
+        ? "kerala"
+        : f.language === "ta" && f.trustFeedScope === false
+          ? "global"
+          : "india");
+
+  const categorySupport: CategoryId[] =
+    f.categorySupport ??
+    (f.official
+      ? ["crisis"]
+      : f.role === "specialist"
+        ? ["crisis", "other-relevant"]
+        : ["crisis", "politics", "finance", "sports", "other-relevant"]);
+
+  const pollIntervalMinutes =
+    f.pollIntervalMinutes ?? (f.official ? 15 : f.role === "specialist" ? 45 : 20);
+
+  return { ...f, sourceType, authorityClass, categorySupport, region, pollIntervalMinutes };
 }
 
 export const FEED_SOURCES: FeedSource[] = [
@@ -338,3 +421,30 @@ export const ENABLED_FEEDS = FEED_SOURCES.filter((f) => f.enabled);
 
 /** Distinct publishers among the enabled feeds. */
 export const ENABLED_PUBLISHERS = [...new Set(ENABLED_FEEDS.map((f) => f.publisher))].sort();
+
+/** The registry with typed metadata resolved — used by /sources and diagnostics. */
+export const DESCRIBED_FEEDS: DescribedFeed[] = FEED_SOURCES.map(describeFeed);
+
+/**
+ * Feeds to INVESTIGATE for v0.7 / v0.8 — public RSS / official endpoints only,
+ * no paywall / CAPTCHA / auth / rate-limit / anti-bot circumvention. Each is
+ * enabled only after `scripts/validate-sources.ts` confirms a valid, reachable
+ * document (HTTP 200, parseable, canonical links). Recorded here so the
+ * discovery work is visible; not yet part of the pipeline.
+ */
+export const CANDIDATE_FEEDS: {
+  id: string;
+  publisher: string;
+  category: CategoryId;
+  url: string;
+  status: "to-validate" | "blocked" | "no-feed-found";
+  note: string;
+}[] = [
+  { id: "rbi-press", publisher: "Reserve Bank of India", category: "finance", url: "https://www.rbi.org.in/pressreleases_rss.xml", status: "to-validate", note: "RBI press releases RSS." },
+  { id: "sebi-press", publisher: "SEBI", category: "finance", url: "https://www.sebi.gov.in/sebirss.xml", status: "to-validate", note: "SEBI news/press RSS." },
+  { id: "pib-english", publisher: "Press Information Bureau", category: "politics", url: "https://pib.gov.in/RssMain.aspx?ModId=6&Lang=1&Regid=1", status: "blocked", note: "Akamai 403 from CI (already in FEED_SOURCES, disabled). Retry from a reachable network." },
+  { id: "thehindu-business", publisher: "The Hindu", category: "finance", url: "https://www.thehindu.com/business/feeder/default.rss", status: "to-validate", note: "The Hindu Business desk." },
+  { id: "thehindu-sport", publisher: "The Hindu", category: "sports", url: "https://www.thehindu.com/sport/feeder/default.rss", status: "to-validate", note: "The Hindu Sport desk." },
+  { id: "sportstar", publisher: "Sportstar", category: "sports", url: "https://sportstar.thehindu.com/feeder/default.rss", status: "to-validate", note: "Sportstar (The Hindu group)." },
+  { id: "eci-press", publisher: "Election Commission of India", category: "politics", url: "https://www.eci.gov.in/", status: "no-feed-found", note: "No public RSS located; press-note page only. Revisit." },
+];
