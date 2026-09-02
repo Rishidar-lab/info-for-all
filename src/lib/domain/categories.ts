@@ -92,7 +92,7 @@ const CRISIS: CategoryMatcher[] = [
   { category: "crisis", subCategory: "kidnap", any: ["kidnapped", "abducted", "held hostage", "ransom demand"] },
   { category: "crisis", subCategory: "public_health", any: ["disease outbreak", "epidemic", "dengue surge", "cholera", "leptospirosis", "nipah", "food poisoning", "health advisory"] },
   { category: "crisis", subCategory: "disease_outbreak", any: ["outbreak", "cases surge", "fever cases rise", "quarantine"] },
-  { category: "crisis", subCategory: "law_and_order", any: ["curfew", "section 144", "prohibitory orders", "clashes", "communal tension", "lynching", "murder", "murdered", "hacked to death", "found dead", "body parts", "gang-rape", "sexual assault", "was assaulted", "molested", "kidnap", "abduct", "honour killing", "custodial death", "fake currency", "counterfeit currency"] },
+  { category: "crisis", subCategory: "law_and_order", any: ["curfew", "section 144", "prohibitory orders", "clashes", "communal tension", "lynching", "murder", "murdered", "hacked to death", "found dead", "body parts", "gang-rape", "sexual assault", "was assaulted", "molested", "kidnap", "abduct", "honour killing", "custodial death", "fake currency", "counterfeit currency", "burglary", "house break-in", "robbery", "dacoity", "loot", "heist", "chain snatching", "extortion", "smuggling racket", "drug haul"] },
   { category: "crisis", subCategory: "riot", any: ["riot", "arson", "mob attack", "group clash"] },
   { category: "crisis", subCategory: "protest_disruption", any: ["road blockade", "rail roko", "highway blocked by protest", "shutdown call", "bandh"] },
   { category: "crisis", subCategory: "infrastructure_failure", any: ["bridge collapse", "building collapse", "flyover crack", "wall collapse", "dam breach"] },
@@ -124,19 +124,19 @@ const POLITICS: CategoryMatcher[] = [
   { category: "politics", subCategory: "corruption_allegation", any: ["corruption charge", "graft", "bribe", "kickback", "disproportionate assets", "scam alleged", "irregularities", "allegation of", "denies allegation"] },
   { category: "politics", subCategory: "investigation", any: ["ed raids", "cbi probe", "income tax raids", "summoned by ed", "chargesheet", "raids premises", "vigilance case", "cb-cid registers", "cb-cid", "cbi registers", "case over deepfake", "registers case over"] },
   { category: "politics", subCategory: "legislation", any: ["bill introduced", "ordinance", "amendment bill", "act amended", "draft law", "introduced in assembly", "introduced in parliament"] },
-  { category: "politics", subCategory: "regulation", any: ["new rules notified", "guidelines issued", "regulatory order", "ban notified", "directs 5-star", "fssai directs", "norms for contract"] },
-  { category: "politics", subCategory: "local_government", any: ["corporation council", "panchayat", "municipality", "municipal polls", "ward", "mayor", "councillor", "local body", "cmda", "township project"] },
+  { category: "politics", subCategory: "regulation", any: ["new rules notified", "guidelines issued", "regulatory order", "ban notified", "directs 5-star", "fssai directs", "norms for contract", "tightens rules", "tightens safety rules", "safety rules after", "comes into effect", "smartphone ban", "phone ban", "ban at 52", "rule comes into"] },
+  { category: "politics", subCategory: "local_government", any: ["corporation council", "panchayat", "municipality", "municipal polls", "ward", "mayor", "councillor", "local body", "cmda", "township project", "demolishes encroachment", "demolishes 40 encroachment", "encroachment removal", "eviction drive", "removes encroachments", "corporation demolishes"] },
   { category: "politics", subCategory: "centre_state", any: ["centre-state", "gst council", "central funds", "denied funds", "governor vs government", "union government", "indus waters treaty", "sindhu nadi", "cauvery water dispute", "mekedatu"] },
   { category: "politics", subCategory: "public_scheme", any: ["welfare scheme", "cash transfer", "free bus", "kalaignar magalir", "pension scheme", "housing scheme", "dbt", "gold-ring scheme", "gold ring scheme", "newborn gold"] },
   { category: "politics", subCategory: "administrative_action", any: ["suspended from service", "suspended over", "suspended for", "transferred", "collector orders", "collector's concurrence", "collectors concurrence", "show-cause notice", "departmental inquiry", "hostel to reopen", "post-metric hostel"] },
-  { category: "politics", subCategory: "protest_politics", any: ["takes out march", "march to", "protest march", "stages protest", "sit-in", "dharna", "gherao", "black flag", "human chain", "protest against the government", "against the government"] },
+  { category: "politics", subCategory: "protest_politics", any: ["takes out march", "march to", "protest march", "stages protest", "sit-in", "dharna", "gherao", "black flag", "human chain", "protest against the government", "against the government", "boycott work", "workers boycott", "strike work", "go on strike", "call for a strike", "wildcat strike", "downs tools"] },
 ];
 
 // ── FINANCE ────────────────────────────────────────────────────────────
 const FINANCE: CategoryMatcher[] = [
   { category: "finance", subCategory: "rbi", any: ["rbi", "reserve bank", "repo rate", "monetary policy", "mpc", "cash reserve ratio"] },
   { category: "finance", subCategory: "sebi", any: ["sebi", "market regulator", "securities and exchange board"] },
-  { category: "finance", subCategory: "banking", any: ["bank merger", "npa", "loan waiver", "bank fraud", "psu bank", "deposit rate", "lending rate", "atm"] },
+  { category: "finance", subCategory: "banking", any: ["bank merger", "npa", "loan waiver", "bank fraud", "psu bank", "deposit rate", "lending rate", "atm fraud", "atm skimming", "crr", "cash reserve ratio", "treasury bills", "t-bills", "auction result", "g-sec", "bond yield"] },
   { category: "finance", subCategory: "inflation", any: ["inflation", "cpi", "wpi", "retail inflation", "price rise", "food prices"] },
   { category: "finance", subCategory: "employment", any: ["unemployment rate", "jobs data", "payroll", "hiring", "layoffs", "job losses", "epfo"] },
   { category: "finance", subCategory: "tax", any: ["income tax", "direct tax", "tax collection", "tax notice", "tds", "tax relief"] },
@@ -146,7 +146,7 @@ const FINANCE: CategoryMatcher[] = [
   { category: "finance", subCategory: "commodity", any: ["gold price", "silver price", "crude oil", "brent", "commodity prices"] },
   { category: "finance", subCategory: "forex", any: ["rupee", "dollar", "forex reserves", "rupee falls", "rupee gains", "exchange rate"] },
   { category: "finance", subCategory: "crypto", any: ["bitcoin", "cryptocurrency", "crypto", "ethereum", "virtual digital asset"] },
-  { category: "finance", subCategory: "corporate_results", any: ["quarterly results", "q1 profit", "q2 profit", "net profit", "revenue rose", "earnings"] },
+  { category: "finance", subCategory: "corporate_results", any: ["quarterly results", "q1 profit", "q2 profit", "net profit", "revenue rose", "earnings", "sales fall", "sales rise", "sales grew", "sales dip", "auto sales", "vehicle sales", "two-wheeler sales", "car sales", "passenger vehicle sales", "monthly sales", "demand stays weak", "rural demand"] },
   { category: "finance", subCategory: "corporate_action", any: ["acquisition", "merger", "stake sale", "buyback", "dividend", "bonus issue", "delisting"] },
   { category: "finance", subCategory: "fraud", any: ["financial fraud", "ponzi", "chit fund scam", "investment scam", "investors duped", "duped of rs", "loses rs", "lost rs", "fell for", "falls prey to", "default on payment", "loan app fraud", "trading scam"] },
   { category: "finance", subCategory: "startup", any: ["startup funding", "series a", "series b", "valuation", "unicorn", "venture capital"] },
@@ -159,7 +159,7 @@ const FINANCE: CategoryMatcher[] = [
 
 // ── SPORTS ─────────────────────────────────────────────────────────────
 const SPORTS: CategoryMatcher[] = [
-  { category: "sports", subCategory: "cricket", any: ["cricket", "test match", "odi", "t20", "ipl", "csk", "rcb", "mumbai indians", "bcci", "ranji", "world cup", "wickets", "century"] },
+  { category: "sports", subCategory: "cricket", any: ["cricket", "test match", "test series", "odi series", "t20i", "ipl", "csk", "rcb", "mumbai indians", "bcci", "ranji trophy", "wtc final", "wtc test", "asia cup", "scores a century", "hits a century", "took a fifer", "wickets", "batting collapse", "run chase", "four-dayers", "hand a t20i debut"] },
   { category: "sports", subCategory: "football", any: ["football", "isl", "fifa", "premier league", "la liga", "champions league", "goal in the"] },
   { category: "sports", subCategory: "chess", any: ["candidates tournament", "chess olympiad", "world chess championship", "chess title", "checkmate", "fide rating"] },
   { category: "sports", subCategory: "hockey", any: ["hockey", "fih", "hockey india", "penalty corner"] },

@@ -4,8 +4,8 @@
   "perCat": [
     {
       "cat": "crisis",
-      "support": 19,
-      "tp": 19,
+      "support": 21,
+      "tp": 21,
       "fp": 0,
       "fn": 0,
       "precision": 1,
@@ -14,8 +14,8 @@
     },
     {
       "cat": "politics",
-      "support": 26,
-      "tp": 26,
+      "support": 38,
+      "tp": 38,
       "fp": 0,
       "fn": 0,
       "precision": 1,
@@ -24,8 +24,8 @@
     },
     {
       "cat": "finance",
-      "support": 11,
-      "tp": 11,
+      "support": 16,
+      "tp": 16,
       "fp": 0,
       "fn": 0,
       "precision": 1,
@@ -34,8 +34,8 @@
     },
     {
       "cat": "sports",
-      "support": 7,
-      "tp": 7,
+      "support": 10,
+      "tp": 10,
       "fp": 0,
       "fn": 0,
       "precision": 1,
@@ -44,8 +44,8 @@
     },
     {
       "cat": "other-relevant",
-      "support": 19,
-      "tp": 19,
+      "support": 27,
+      "tp": 27,
       "fp": 0,
       "fn": 0,
       "precision": 1,
@@ -75,7 +75,7 @@
   ],
   "confusion": {
     "crisis": {
-      "crisis": 19,
+      "crisis": 21,
       "politics": 0,
       "finance": 0,
       "sports": 0,
@@ -85,7 +85,7 @@
     },
     "politics": {
       "crisis": 0,
-      "politics": 26,
+      "politics": 38,
       "finance": 0,
       "sports": 0,
       "other-relevant": 0,
@@ -95,7 +95,7 @@
     "finance": {
       "crisis": 0,
       "politics": 0,
-      "finance": 11,
+      "finance": 16,
       "sports": 0,
       "other-relevant": 0,
       "entertainment": 0,
@@ -105,7 +105,7 @@
       "crisis": 0,
       "politics": 0,
       "finance": 0,
-      "sports": 7,
+      "sports": 10,
       "other-relevant": 0,
       "entertainment": 0,
       "celebrity": 0
@@ -115,7 +115,7 @@
       "politics": 0,
       "finance": 0,
       "sports": 0,
-      "other-relevant": 19,
+      "other-relevant": 27,
       "entertainment": 0,
       "celebrity": 0
     },
@@ -140,6 +140,6 @@
   },
   "misses": [],
   "secondaryHit": 2,
-  "secondaryTotal": 8,
-  "generatedAt": "2026-09-02T14:24:13.300Z"
+  "secondaryTotal": 13,
+  "generatedAt": "2026-09-02T14:32:48.923Z"
 }

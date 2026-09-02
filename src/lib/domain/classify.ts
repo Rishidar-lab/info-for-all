@@ -139,8 +139,8 @@ const TAMIL_KEYWORDS: Record<CategoryId, string[]> = {
 };
 
 // ── the "government actor takes a governance action" high-signal pattern ──
-const GOVT_ACTOR = /\b(cm|chief minister|dy cm|deputy cm|minister|state government|tamil nadu government|governor|secretariat|collector|assembly|cabinet|corporation|panchayat|centre|union government|speaker|dmk|aiadmk|bjp|congress|tvk|vck|pmk|opposition)\b/i;
-const GOVT_ACTION = /\b(announce[sd]?|propose[sd]?|launch(?:e[sd])?|introduce[sd]?|table[sd]?|clear[sd]?|pass(?:e[sd])?|approve[sd]?|inaugurat\w+|unveil\w+|declare[sd]?|order[sd]?|sanction\w*|allocat\w+|formulate[sd]?|withdraw[sd]?|slam[s]?|criticis\w+|accus\w+|allege[sd]?|demand[sd]?|assure[sd]?|to set up|to form)\b/i;
+const GOVT_ACTOR = /\b(cm|chief minister|dy cm|deputy cm|minister|state government|tamil nadu government|governor|secretariat|collector|assembly|cabinet|corporation|panchayat|centre|union government|speaker|pm modi|prime minister|president|dmk|aiadmk|bjp|congress|tvk|vck|pmk|opposition)\b/i;
+const GOVT_ACTION = /\b(announce[sd]?|propose[sd]?|launch(?:e[sd])?|introduce[sd]?|table[sd]?|clear[sd]?|pass(?:e[sd])?|approve[sd]?|inaugurat\w+|unveil\w+|declare[sd]?|order[sd]?|sanction\w*|allocat\w+|formulate[sd]?|withdraw[sd]?|slam[s]?|criticis\w+|accus\w+|allege[sd]?|demand[sd]?|assure[sd]?|reject[sd]?|gifts?|to set up|to form|tighten\w*|comes into effect)\b/i;
 const GOVT_ACTOR_TA = /அரசு|முதல்வர்|அமைச்சர்|சட்டசபை|பேரவை|ஆட்சியர்|கவர்னர்|ஆளுநர்|செயலகம்|மாநகராட்சி|நகராட்சி|திமுக|அதிமுக|பாஜக|காங்கிரஸ்|தவெக|எதிர்க்கட்சி/;
 const GOVT_ACTION_TA = /அறிவித்த|அறிவிப்பு|தொடங்கி|தொடங்க|திறந்து வைத்|அறிமுக|நிறைவேற்ற|ஒப்புதல்|உத்தரவிட்ட|ஒதுக்கீடு|வலியுறுத்த|குற்றம்சாட்ட|கண்டித்|வாபஸ்|திட்டம்/;
 
@@ -368,12 +368,18 @@ export function classifyEvent(input: ClassifyInput): CategoryResultV2 {
   else if (strongHits[primary] >= 1 || keywordHits[primary] >= 2 || maxScore >= 4.5) confidenceClass = "MODERATE";
   else confidenceClass = "WEAK";
 
-  // secondary: any category scoring ≥ 45% of the primary and ≥ 2.0
+  // secondary: a real second-domain angle — enough score AND a distinctive signal
   const secondaryCategories =
     primary === "other-relevant"
       ? []
       : ranked
-          .filter((r) => r.category !== primary && r.score >= 2 && r.score >= 0.45 * maxScore)
+          .filter(
+            (r) =>
+              r.category !== primary &&
+              r.score >= 0.3 * maxScore &&
+              (strongHits[r.category] >= 1 || keywordHits[r.category] >= 1) &&
+              r.score >= 1.8,
+          )
           .map((r) => r.category);
 
   // sub-category = the highest-scoring sub within the primary
