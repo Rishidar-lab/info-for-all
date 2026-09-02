@@ -4,20 +4,27 @@ import evalData from "@/data/claim-eval.json";
 import categoryEval from "../../../../evaluation/reports/category-latest.json";
 import { cn } from "@/lib/format";
 import { dataset } from "@/lib/live/dataset";
-import { hasTrendData, categoryCounts, situation } from "@/lib/live/trends-view";
+import { hasTrendData, categoryCounts, situation, v09Metrics } from "@/lib/live/trends-view";
 
-/** IFFA v0.8 test-suite tallies (from `npm test` + `npm run test:e2e`). */
+/** IFFA test-suite tallies (from `npm test` + `npm run test:e2e`). */
 const IFFA_SUITES: [string, number][] = [
   ["Category taxonomy + geo tiers", 17],
-  ["Multi-signal classifier v2", 10],
+  ["Multi-signal classifier v2 + secondary engine", 16],
   ["Tamil Nadu district resolution", 8],
   ["Source registry", 9],
   ["Trend engine (velocity, score, situation)", 17],
-  ["Claim-aware novelty v2", 6],
+  ["Claim-aware novelty v2 + update significance", 10],
   ["Event severity", 7],
   ["Event identity v2 (specialist split guard)", 6],
   ["Critical-safety corpus (12 spec non-negotiables)", 13],
-  ["Finance / sports fixture guards", 10],
+  ["Finance / sports fixture guards + event state", 20],
+  ["v0.9 · editorial priority", 9],
+  ["v0.9 · consequence model (anti-sensationalism)", 7],
+  ["v0.9 · political event identity + speech acts", 12],
+  ["v0.9 · political claim threads", 1],
+  ["v0.9 · temporal intelligence", 12],
+  ["v0.9 · local-impact model", 8],
+  ["v0.9 · political coverage description", 5],
   ["Adversarial mini-corpus (category / geo / district)", 43],
   ["Browser E2E (Playwright, desktop + 390px)", 38],
 ];
@@ -296,7 +303,7 @@ export default function QualityDashboard() {
               ))}
               <tr className="bg-surface-2">
                 <td className="px-4 py-2.5 ui text-[13px] font-semibold text-ink">Total (v0.6 baseline 200 unit + IFFA unit + E2E)</td>
-                <td className="px-4 py-2.5 mono text-[13px] font-semibold text-ink">344 + 38</td>
+                <td className="px-4 py-2.5 mono text-[13px] font-semibold text-ink">411 + 38</td>
                 <td className="px-4 py-2.5 ui text-[12px] font-semibold text-agree">pass</td>
               </tr>
             </tbody>
@@ -318,6 +325,140 @@ export default function QualityDashboard() {
           ))}
         </div>
       </section>
+
+      {/* ── v0.9 Editorial Intelligence layer ─────────────────────────── */}
+      {(() => {
+        const m = v09Metrics();
+        const ce = categoryEval as {
+          corpusSize: number;
+          secondaryHit: number;
+          secondaryTotal: number;
+          secTP: number;
+          secFP: number;
+          secFN: number;
+        };
+        const secP = ce.secTP + ce.secFP > 0 ? ce.secTP / (ce.secTP + ce.secFP) : 1;
+        const secR = ce.secTP + ce.secFN > 0 ? ce.secTP / (ce.secTP + ce.secFN) : 1;
+        const dist = (o: Record<string, number>) =>
+          Object.entries(o)
+            .sort((a, b) => b[1] - a[1])
+            .map(([k, v]) => `${k} ${v}`)
+            .join(" · ");
+        return (
+          <section>
+            <div className="mb-3 border-b border-rule-strong pb-2">
+              <div className="label mb-1">v0.9 · Editorial Intelligence layer</div>
+              <h2 className="font-serif text-[20px] font-semibold text-ink">
+                Which events deserve prominence — and can the ranking explain itself?
+              </h2>
+              <p className="ui mt-1 text-[12px] leading-relaxed text-ink-3">
+                Every figure below is a straight count over the current snapshot
+                ({new Date(dataset.generatedAt).toISOString().slice(0, 16).replace("T", " ")}Z) or the
+                144-case category corpus. The editorial score is a <strong>ranking</strong>, not a
+                probability of truth. Method:{" "}
+                <a
+                  href="https://github.com/Rishidar-lab/info-for-all/blob/main/docs/EDITORIAL-MODEL.md"
+                  className="text-accent hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  docs/EDITORIAL-MODEL.md
+                </a>
+                .
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+              {[
+                ["Editorial bands (U/H/S/B/Sup)", `${m.bands.urgent ?? 0}/${m.bands.high ?? 0}/${m.bands.standard ?? 0}/${m.bands.background ?? 0}/${m.bands.suppressed ?? 0}`],
+                ["Secondary category — live rate", `${(m.secondaryCategory.rate * 100).toFixed(1)}%`],
+                ["Secondary category — corpus P/R", `${(secP * 100).toFixed(0)}% / ${(secR * 100).toFixed(0)}%`],
+                ["Political events described", String(m.politicalIdentity.politics)],
+                ["— threaded to another event", String(m.politicalIdentity.threaded)],
+                ["— allegation w/ no response", String(m.politicalIdentity.unanswered)],
+                ["Temporal: event≠publication resolved", `${m.temporal.resolved}/${m.temporal.ofInScope}`],
+                ["Local impact resolved (P0)", `${m.localImpact.resolved}/${m.localImpact.ofP0}`],
+                ["Finance: policy / market-reaction", `${m.finance.policy} / ${m.finance.reaction}`],
+                ["Sports: fixtures with state", `${m.sports.withState}/${m.sports.total}`],
+                ["Isolated incidents de-prioritised", String(m.isolatedIncidents)],
+                ["Source-concentration caps hit", String(m.concentrationNotes.length)],
+              ].map(([k, v]) => (
+                <div key={k} className="card p-3">
+                  <div className="label text-[10px]">{k}</div>
+                  <div className="mono mt-1 text-[16px] text-ink">{v}</div>
+                </div>
+              ))}
+            </div>
+
+            <dl className="mt-4 grid gap-2 sm:grid-cols-2">
+              {[
+                ["Speech-act mix (politics)", dist(m.politicalIdentity.speechActs)],
+                ["Tense mix (in-scope)", dist(m.temporal.tenses)],
+                ["Update significance", dist(m.updateSignificance)],
+                ["Live category mix", dist(m.categoryMix as unknown as Record<string, number>)],
+              ].map(([k, v]) => (
+                <div key={k} className="card p-3">
+                  <div className="label text-[10px]">{k}</div>
+                  <div className="ui mt-1 text-[12px] text-ink-2">{v}</div>
+                </div>
+              ))}
+            </dl>
+
+            {m.concentrationNotes.length > 0 && (
+              <p className="mt-3 ui text-[12px] text-ink-3">
+                Source-concentration control this run: {m.concentrationNotes.join("; ")}.
+              </p>
+            )}
+
+            <div className="mt-4 card w-full min-w-0 overflow-x-auto">
+              <table className="w-full min-w-[520px] border-collapse text-left">
+                <caption className="px-4 pt-3 text-left label text-[10px]">
+                  Top 10 events by editorial score — why each is ranked
+                </caption>
+                <thead>
+                  <tr className="border-b border-rule-strong bg-surface-2 ui text-[11px] uppercase tracking-wider text-ink-3">
+                    <th className="px-4 py-2.5 font-semibold">Score</th>
+                    <th className="px-4 py-2.5 font-semibold">Band</th>
+                    <th className="px-4 py-2.5 font-semibold">Event</th>
+                    <th className="px-4 py-2.5 font-semibold">Why ranked</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-rule">
+                  {m.topEvents.map((e) => (
+                    <tr key={e.slug}>
+                      <td className="px-4 py-2.5 mono text-[13px] text-ink">{e.score.toFixed(1)}</td>
+                      <td className="px-4 py-2.5 ui text-[12px] text-ink-2">{e.band}</td>
+                      <td className="px-4 py-2.5 ui text-[12.5px] text-ink">
+                        {e.title.length > 70 ? `${e.title.slice(0, 70)}…` : e.title}
+                        <span className="ml-1 text-ink-3">
+                          ({e.category}/{e.tier})
+                        </span>
+                      </td>
+                      <td className="px-4 py-2.5 ui text-[11.5px] text-ink-3">{e.reasons.slice(0, 3).join(" · ")}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <ul className="mt-3 flex flex-col gap-1.5 ui text-[12.5px] leading-relaxed text-ink-2">
+              <li>
+                <strong>Classification ≠ importance:</strong> an <code>other-relevant</code> event is capped at
+                STANDARD unless it is genuinely consequential and Tamil-Nadu-local — that is how the ~52%
+                figure is de-emphasised without being reclassified.
+              </li>
+              <li>
+                <strong>Anti-sensationalism:</strong> an isolated single-victim crime is capped at STANDARD
+                however vivid the headline; emotional-intensity words carry zero weight in the consequence model.
+              </li>
+              <li>
+                <strong>Not a bias score:</strong> political coverage is described (claim / response / official
+                record / source families), never graded on a left–right or government–opposition axis.
+              </li>
+            </ul>
+          </section>
+        );
+      })()}
 
       {/* ── metrics table ───────────────────────────────────────────── */}
       <section>

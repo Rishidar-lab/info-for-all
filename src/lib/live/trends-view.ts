@@ -147,6 +147,88 @@ export function categoryCounts(): Record<CategoryId, number> {
   return out;
 }
 
+/**
+ * v0.9 — live-snapshot metrics for the quality dashboard (Phase S). Every one is
+ * a straight count over the current snapshot; nothing here is a truth claim.
+ */
+export function v09Metrics() {
+  const cs = dataset.clusters;
+  const td = (c: LiveCluster) => c.trendData;
+  const inScope = cs.filter((c) => td(c) && td(c)!.geoTier !== "out");
+
+  const bands = editorialBands();
+  const withSecondary = inScope.filter((c) => (td(c)!.secondaryCategories?.filter((s) => s !== td(c)!.category).length ?? 0) > 0);
+  const politics = inScope.filter((c) => td(c)!.category === "politics");
+  const threaded = politics.filter((c) => (td(c)!.politicalThread?.links?.length ?? 0) > 0);
+  const unanswered = politics.filter((c) => td(c)!.politicalCoverage?.unanswered);
+
+  const speechActs: Record<string, number> = {};
+  for (const c of politics) {
+    const s = td(c)!.politicalCoverage?.speechAct ?? "—";
+    speechActs[s] = (speechActs[s] ?? 0) + 1;
+  }
+
+  const temporalResolved = inScope.filter((c) => {
+    const t = td(c)!.temporal;
+    return t && (t.eventOccurredAt || t.scheduledFor || t.effectiveFrom || t.effectiveUntil);
+  });
+  const tenses: Record<string, number> = {};
+  for (const c of inScope) {
+    const t = td(c)!.temporal?.tense ?? "—";
+    tenses[t] = (tenses[t] ?? 0) + 1;
+  }
+
+  const significance: Record<string, number> = {};
+  for (const c of inScope) {
+    const s = td(c)!.novelty?.updateSignificance ?? "—";
+    significance[s] = (significance[s] ?? 0) + 1;
+  }
+
+  const p0 = inScope.filter((c) => td(c)!.geoTier === "P0");
+  const withLocalImpact = p0.filter((c) => (td(c)!.localImpact?.statements?.length ?? 0) > 0);
+
+  const finance = inScope.filter((c) => td(c)!.category === "finance");
+  const financePolicy = finance.filter((c) => td(c)!.financeEvent?.kind === "policy-decision");
+  const financeReaction = finance.filter((c) => td(c)!.financeEvent?.kind === "market-reaction");
+  const sports = inScope.filter((c) => td(c)!.category === "sports");
+  const sportsWithState = sports.filter((c) => td(c)!.sportsEvent && (td(c)!.sportsEvent!.competition || td(c)!.sportsEvent!.teams.length > 0));
+
+  const isolatedIncidents = inScope.filter((c) =>
+    td(c)!.editorial?.reasons.some((r) => r.startsWith("an isolated incident")),
+  );
+
+  const topEvents = [...inScope]
+    .filter((c) => td(c)!.editorial && td(c)!.editorial!.band !== "suppressed")
+    .sort((a, b) => (td(b)!.editorial!.score ?? 0) - (td(a)!.editorial!.score ?? 0))
+    .slice(0, 10)
+    .map((c) => ({
+      slug: c.slug,
+      title: c.title,
+      score: td(c)!.editorial!.score,
+      band: td(c)!.editorial!.band,
+      category: td(c)!.category,
+      tier: td(c)!.geoTier,
+      reasons: td(c)!.editorial!.reasons,
+    }));
+
+  return {
+    total: cs.length,
+    inScope: inScope.length,
+    bands,
+    concentrationNotes: concentrationNotes(),
+    secondaryCategory: { count: withSecondary.length, rate: inScope.length ? withSecondary.length / inScope.length : 0 },
+    politicalIdentity: { politics: politics.length, threaded: threaded.length, unanswered: unanswered.length, speechActs },
+    temporal: { resolved: temporalResolved.length, ofInScope: inScope.length, tenses },
+    updateSignificance: significance,
+    localImpact: { resolved: withLocalImpact.length, ofP0: p0.length },
+    finance: { total: finance.length, policy: financePolicy.length, reaction: financeReaction.length },
+    sports: { total: sports.length, withState: sportsWithState.length },
+    isolatedIncidents: isolatedIncidents.length,
+    categoryMix: categoryCounts(),
+    topEvents,
+  };
+}
+
 /** All clusters that should get their own /story page (superset of routableClusters). */
 export function trendRoutableSlugs(): Set<string> {
   const s = new Set<string>();
