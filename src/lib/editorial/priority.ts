@@ -3,6 +3,7 @@
  */
 import type { LiveArticle, LiveCluster } from "@/lib/live/types";
 import { isDigestHeadline } from "@/lib/live/entities";
+import { assessConsequence } from "@/lib/domain/consequence";
 import type { EditorialPriority, EditorialFactor, EditorialPenalty, EditorialBand } from "./types";
 import {
   EDITORIAL_WEIGHTS,
@@ -37,19 +38,20 @@ function officialInstitution(articles: LiveArticle[]): boolean {
   );
 }
 
+/**
+ * Consequence for the ranking score. The interpretable, anti-sensationalism
+ * signal set lives in `src/lib/domain/consequence.ts`; here it is only combined
+ * with the (independently derived) event severity so that a `severe`/`critical`
+ * alert still scores high even before its on-the-ground impact is reported.
+ */
 function consequence(cluster: LiveCluster, articles: LiveArticle[]): number {
+  const c = assessConsequence(cluster, articles);
+  if (c.isolatedIncident) return c.score; // one incident, however it is worded
   const sev = cluster.trendData?.severity?.level;
-  const bySeverity = sev === "critical" ? 1 : sev === "severe" ? 0.82 : sev === "significant" ? 0.55 : sev === "watch" ? 0.3 : 0;
-  let s = Math.max(bySeverity, Math.min(1, cluster.crisisPriority / 100));
-  if (officialInstitution(articles)) s = Math.max(s, 0.5);
-  if (OFFICIAL_PRIMARY.has(articles.find((a) => OFFICIAL_PRIMARY.has(a.evidenceRole))?.evidenceRole ?? "")) s += 0.1;
-  if (cluster.districts.length >= 4) s += 0.12;
-  else if (cluster.districts.length >= 2) s += 0.06;
-  // population / disruption signal from the text
-  const text = articles.map((a) => `${a.title} ${a.excerpt ?? ""}`).join(" ");
-  if (/\b(evacuat|relief camp|schools? closed|holiday declared|services? suspended|trains? cancelled|flights? (?:cancelled|delayed)|highway blocked|section 144|power (?:cut|outage))\b/i.test(text)) s += 0.12;
-  if (/\b(lakh|crore|thousands?|hundreds?)\s+(?:people|residents|families|passengers|affected|evacuated)\b/i.test(text)) s += 0.1;
-  return Math.min(1, s);
+  const bySeverity =
+    sev === "critical" ? 0.95 : sev === "severe" ? 0.8 : sev === "significant" ? 0.5 : sev === "watch" ? 0.28 : 0;
+  const institutional = officialInstitution(articles) ? 0.5 : 0;
+  return Math.min(1, Math.max(c.score, bySeverity, institutional, Math.min(0.55, cluster.crisisPriority / 100)));
 }
 
 function corroboration(cluster: LiveCluster, articles: LiveArticle[]): number {
@@ -87,8 +89,17 @@ export function computeEditorialPriority(input: EditorialInput): EditorialPriori
   const headText = articles.map((a) => a.title).join("  ");
   const pureReaction = PURE_REACTION_RE.test(headText) && !CONCRETE_ACTION_RE.test(headText);
 
+  const conseq = assessConsequence(cluster, articles);
   let consequenceV = consequence(cluster, articles);
   let infoGainV = INFO_GAIN[updateKind] ?? 0.4;
+
+  // An isolated single-victim crime does not get crisis-domain prominence,
+  // however it is classified or worded — the priority-domain lever is for
+  // public-safety events at scale, not for a lurid headline. (Phase I.)
+  let categoryPriorityV = CATEGORY_PRIORITY[category] ?? 0.22;
+  if (conseq.isolatedIncident && (category === "crisis" || category === "other-relevant")) {
+    categoryPriorityV = Math.min(categoryPriorityV, 0.24);
+  }
   // "new to us" ≠ "a major development" — moderate the gain when the event is
   // low-consequence and thinly sourced (a political quip, a minor local item).
   if ((updateKind === "new-event" || updateKind === "major-development") && consequenceV < 0.35 && fam < 3) {
@@ -101,7 +112,7 @@ export function computeEditorialPriority(input: EditorialInput): EditorialPriori
 
   const values = {
     geoRelevance: GEO_RELEVANCE[tier] ?? 0.4,
-    categoryPriority: CATEGORY_PRIORITY[category] ?? 0.22,
+    categoryPriority: categoryPriorityV,
     consequence: consequenceV,
     informationGain: infoGainV,
     corroboration: corroboration(cluster, articles),
@@ -196,6 +207,11 @@ export function computeEditorialPriority(input: EditorialInput): EditorialPriori
     }
   }
 
+  // An isolated single-victim incident is real news but not front-page
+  // consequence for a civic-intelligence product — cap it at STANDARD, however
+  // vivid the headline. (Phase I, anti-sensationalism.)
+  if (conseq.isolatedIncident && (band === "urgent" || band === "high")) band = "standard";
+
   // ── reasons ──
   const reasons: string[] = [];
   const R = (cond: boolean, text: string) => cond && reasons.push(text);
@@ -207,7 +223,17 @@ export function computeEditorialPriority(input: EditorialInput): EditorialPriori
   R(["new-event", "new-fact", "new-number", "new-location", "new-official-confirmation", "correction", "major-development"].includes(updateKind), `new development: ${(td?.novelty?.changes ?? [])[0] ?? updateKind}`);
   R(cluster.districts.length >= 2, `affects ${cluster.districts.slice(0, 4).join(", ")}`);
   R(values.meaningfulRecency >= 0.9, "updated in the last hour");
+  R(conseq.signals.length > 0 && !conseq.isolatedIncident, `consequence: ${conseq.signals[0]?.evidence ?? ""}`);
+  R(conseq.isolatedIncident, "an isolated incident — not de-prioritised junk, but not front-page consequence");
   if (reasons.length === 0) reasons.push(category === "other-relevant" ? "general / regional interest — not a priority domain" : "limited current signal");
 
-  return { score, band, factors, reasons: reasons.slice(0, 6), penalties, suppressedByRule };
+  return {
+    score,
+    band,
+    factors,
+    reasons: reasons.slice(0, 6),
+    penalties,
+    suppressedByRule,
+    consequenceSignals: conseq.signals.slice(0, 5),
+  };
 }

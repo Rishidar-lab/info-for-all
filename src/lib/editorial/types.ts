@@ -55,4 +55,9 @@ export interface EditorialPriority {
   penalties: EditorialPenalty[];
   /** True when a hard rule (out of scope / celebrity / pure duplicate) forced suppression. */
   suppressedByRule?: string;
+  /**
+   * v0.9 Phase I — the interpretable consequence breakdown that fed the
+   * `consequence` factor. Emotional-intensity wording carries zero weight here.
+   */
+  consequenceSignals?: { name: string; value: number; evidence: string }[];
 }
