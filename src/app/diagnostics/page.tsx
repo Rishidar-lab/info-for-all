@@ -27,8 +27,7 @@ export default function DiagnosticsPage() {
   const crossLang = d.clusters.filter((c) => c.languages.includes("ta") && c.languages.includes("en")).length;
   const cats = categoryCounts();
   const s = situation();
-  const feedFail = d.feeds.filter((f) => f.status !== "ok");
-  const malformed = d.feeds.filter((f) => f.error && f.status === "ok");
+  const feedFail = d.feeds.filter((f) => f.status !== "ok" && f.health !== "disabled");
 
   return (
     <div className="flex flex-col gap-7">
