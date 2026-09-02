@@ -74,6 +74,23 @@ function publicView(r: CorpusReport) {
       falseCorroboration: 0,
       falseCorroborationDen: 71,
     },
+    /**
+     * Frozen v0.6 result. The claim / identity engine was NOT changed in v0.7
+     * (Trend Intelligence is an additive layer), so the v0.7 "current" column in
+     * the dashboard equals this — the live `metrics` above prove it each run.
+     */
+    v06: {
+      cases: 223,
+      clean: 222,
+      matchingPrecision: 1.0,
+      matchingRecall: 1.0,
+      tamilMatching: 1.0,
+      crossLanguage: 1.0,
+      contradictionRecall: 1.0,
+      falseCorroboration: 0,
+      falseCorroborationDen: 71,
+    },
+    engineFrozenSince: "v0.6",
   };
 }
 

@@ -27,10 +27,28 @@ export default function AboutPage() {
       <section>
         <h2 className="font-serif text-[20px] font-semibold">Scope</h2>
         <p className="mt-2 text-[14.5px] leading-relaxed text-ink-2">
-          <strong>Primary:</strong> Tamil Nadu. <strong>Secondary:</strong> India-wide events that
-          materially affect Tamil Nadu or carry major national public importance. IFFA deliberately
-          excludes generic international news, entertainment feeds, and foreign politics without a
-          direct India / Tamil Nadu consequence.
+          <strong>P0:</strong> Tamil Nadu (district-level). <strong>P1:</strong> India national.{" "}
+          <strong>P2:</strong> events abroad only when they materially affect Tamil Nadu, India,
+          Indian citizens, the economy, markets or foreign policy, or are a major global crisis.
+          Category priority is <strong>Crisis → Politics → Finance → Sports</strong>; entertainment
+          and celebrity stories are classified but kept out of the default feed (disabled, not
+          deleted).
+        </p>
+      </section>
+
+      <section>
+        <h2 className="font-serif text-[20px] font-semibold">Trend ranking (v0.7)</h2>
+        <p className="mt-2 text-[14.5px] leading-relaxed text-ink-2">
+          IFFA ranks <strong>events</strong>, not articles, and by <strong>what is changing</strong>,
+          not publication count. The trend score is a weighted geometric mean of eight factors —
+          recency, publication velocity <em>across independent newsrooms</em>, source diversity,
+          geographic relevance, category, consequence, novelty, and corroboration. Every factor is
+          shown on the card and the weights are{" "}
+          <a href="https://github.com/Rishidar-lab/info-for-all/blob/main/docs/TREND-MODEL.md" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">public</a>.
+          Velocity counts <strong>independent source families</strong>, so many sites reprinting one
+          wire dispatch count as a single confirmation. &ldquo;Watching&rdquo; holds stories that
+          matter but lack the independent evidence to be called trending — a single local report of
+          a bridge collapse never becomes a &ldquo;confirmed crisis&rdquo;.
         </p>
       </section>
 

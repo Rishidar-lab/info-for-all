@@ -1,9 +1,27 @@
-# IFA Architecture
+# IFFA Architecture
 
-**Status:** current as of v0.6. This document describes what the repository
-actually builds and deploys today. An earlier revision described a
-Drizzle / SQLite / Next.js-API-route service that was **abandoned** before
-launch — see [Superseded design](#superseded-design) at the end.
+**Status:** current as of **v0.7 — Trend Intelligence**. This document describes
+what the repository actually builds and deploys today. An earlier revision
+described a Drizzle / SQLite / Next.js-API-route service that was **abandoned**
+before launch — see [Superseded design](#superseded-design) at the end.
+
+> **v0.7 additions (all additive — the v0.6 identity / claim / clustering engine
+> is untouched, and its corpus numbers hold identical):**
+> - `src/lib/domain/` — deterministic classifiers: `categories.ts` (news domain:
+>   crisis / politics / finance / sports; entertainment & celebrity disabled by
+>   default), `geo-tiers.ts` (P0 Tamil Nadu / P1 India / P2 abroad-relevant /
+>   out), `districts.ts` (Tamil-script names + resolver for all 38 districts),
+>   `finance.ts` / `sports.ts` (number-unit and fixture safety guards).
+> - `src/lib/trends/` — a **pure** enrichment layer run in `ingest-feeds.ts`
+>   *after* clustering: velocity (by independent family), novelty vs the previous
+>   snapshot, an interpretable `trendScore` (weighted geometric mean, weights in
+>   `weights.ts`), the Current Situation bar, and event timelines. Consumes
+>   `LiveArticle[]` / `LiveCluster[]`, writes `cluster.trendData` +
+>   `dataset.trending` / `watching` / `situation` / `counts.byCategory`.
+> - `src/data/feeds.ts` — typed source-registry metadata (`describeFeed()`).
+> - UI: event-first `/` + `/crisis` `/politics` `/finance` `/sports` `/tamil-nadu`
+>   `/india` `/trends` `/diagnostics`; `components/iffa/`.
+> - See `docs/TREND-MODEL.md`.
 
 ## What IFA is, structurally
 

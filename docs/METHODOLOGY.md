@@ -1,7 +1,18 @@
-# IFA Methodology
+# IFFA Methodology
 
-IFA is designed to encourage verification rather than demand trust. This document states the method —
+IFFA is designed to encourage verification rather than demand trust. This document states the method —
 **and its weaknesses** — for each stage of the pipeline. Nothing here is hidden or hand-waved.
+
+> **IFFA DOES NOT DECIDE WHAT IS TRUE BY MAJORITY VOTE.** Five copied articles are
+> not five independent confirmations. IFFA compares provenance, claims, entities,
+> time, location, independent source families, official evidence, contradictions
+> and corrections — and where it cannot tell, it says so.
+>
+> **STATUS (v0.7):** the trend / ranking layer is documented in
+> `docs/TREND-MODEL.md`; the news-domain taxonomy and geo tiers in
+> `src/lib/domain/`. Trending is *what is changing and consequential*, computed
+> as a weighted geometric mean of eight visible sub-scores — it never changes a
+> claim or clustering decision.
 
 > **STATUS (v0.6):** §0 (principle) and §5+ are current. §1–§4 predate the static
 > pivot and the v0.5–v0.6 identity/claim engines and are being rewritten — the

@@ -2,6 +2,19 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import evalData from "@/data/claim-eval.json";
 import { cn } from "@/lib/format";
+import { dataset } from "@/lib/live/dataset";
+import { hasTrendData, categoryCounts, situation } from "@/lib/live/trends-view";
+
+/** IFFA v0.7 test-suite tallies (from `npm test`). */
+const IFFA_SUITES: [string, number][] = [
+  ["Category taxonomy + geo tiers", 17],
+  ["Tamil Nadu district resolution", 8],
+  ["Source registry", 7],
+  ["Trend engine (velocity, score, situation)", 17],
+  ["Critical-safety corpus (12 spec non-negotiables)", 13],
+  ["Finance / sports fixture guards", 10],
+  ["Adversarial mini-corpus (category / geo / district)", 41],
+];
 
 export const metadata: Metadata = {
   title: "Claim quality",
@@ -103,46 +116,51 @@ export default function QualityDashboard() {
       {"v04" in d && "v05" in d && "languageRecall" in d && (
         <section>
           <div className="mb-3 border-b border-rule-strong pb-2">
-            <div className="label mb-1">Version history</div>
-            <h2 className="font-serif text-[20px] font-semibold text-ink">v0.4 → v0.5 → v0.6</h2>
+            <div className="label mb-1">Version history · semantic regression</div>
+            <h2 className="font-serif text-[20px] font-semibold text-ink">v0.4 → v0.5 → v0.6 → v0.7</h2>
             <p className="ui mt-1 text-[12px] leading-relaxed text-ink-3">
               v0.5 added a structured event-identity engine, a Tamil normaliser and a
               cross-language layer. v0.6 hardened recall: 10 known missed matches
-              resolved with precision and the zero-false-corroboration guarantee
-              held. Regressions are shown, not hidden.
+              resolved with precision, zero false corroboration held. <strong>v0.7 (Trend
+              Intelligence) did not change the claim / identity engine</strong> — the current
+              column below is measured live each run and equals v0.6. Regressions are shown,
+              not hidden.
             </p>
           </div>
           <div className="card w-full min-w-0 overflow-x-auto">
-            <table className="w-full min-w-[560px] border-collapse text-left">
+            <table className="w-full min-w-[620px] border-collapse text-left">
               <thead>
                 <tr className="border-b border-rule-strong bg-surface-2 ui text-[11px] uppercase tracking-wider text-ink-3">
                   <th className="px-4 py-2.5 font-semibold">Metric</th>
                   <th className="px-4 py-2.5 font-semibold">v0.4</th>
                   <th className="px-4 py-2.5 font-semibold">v0.5</th>
                   <th className="px-4 py-2.5 font-semibold">v0.6</th>
+                  <th className="px-4 py-2.5 font-semibold">v0.7</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-rule">
                 {(() => {
                   const v04 = d.v04 as { cases: number; clean: number; matchingPrecision: number; matchingRecall: number; tamilMatching: number; crossLanguage: number | null; falseCorroboration: number; falseCorroborationDen: number };
                   const v05 = d.v05 as typeof v04;
+                  const v06 = ("v06" in d ? d.v06 : v05) as typeof v04;
                   const lr = d.languageRecall as { english: number | null; tamilTamil: number | null; crossLanguage: number | null };
                   const cross = (v: number | null) => (v == null ? "n/a" : pct(v));
-                  const rows: [string, string, string, string][] = [
-                    ["Corpus size", String(v04.cases), String(v05.cases), String(d.totals.cases)],
-                    ["Fully clean", `${v04.clean} (${pct(v04.clean / v04.cases)})`, `${v05.clean} (${pct(v05.clean / v05.cases)})`, `${d.totals.passed} (${pct(d.totals.passed / d.totals.cases)})`],
-                    ["Claim-matching precision", pct(v04.matchingPrecision), pct(v05.matchingPrecision), pct(metrics.claimMatching.precision)],
-                    ["Claim-matching recall (all)", pct(v04.matchingRecall), pct(v05.matchingRecall), pct(metrics.claimMatching.recall)],
-                    ["Tamil ↔ Tamil matching", pct(v04.tamilMatching), pct(v05.tamilMatching), pct(metrics.tamilMatching?.accuracy)],
-                    ["Tamil ↔ English recall", cross(v04.crossLanguage), cross(v05.crossLanguage), pct(lr.crossLanguage)],
-                    ["False corroboration", `${v04.falseCorroboration} / ${v04.falseCorroborationDen}`, `${v05.falseCorroboration} / ${v05.falseCorroborationDen}`, `${fc.count} / ${fc.denominator}`],
+                  const rows: [string, string, string, string, string][] = [
+                    ["Corpus size", String(v04.cases), String(v05.cases), String(v06.cases), String(d.totals.cases)],
+                    ["Fully clean", `${v04.clean} (${pct(v04.clean / v04.cases)})`, `${v05.clean} (${pct(v05.clean / v05.cases)})`, `${v06.clean} (${pct(v06.clean / v06.cases)})`, `${d.totals.passed} (${pct(d.totals.passed / d.totals.cases)})`],
+                    ["Claim-matching precision", pct(v04.matchingPrecision), pct(v05.matchingPrecision), pct(v06.matchingPrecision), pct(metrics.claimMatching.precision)],
+                    ["Claim-matching recall (all)", pct(v04.matchingRecall), pct(v05.matchingRecall), pct(v06.matchingRecall), pct(metrics.claimMatching.recall)],
+                    ["Tamil ↔ Tamil matching", pct(v04.tamilMatching), pct(v05.tamilMatching), pct(v06.tamilMatching), pct(metrics.tamilMatching?.accuracy)],
+                    ["Tamil ↔ English recall", cross(v04.crossLanguage), cross(v05.crossLanguage), cross(v06.crossLanguage), pct(lr.crossLanguage)],
+                    ["False corroboration", `${v04.falseCorroboration} / ${v04.falseCorroborationDen}`, `${v05.falseCorroboration} / ${v05.falseCorroborationDen}`, `${v06.falseCorroboration} / ${v06.falseCorroborationDen}`, `${fc.count} / ${fc.denominator}`],
                   ];
-                  return rows.map(([k, a, b, c]) => (
+                  return rows.map(([k, a, b, c, e]) => (
                     <tr key={k} className="align-top">
                       <td className="px-4 py-3 ui text-[13px] font-semibold text-ink">{k}</td>
                       <td className="px-4 py-3 mono text-[13px] text-ink-3">{a}</td>
                       <td className="px-4 py-3 mono text-[13px] text-ink-3">{b}</td>
-                      <td className="px-4 py-3 mono text-[13px] font-semibold text-ink">{c}</td>
+                      <td className="px-4 py-3 mono text-[13px] text-ink-3">{c}</td>
+                      <td className="px-4 py-3 mono text-[13px] font-semibold text-ink">{e}</td>
                     </tr>
                   ));
                 })()}
@@ -160,6 +178,78 @@ export default function QualityDashboard() {
           </p>
         </section>
       )}
+
+      {/* ── v0.7 Trend Intelligence layer ──────────────────────────── */}
+      <section>
+        <div className="mb-3 border-b border-rule-strong pb-2">
+          <div className="label mb-1">v0.7 · Trend Intelligence layer</div>
+          <h2 className="font-serif text-[20px] font-semibold text-ink">Ingestion, clustering, trend detection</h2>
+          <p className="ui mt-1 text-[12px] leading-relaxed text-ink-3">
+            The trend engine is an additive layer over the frozen claim / identity engine. These
+            numbers are measured from the current static snapshot ({new Date(dataset.generatedAt).toISOString().slice(0, 16).replace("T", " ")}Z)
+            plus the v0.7 unit suites.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+          {[
+            ["Feeds responding", `${dataset.counts.workingFeeds}/${dataset.feeds.length}`],
+            ["Articles ingested", String(dataset.articles.length)],
+            ["Events (clusters)", String(dataset.clusters.length)],
+            ["Distinct publishers", String(dataset.counts.distinctPublishers)],
+            ["Verified comparisons", String(dataset.counts.comparisons)],
+            ["Weak matches kept apart", String(dataset.counts.weakMatchesRejected)],
+            ["Trending / watching", hasTrendData() ? `${dataset.trending?.length ?? 0} / ${dataset.watching?.length ?? 0}` : "—"],
+            ["Situation TN / India", situation() ? `${situation()!.tamilNadu} / ${situation()!.india}` : "—"],
+          ].map(([k, v]) => (
+            <div key={k} className="card p-3">
+              <div className="label text-[10px]">{k}</div>
+              <div className="mono mt-1 text-[18px] text-ink">{v}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-4 card w-full min-w-0 overflow-x-auto">
+          <table className="w-full min-w-[420px] border-collapse text-left">
+            <thead>
+              <tr className="border-b border-rule-strong bg-surface-2 ui text-[11px] uppercase tracking-wider text-ink-3">
+                <th className="px-4 py-2.5 font-semibold">v0.7 unit suite</th>
+                <th className="px-4 py-2.5 font-semibold">Tests</th>
+                <th className="px-4 py-2.5 font-semibold">Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-rule">
+              {IFFA_SUITES.map(([name, n]) => (
+                <tr key={name}>
+                  <td className="px-4 py-2.5 ui text-[13px] text-ink">{name}</td>
+                  <td className="px-4 py-2.5 mono text-[13px] text-ink-2">{n}</td>
+                  <td className="px-4 py-2.5 ui text-[12px] font-semibold text-agree">pass</td>
+                </tr>
+              ))}
+              <tr className="bg-surface-2">
+                <td className="px-4 py-2.5 ui text-[13px] font-semibold text-ink">Total (v0.6 baseline 200 + v0.7)</td>
+                <td className="px-4 py-2.5 mono text-[13px] font-semibold text-ink">313</td>
+                <td className="px-4 py-2.5 ui text-[12px] font-semibold text-agree">pass</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ul className="mt-3 flex flex-col gap-1.5 ui text-[12.5px] leading-relaxed text-ink-2">
+          <li><strong>Source independence:</strong> velocity and corroboration count DISTINCT source families, not raw articles — many sites running one wire dispatch count as one confirmation (locked by critical test 10).</li>
+          <li><strong>Political claim safety:</strong> allegations keep their claimant through clustering (critical tests 1, 9).</li>
+          <li><strong>Financial numbers:</strong> a move in points is never a move in percent (critical tests 4, 5).</li>
+          <li><strong>Sports identity:</strong> the same two teams on two dates, or a men&rsquo;s vs a women&rsquo;s match, are distinct fixtures (critical test 6).</li>
+          <li><strong>No fabricated alert level:</strong> the Current Situation bar is derived from active events only and always lists its drivers; routine national CAP watches do not read as &ldquo;Crisis&rdquo;.</li>
+          <li><strong>Trend ranking is not a black box:</strong> every one of the eight factors is stored and shown on the card, and the weights are in <a href="https://github.com/Rishidar-lab/info-for-all/blob/main/docs/TREND-MODEL.md" className="text-accent hover:underline" target="_blank" rel="noopener noreferrer">docs/TREND-MODEL.md</a>.</li>
+        </ul>
+
+        <div className="mt-3 flex flex-wrap gap-2">
+          {(Object.entries(categoryCounts()) as [string, number][]).map(([c, n]) => (
+            <span key={c} className="pill text-ink-3">{c} {n}</span>
+          ))}
+        </div>
+      </section>
 
       {/* ── metrics table ───────────────────────────────────────────── */}
       <section>

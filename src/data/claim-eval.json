@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-02T13:18:47.108Z",
+  "generatedAt": "2026-09-02T13:20:53.242Z",
   "corpusInstant": "2026-09-02T06:00:00.000Z",
   "provider": "rule-only",
   "totals": {
@@ -215,5 +215,17 @@
     "contradictionRecall": 1,
     "falseCorroboration": 0,
     "falseCorroborationDen": 71
-  }
+  },
+  "v06": {
+    "cases": 223,
+    "clean": 222,
+    "matchingPrecision": 1,
+    "matchingRecall": 1,
+    "tamilMatching": 1,
+    "crossLanguage": 1,
+    "contradictionRecall": 1,
+    "falseCorroboration": 0,
+    "falseCorroborationDen": 71
+  },
+  "engineFrozenSince": "v0.6"
 }
