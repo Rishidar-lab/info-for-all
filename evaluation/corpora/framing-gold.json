@@ -1,0 +1,65 @@
+{
+  "corpus": "framing-gold",
+  "version": "0.11-firstpass",
+  "generatedAt": "2026-09-03",
+  "humanVerifiedCount": 0,
+  "note": "First-pass headline-emphasis labels. humanVerified:false. Indicative only. Each entry: one headline, the emphasis a reader would say it foregrounds. Maps to HeadlineEmphasis in src/lib/media-landscape/types.ts.",
+  "emphasisLabels": ["government-action", "opposition-pressure", "political-causation", "measurement-data", "human-impact", "conflict-dispute", "process-procedure", "reaction-quote", "accusation", "outcome-result"],
+  "entries": [
+    { "id": "f001", "language": "en", "headline": "Tamil Nadu Government releases Cauvery water for irrigation", "emphasis": ["government-action"], "humanVerified": false },
+    { "id": "f002", "language": "en", "headline": "After opposition pressure, Cauvery water release increased", "emphasis": ["opposition-pressure"], "humanVerified": false },
+    { "id": "f003", "language": "en", "headline": "Cauvery discharge rises to 12,000 cusecs at Mettur", "emphasis": ["measurement-data"], "humanVerified": false },
+    { "id": "f004", "language": "en", "headline": "Thousands stranded as Cauvery release floods delta villages", "emphasis": ["human-impact"], "humanVerified": false },
+    { "id": "f005", "language": "en", "headline": "Row over Cauvery board resurfaces in Assembly as parties trade charges", "emphasis": ["conflict-dispute"], "humanVerified": false },
+    { "id": "f006", "language": "en", "headline": "CM announces ₹1,850-cr for Chennai road repairs", "emphasis": ["government-action"], "humanVerified": false },
+    { "id": "f007", "language": "en", "headline": "BJP alleges cost of CM's visits exceeds Mettur dam repair bill", "emphasis": ["accusation"], "humanVerified": false },
+    { "id": "f008", "language": "en", "headline": "Madras High Court dismisses M.K. Stalin's plea", "emphasis": ["outcome-result"], "humanVerified": false },
+    { "id": "f009", "language": "en", "headline": "Setback for MK Stalin as High Court rejects Kolathur plea", "emphasis": ["outcome-result"], "humanVerified": false },
+    { "id": "f010", "language": "en", "headline": "Stalin moves Madras High Court seeking Kolathur result declaration", "emphasis": ["process-procedure"], "humanVerified": false },
+    { "id": "f011", "language": "en", "headline": "Opposition slams government over water shortage in four districts", "emphasis": ["reaction-quote"], "humanVerified": false },
+    { "id": "f012", "language": "en", "headline": "GST collections rise 14.8% to ₹1.99 trillion in August", "emphasis": ["measurement-data"], "humanVerified": false },
+    { "id": "f013", "language": "en", "headline": "After weeks of protests, government withdraws the loose-sweets order", "emphasis": ["opposition-pressure", "government-action"], "humanVerified": false },
+    { "id": "f014", "language": "en", "headline": "12 dead, 16,000 evacuated as floods hit 23 districts in UP", "emphasis": ["human-impact"], "humanVerified": false },
+    { "id": "f015", "language": "en", "headline": "Tamil Nadu Assembly passes resolution on Tamil in High Court", "emphasis": ["process-procedure"], "humanVerified": false },
+    { "id": "f016", "language": "en", "headline": "'King of England?': judge raps finance minister for skipping court", "emphasis": ["reaction-quote"], "humanVerified": false },
+    { "id": "f017", "language": "en", "headline": "Following the HC ruling, temples move to acquire elephants again", "emphasis": ["political-causation"], "humanVerified": false },
+    { "id": "f018", "language": "en", "headline": "Two killed as omni bus hits lorry near Perambalur", "emphasis": ["human-impact", "outcome-result"], "humanVerified": false },
+    { "id": "f019", "language": "en", "headline": "Cabinet approves 3% DA hike for government employees", "emphasis": ["government-action"], "humanVerified": false },
+    { "id": "f020", "language": "en", "headline": "PMI manufacturing slips to near five-year low in August", "emphasis": ["measurement-data"], "humanVerified": false },
+    { "id": "f021", "language": "en", "headline": "Congress protests outside collectorate over Rahul Gandhi case", "emphasis": ["reaction-quote", "conflict-dispute"], "humanVerified": false },
+    { "id": "f022", "language": "en", "headline": "Anna University postpones semester exams in Chennai and Chengalpattu", "emphasis": ["government-action"], "humanVerified": false },
+    { "id": "f023", "language": "en", "headline": "Amid the standoff, Governor returns two Bills to the Assembly", "emphasis": ["conflict-dispute", "process-procedure"], "humanVerified": false },
+    { "id": "f024", "language": "en", "headline": "Japan Credit Rating Agency upgrades India's sovereign rating to A-", "emphasis": ["outcome-result", "measurement-data"], "humanVerified": false },
+    { "id": "f025", "language": "ta", "headline": "ரூ.1200 கோடியில் சென்னையில் புதிய தலைமைச் செயலகம்: பேரவையில் முதல்வர் அறிவிப்பு", "emphasis": ["government-action"], "humanVerified": false },
+    { "id": "f026", "language": "ta", "headline": "மு.க.ஸ்டாலின் தாக்கல் செய்த தேர்தல் வழக்கு தள்ளுபடி", "emphasis": ["outcome-result"], "humanVerified": false },
+    { "id": "f027", "language": "ta", "headline": "மெட்டூர் அணை செலவை விட முதல்வர் வருகைச் செலவு அதிகம் என பாஜக குற்றச்சாட்டு", "emphasis": ["accusation"], "humanVerified": false },
+    { "id": "f028", "language": "ta", "headline": "காங்கிரஸ் கண்டன ஆர்ப்பாட்டம்; ராகுல் காந்திக்கு எதிரான வழக்கு", "emphasis": ["reaction-quote", "conflict-dispute"], "humanVerified": false },
+    { "id": "f029", "language": "ta", "headline": "பெரம்பலூர் அருகே லாரி மீது பேருந்து மோதி இருவர் உயிரிழப்பு", "emphasis": ["human-impact", "outcome-result"], "humanVerified": false },
+    { "id": "f030", "language": "ta", "headline": "ரேஷன் கடைகளில் வெங்காயம் விற்பனை தொடங்கியது", "emphasis": ["government-action"], "humanVerified": false }
+  ],
+  "crossSourceSets": [
+    {
+      "id": "cs001",
+      "event": "New Tamil Nadu Secretariat announcement",
+      "articles": [
+        { "publisher": "The Hindu Tamil", "headline": "ரூ.1200 கோடியில் சென்னையில் புதிய தலைமைச் செயலகம்: பேரவையில் முதல்வர் விஜய் அறிவிப்பு", "emphasis": ["government-action"] },
+        { "publisher": "News18 Tamil", "headline": "”20 லட்சம் சதுர அடி.. ரூ.1200 கோடியில் புதிய தலைமைச் செயலகம்” முதலமைச்சர் விஜய் அறிவிப்பு", "emphasis": ["measurement-data", "government-action"] },
+        { "publisher": "BBC Tamil", "headline": "\"சென்னையில் 20 லட்சம் சதுர அடியில் புதிய சட்டப்பேரவை மற்றும் தலைமைச் செயலகம்\" - விஜய்", "emphasis": ["measurement-data", "government-action"] }
+      ],
+      "sharedCore": ["The CM announced a new Secretariat / Assembly complex in Chennai", "Stated cost ₹1,200 crore", "Stated size ~20 lakh sq ft"],
+      "humanVerified": false
+    },
+    {
+      "id": "cs002",
+      "event": "Madras HC dismisses Stalin's Kolathur plea",
+      "articles": [
+        { "publisher": "The Hindu", "headline": "Madras High Court dismisses M.K. Stalin's plea to declare him elected from Kolathur", "emphasis": ["outcome-result"] },
+        { "publisher": "India Today", "headline": "Setback for MK Stalin as High Court rejects plea against TVK's Kolathur win", "emphasis": ["outcome-result"] },
+        { "publisher": "Hindustan Times", "headline": "Madras HC dismisses MK Stalin's plea challenging Vijay team's Kolathur victory", "emphasis": ["outcome-result"] }
+      ],
+      "sharedCore": ["Madras HC dismissed Stalin's plea", "The plea concerned the Kolathur constituency result", "TVK won Kolathur"],
+      "framingDifferences": ["India Today frames the outcome as a 'setback for MK Stalin' (personalised); The Hindu and HT report it procedurally."],
+      "humanVerified": false
+    }
+  ]
+}

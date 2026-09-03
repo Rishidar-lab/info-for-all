@@ -83,12 +83,20 @@ describe("v0.10 — entities + stance", () => {
     expect(entitiesIn("DMK slams BJP over the issue").map((e) => e.id).sort()).toEqual(["bjp", "dmk"]);
     expect(primaryEntity(["Tamil Nadu Government announces scheme", "State government scheme welcomed", "BJP reacts"])?.id).toBe("tn-government");
   });
-  it("reads supportive / critical / neutral stance from phrasing, exposing the phrases", () => {
+  it("separates the article's own framing from quoted / reported speech", () => {
     const gov = entitiesIn("Tamil Nadu Government")[0];
-    expect(readStance("Tamil Nadu Government hails record GST collections", gov).stance).toBe("supportive");
-    expect(readStance("Opposition slams Tamil Nadu Government over failure to act", gov).stance).toBe("critical");
+    // reported speech: author is NEUTRAL, the quoted actor carries the stance
+    const slam = readStance("Opposition slams Tamil Nadu Government over failure to act", gov);
+    expect(slam.stance).toBe("neutral-descriptive");
+    expect(slam.quotedStance).toBe("critical");
+    const hail = readStance("Tamil Nadu Government hails record GST collections", gov);
+    expect(hail.stance).toBe("neutral-descriptive");
+    expect(hail.quotedStance).toBe("supportive");
+    // plain event report
     expect(readStance("Tamil Nadu Government announces new water scheme", gov).stance).toBe("neutral-descriptive");
-    expect(readStance("Tamil Nadu Government hails scheme but opposition slams the delay", gov).stance).toBe("mixed");
+    // the ARTICLE'S OWN voice evaluates → author stance
+    expect(readStance("Government's total failure exposed as the water crisis worsens", gov).stance).toBe("critical");
+    expect(readStance("A masterstroke: the government's infrastructure blitz wins over sceptics", gov).stance).toBe("supportive");
   });
 });
 

@@ -43,7 +43,7 @@ const ALL_STATUSES: ClaimEvidenceStatus[] = [
   "SUPERSEDED",
 ];
 
-function statusOf(c: Claim): ClaimEvidenceStatus {
+export function statusOf(c: Claim): ClaimEvidenceStatus {
   if (c.status === "retracted") return "RETRACTED";
   if (c.corrections.length > 0) return "CORRECTED";
   if (c.status === "outdated" || c.updates.some((u) => u.supersedes)) return "SUPERSEDED";

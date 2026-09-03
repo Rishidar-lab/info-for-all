@@ -66,6 +66,13 @@ export function computePublisherObserved(
     }
   }
 
+  const bump: Record<CoverageStance, keyof PublisherEntityStance> = {
+    supportive: "supportive",
+    critical: "critical",
+    "neutral-descriptive": "neutralDescriptive",
+    mixed: "mixed",
+    unclear: "unclear",
+  };
   const stanceByEntity = new Map<string, PublisherEntityStance>();
   for (const a of politicalArts) {
     const text = `${a.title}. ${a.excerpt ?? ""}`;
@@ -73,15 +80,11 @@ export function computePublisherObserved(
       const rec =
         stanceByEntity.get(e.id) ??
         { entityId: e.id, entityName: e.name, n: 0, supportive: 0, critical: 0, neutralDescriptive: 0, mixed: 0, unclear: 0 };
+      // ALIGNMENT tracks the ARTICLE'S OWN framing (author stance). Reported
+      // speech ("X slams Y") is descriptive of the exchange, not the publisher's
+      // stance — that is the whole point (docs/MEDIA-LANDSCAPE.md).
       const s = readStance(text, e).stance;
       rec.n++;
-      const bump: Record<CoverageStance, keyof PublisherEntityStance> = {
-        supportive: "supportive",
-        critical: "critical",
-        "neutral-descriptive": "neutralDescriptive",
-        mixed: "mixed",
-        unclear: "unclear",
-      };
       (rec[bump[s]] as number)++;
       stanceByEntity.set(e.id, rec);
     }

@@ -30,7 +30,10 @@
     "verify": "npm run lint && npm run typecheck && npm run test && npm run build",
     "ingest:discourse": "tsx scripts/ingest-discourse.ts",
     "history:append": "tsx scripts/history-append.ts",
-    "source-discovery-audit": "tsx scripts/source-discovery-audit.ts"
+    "source-discovery-audit": "tsx scripts/source-discovery-audit.ts",
+    "eval:stance": "tsx scripts/eval-stance.ts",
+    "eval:framing": "tsx scripts/eval-framing.ts",
+    "eval:evidence": "tsx scripts/eval-evidence.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.8",

@@ -1,0 +1,75 @@
+{
+  "n": 64,
+  "humanVerified": 0,
+  "accuracy": 0.546875,
+  "macroF1": 0.5375,
+  "perLabel": {
+    "SUPPORTIVE": {
+      "p": 0.5,
+      "r": 0.25,
+      "f1": 0.3333333333333333,
+      "support": 4
+    },
+    "CRITICAL": {
+      "p": 1,
+      "r": 0.7142857142857143,
+      "f1": 0.8333333333333333,
+      "support": 7
+    },
+    "NEUTRAL_DESCRIPTIVE": {
+      "p": 0.8888888888888888,
+      "r": 0.5333333333333333,
+      "f1": 0.6666666666666667,
+      "support": 45
+    },
+    "MIXED": {
+      "p": 1,
+      "r": 0.5,
+      "f1": 0.6666666666666666,
+      "support": 4
+    },
+    "UNCLEAR": {
+      "p": 0.10714285714285714,
+      "r": 0.75,
+      "f1": 0.1875,
+      "support": 4
+    }
+  },
+  "confusion": {
+    "SUPPORTIVE": {
+      "SUPPORTIVE": 1,
+      "CRITICAL": 0,
+      "NEUTRAL_DESCRIPTIVE": 2,
+      "MIXED": 0,
+      "UNCLEAR": 1
+    },
+    "CRITICAL": {
+      "SUPPORTIVE": 0,
+      "CRITICAL": 5,
+      "NEUTRAL_DESCRIPTIVE": 0,
+      "MIXED": 0,
+      "UNCLEAR": 2
+    },
+    "NEUTRAL_DESCRIPTIVE": {
+      "SUPPORTIVE": 0,
+      "CRITICAL": 0,
+      "NEUTRAL_DESCRIPTIVE": 24,
+      "MIXED": 0,
+      "UNCLEAR": 21
+    },
+    "MIXED": {
+      "SUPPORTIVE": 1,
+      "CRITICAL": 0,
+      "NEUTRAL_DESCRIPTIVE": 0,
+      "MIXED": 2,
+      "UNCLEAR": 1
+    },
+    "UNCLEAR": {
+      "SUPPORTIVE": 0,
+      "CRITICAL": 0,
+      "NEUTRAL_DESCRIPTIVE": 1,
+      "MIXED": 0,
+      "UNCLEAR": 3
+    }
+  }
+}

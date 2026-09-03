@@ -1,0 +1,105 @@
+{
+  "n": 36,
+  "accuracy": 0.9444444444444444,
+  "confusion": {
+    "HIGHLY_CORROBORATED": {
+      "HIGHLY_CORROBORATED": 5,
+      "CORROBORATED": 1,
+      "PARTIALLY_CORROBORATED": 0,
+      "SINGLE_SOURCE": 0,
+      "DISPUTED": 0,
+      "UNVERIFIED": 0,
+      "CORRECTED": 0,
+      "RETRACTED": 0,
+      "SUPERSEDED": 0
+    },
+    "CORROBORATED": {
+      "HIGHLY_CORROBORATED": 0,
+      "CORROBORATED": 12,
+      "PARTIALLY_CORROBORATED": 0,
+      "SINGLE_SOURCE": 0,
+      "DISPUTED": 0,
+      "UNVERIFIED": 0,
+      "CORRECTED": 0,
+      "RETRACTED": 0,
+      "SUPERSEDED": 0
+    },
+    "PARTIALLY_CORROBORATED": {
+      "HIGHLY_CORROBORATED": 0,
+      "CORROBORATED": 0,
+      "PARTIALLY_CORROBORATED": 1,
+      "SINGLE_SOURCE": 0,
+      "DISPUTED": 0,
+      "UNVERIFIED": 0,
+      "CORRECTED": 0,
+      "RETRACTED": 0,
+      "SUPERSEDED": 0
+    },
+    "SINGLE_SOURCE": {
+      "HIGHLY_CORROBORATED": 0,
+      "CORROBORATED": 0,
+      "PARTIALLY_CORROBORATED": 0,
+      "SINGLE_SOURCE": 5,
+      "DISPUTED": 0,
+      "UNVERIFIED": 1,
+      "CORRECTED": 0,
+      "RETRACTED": 0,
+      "SUPERSEDED": 0
+    },
+    "DISPUTED": {
+      "HIGHLY_CORROBORATED": 0,
+      "CORROBORATED": 0,
+      "PARTIALLY_CORROBORATED": 0,
+      "SINGLE_SOURCE": 0,
+      "DISPUTED": 2,
+      "UNVERIFIED": 0,
+      "CORRECTED": 0,
+      "RETRACTED": 0,
+      "SUPERSEDED": 0
+    },
+    "UNVERIFIED": {
+      "HIGHLY_CORROBORATED": 0,
+      "CORROBORATED": 0,
+      "PARTIALLY_CORROBORATED": 0,
+      "SINGLE_SOURCE": 0,
+      "DISPUTED": 0,
+      "UNVERIFIED": 4,
+      "CORRECTED": 0,
+      "RETRACTED": 0,
+      "SUPERSEDED": 0
+    },
+    "CORRECTED": {
+      "HIGHLY_CORROBORATED": 0,
+      "CORROBORATED": 0,
+      "PARTIALLY_CORROBORATED": 0,
+      "SINGLE_SOURCE": 0,
+      "DISPUTED": 0,
+      "UNVERIFIED": 0,
+      "CORRECTED": 2,
+      "RETRACTED": 0,
+      "SUPERSEDED": 0
+    },
+    "RETRACTED": {
+      "HIGHLY_CORROBORATED": 0,
+      "CORROBORATED": 0,
+      "PARTIALLY_CORROBORATED": 0,
+      "SINGLE_SOURCE": 0,
+      "DISPUTED": 0,
+      "UNVERIFIED": 0,
+      "CORRECTED": 0,
+      "RETRACTED": 1,
+      "SUPERSEDED": 0
+    },
+    "SUPERSEDED": {
+      "HIGHLY_CORROBORATED": 0,
+      "CORROBORATED": 0,
+      "PARTIALLY_CORROBORATED": 0,
+      "SINGLE_SOURCE": 0,
+      "DISPUTED": 0,
+      "UNVERIFIED": 0,
+      "CORRECTED": 0,
+      "RETRACTED": 0,
+      "SUPERSEDED": 2
+    }
+  }
+}
