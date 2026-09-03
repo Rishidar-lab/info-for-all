@@ -354,7 +354,9 @@ export default function QualityDashboard() {
               <p className="ui mt-1 text-[12px] leading-relaxed text-ink-3">
                 Every figure below is a straight count over the current snapshot
                 ({new Date(dataset.generatedAt).toISOString().slice(0, 16).replace("T", " ")}Z) or the
-                144-case category corpus. The editorial score is a <strong>ranking</strong>, not a
+                {" "}{ce.corpusSize}-case category corpus (hand-labelled, and tuned against during
+                development — the corpus precision/recall below is not a held-out generalisation
+                measure). The editorial score is a <strong>ranking</strong>, not a
                 probability of truth. Method:{" "}
                 <a
                   href="https://github.com/Rishidar-lab/info-for-all/blob/main/docs/EDITORIAL-MODEL.md"
@@ -372,7 +374,7 @@ export default function QualityDashboard() {
               {[
                 ["Editorial bands (U/H/S/B/Sup)", `${m.bands.urgent ?? 0}/${m.bands.high ?? 0}/${m.bands.standard ?? 0}/${m.bands.background ?? 0}/${m.bands.suppressed ?? 0}`],
                 ["Secondary category — live rate", `${(m.secondaryCategory.rate * 100).toFixed(1)}%`],
-                ["Secondary category — corpus P/R", `${(secP * 100).toFixed(0)}% / ${(secR * 100).toFixed(0)}%`],
+                ["Secondary category — corpus P/R (tuned set)", `${(secP * 100).toFixed(1)}% / ${(secR * 100).toFixed(1)}%`],
                 ["Political events described", String(m.politicalIdentity.politics)],
                 ["— threaded to another event", String(m.politicalIdentity.threaded)],
                 ["— allegation w/ no response", String(m.politicalIdentity.unanswered)],
