@@ -24,6 +24,7 @@ import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildLandscapeSummary } from "../src/lib/media-landscape/dashboard";
+import { microBrief } from "../src/lib/brief/build";
 import { PUBLISHERS } from "../src/data/publishers";
 import type { LiveCluster, LiveDataset } from "../src/lib/live/types";
 
@@ -86,6 +87,7 @@ const searchBytes = write("search/index.json", { generatedAt: dataset.generatedA
 const compactClusters = dataset.clusters.map((c) => {
   const td = c.trendData;
   const ml = td?.mediaLandscape;
+  const mb = microBrief(c, clusterArts(c));
   return {
     slug: c.slug,
     title: c.title,
@@ -99,6 +101,7 @@ const compactClusters = dataset.clusters.map((c) => {
     category: td?.category ?? null,
     editorialBand: td?.editorial?.band ?? null,
     severity: td?.severity?.level ?? null,
+    brief: mb.withheld ? { withheld: true, reason: mb.withheldReason } : { withheld: false, text: mb.text, citations: mb.citationCount },
     coverage: ml
       ? {
           uniquePublishers: ml.coverage.uniquePublishers,

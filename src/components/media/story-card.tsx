@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { LiveCluster } from "@/lib/live/types";
 import { cn } from "@/lib/format";
+import { microBriefForCluster } from "@/lib/live/brief-view";
 import { AlignmentBar } from "./alignment-bar";
 import { BlindspotBadge } from "./blindspot-panel";
 
@@ -23,6 +24,7 @@ export function StoryCard({ cluster, rank }: { cluster: LiveCluster; rank?: numb
   const cat = td?.category ?? "other-relevant";
   const scope = cluster.scope === "tamil-nadu" ? "Tamil Nadu" : "India";
   const ep = ml?.evidenceProfile;
+  const mb = microBriefForCluster(cluster);
 
   return (
     <article className="card min-w-0 p-4">
@@ -42,6 +44,19 @@ export function StoryCard({ cluster, rank }: { cluster: LiveCluster; rank?: numb
               {cluster.title}
             </Link>
           </h3>
+
+          {mb.withheld ? (
+            <p className="mt-1.5 ui text-[12px] italic leading-relaxed text-ink-3">
+              IFFA Brief: collecting evidence — {mb.coverage.sources} publisher{mb.coverage.sources === 1 ? "" : "s"}, {mb.coverage.families} independent famil{mb.coverage.families === 1 ? "y" : "ies"}.
+            </p>
+          ) : (
+            <p className="mt-1.5 ui text-[12.5px] leading-relaxed text-ink-2">
+              {mb.text}{" "}
+              <Link href={`/story/${cluster.slug}`} className="whitespace-nowrap font-semibold text-accent hover:underline">
+                Read IFFA Brief →
+              </Link>
+            </p>
+          )}
 
           {ml ? (
             <>

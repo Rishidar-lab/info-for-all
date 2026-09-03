@@ -6,6 +6,7 @@ import { CATEGORY_LABEL, type CategoryId } from "@/lib/domain/categories";
 import { GEO_TIER_LABEL, type GeoTier } from "@/lib/domain/geo-tiers";
 import { TREND_STATE_LABEL, type TrendState } from "@/lib/trends/types";
 import { categoryOf, tierOf } from "@/lib/live/trends-view";
+import { microBriefForCluster } from "@/lib/live/brief-view";
 import { TrendWhy } from "./trend-why";
 import { EditorialWhy } from "./editorial-why";
 import { cn } from "@/lib/format";
@@ -77,6 +78,7 @@ export function EventCard({
   const kind = cluster.crisisType ? CRISIS_TYPE_LABEL[cluster.crisisType] : cluster.trendData?.categoryReason;
   const districts = cluster.districts.slice(0, 4);
   const isActiveCrisis = cluster.isCrisis && (cluster.lifecycle === "active" || cluster.lifecycle === "update");
+  const mb = microBriefForCluster(cluster);
 
   return (
     <article
@@ -135,6 +137,14 @@ export function EventCard({
           {cluster.title}
         </Link>
       </h3>
+
+      {mb.withheld ? (
+        <p className="mt-1.5 ui text-[11.5px] italic leading-snug text-ink-3">
+          IFFA Brief: collecting evidence — {mb.coverage.sources} publisher{mb.coverage.sources === 1 ? "" : "s"}, {mb.coverage.families} independent famil{mb.coverage.families === 1 ? "y" : "ies"}.
+        </p>
+      ) : (
+        <p className="mt-1.5 ui text-[12px] leading-relaxed text-ink-2">{mb.text}</p>
+      )}
 
       <div className="mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-1 ui text-[11.5px] text-ink-3">
         {cluster.state && <span>{cluster.state}</span>}

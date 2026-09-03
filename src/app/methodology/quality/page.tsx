@@ -634,6 +634,47 @@ export default function QualityDashboard() {
         </p>
       </section>
 
+      {/* ── Ground-Parity Milestone A · Native comprehension ────────── */}
+      <section>
+        <div className="mb-3 border-b border-rule-strong pb-2">
+          <div className="label mb-1">Ground-Parity Milestone A · Native comprehension</div>
+          <h2 className="font-serif text-[20px] font-semibold text-ink">IFFA now explains the story</h2>
+          <p className="ui mt-1 text-[12px] leading-relaxed text-ink-3">
+            The story page used to say &ldquo;IFFA does not write its own prose account&rdquo;. It does now. For
+            every sufficiently-covered event a <strong>deterministic synthesiser</strong> (no language model)
+            builds a native brief from the frozen claim engine, event state, independence and primary records.
+            Every factual sentence is bound to its claims, sources and records; a{" "}
+            <strong>hallucination firewall</strong> re-checks each sentence — entities, numbers, dates, units and
+            attribution — and drops any that cannot be traced to a source. If the evidence is too thin the brief
+            is <strong>withheld with a reason</strong>, never padded.
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+          <div className="card p-3">
+            <div className="mono text-[16px] font-semibold text-agree">10% → 50%</div>
+            <div className="ui text-[10px] text-ink-3">Native-comprehension rate — 20-story front-door audit</div>
+          </div>
+          <div className="card p-3">
+            <div className="mono text-[16px] font-semibold text-ink">100%</div>
+            <div className="ui text-[10px] text-ink-3">Brief delivered where coverage supports one (53 clusters, ≥2 families / official alert)</div>
+          </div>
+          <div className="card p-3">
+            <div className="mono text-[16px] font-semibold text-ink">0</div>
+            <div className="ui text-[10px] text-ink-3">Unsupported factual sentences published (firewall drops them)</div>
+          </div>
+          <div className="card p-3">
+            <div className="mono text-[16px] font-semibold text-ink">EN + தமிழ்</div>
+            <div className="ui text-[10px] text-ink-3">Both briefs from the same claim ids — identical factual state</div>
+          </div>
+        </div>
+        <p className="ui mt-3 text-[11.5px] leading-relaxed text-ink-3">
+          <strong>Withholding is the correct result, not a gap:</strong> half of the audited front-door stories
+          are single-independent-source, so their briefs are withheld. Closing that needs Milestone B
+          (research-on-demand), not more synthesis. Ground-News-level parity is <em>not</em> claimed — Milestones
+          B–E (URL-to-coverage, mature Perspective Compare, source scale, reader personalisation) remain.
+        </p>
+      </section>
+
       {/* ── metrics table ───────────────────────────────────────────── */}
       <section>
         <div className="mb-3 border-b border-rule-strong pb-2">

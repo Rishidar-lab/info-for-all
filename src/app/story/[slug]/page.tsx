@@ -11,6 +11,7 @@ import {
   LIFECYCLE_LABEL,
   VERIFICATION_LABEL,
 } from "@/lib/live/dataset";
+import { briefsForCluster, perspectiveForCluster } from "@/lib/live/brief-view";
 import { CRISIS_TYPE_LABEL } from "@/lib/live/crisis";
 import { trendRoutableSlugs } from "@/lib/live/trends-view";
 import { StoryTimeline } from "@/components/iffa/story-timeline";
@@ -18,6 +19,7 @@ import { TrendWhy } from "@/components/iffa/trend-why";
 import { VerificationBadge, LifecycleBadge } from "@/components/live/badges";
 import { ClaimsPanel, type ArticleRef } from "@/components/live/claims-panel";
 import { cn } from "@/lib/format";
+import { Brief } from "@/components/media/brief";
 import { StoryTabs, type StoryTab } from "@/components/media/story-tabs";
 import { CoverageLandscapePanel } from "@/components/media/coverage-landscape";
 import { BlindspotPanel, BlindspotBadge } from "@/components/media/blindspot-panel";
@@ -25,6 +27,8 @@ import { HeadlineComparison } from "@/components/media/headline-comparison";
 import { EvidenceMatrix, EvidenceProfilePanel } from "@/components/media/evidence-matrix";
 import { FullCoverage, type FullCoverageRow } from "@/components/media/full-coverage";
 import { DiscoursePanel } from "@/components/media/discourse-panel";
+import { PerspectivePanel } from "@/components/media/perspective";
+import { ReferencesPanel } from "@/components/media/references-panel";
 import { AlignmentBar } from "@/components/media/alignment-bar";
 import { publisherByName, publisherSlug } from "@/data/publishers";
 import { readStance } from "@/lib/media-landscape/stance";
@@ -43,12 +47,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const c = clusterBySlug(slug);
   if (!c) return { title: "Story not found" };
+  const { en } = briefsForCluster(c);
+  const lead = en.shortVersion[0]?.text;
   const cov = c.trendData?.mediaLandscape?.coverage;
   return {
     title: c.title,
-    description: cov
-      ? `${cov.uniquePublishers} sources · ${cov.independentSourceFamilies} independent families · Tamil ${cov.tamilCount} / English ${cov.englishCount}.`
-      : `${clusterLabel(c).tag} — ${c.distinctPublishers} publisher(s).`,
+    description:
+      lead ??
+      (cov
+        ? `${cov.uniquePublishers} sources · ${cov.independentSourceFamilies} independent families · Tamil ${cov.tamilCount} / English ${cov.englishCount}.`
+        : `${clusterLabel(c).tag} — ${c.distinctPublishers} publisher(s).`),
   };
 }
 
@@ -77,6 +85,10 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
   const label = clusterLabel(cluster);
   const ec = cluster.claims;
   const ml = cluster.trendData?.mediaLandscape;
+
+  const { en: brief, ta: tamilBrief } = briefsForCluster(cluster);
+  const perspective = perspectiveForCluster(cluster);
+
   const articleRefs: ArticleRef[] = articles.map((a) => ({
     id: a.id,
     publisher: a.publisher,
@@ -110,101 +122,49 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
     };
   });
 
-  // ── tab content ──────────────────────────────────────────────────────
-  const overview = (
-    <div className="flex flex-col gap-6">
-      <p className="ui max-w-3xl text-[13px] leading-relaxed text-ink-3">
-        Working title taken from the sources below. IFFA does not write its own prose account — it
-        structures what the sources say and shows where each claim came from.
-      </p>
-
-      {ml && (
-        <div className="card p-4">
-          <div className="label mb-1.5 text-[10px]">Coverage at a glance</div>
-          <div className="flex flex-wrap gap-x-6 gap-y-1.5 ui text-[13px] text-ink-2">
-            <span><span className="mono text-ink">{ml.coverage.uniquePublishers}</span> sources</span>
-            <span><span className="mono text-ink">{ml.coverage.independentSourceFamilies}</span> independent families</span>
-            <span>Tamil <span className="mono text-ink">{ml.coverage.tamilCount}</span> · English <span className="mono text-ink">{ml.coverage.englishCount}</span></span>
-            <span><span className="mono text-ink">{ml.evidenceProfile.substantiveClaims}</span> substantive claims</span>
-          </div>
-          <div className="mt-3">
-            <div className="label mb-1 text-[10px]">Coverage alignment</div>
-            <AlignmentBar groups={ml.coverage.alignment} reason={ml.coverage.alignmentUnavailableReason} />
-          </div>
-          <div className="mt-3">
-            <BlindspotBadge blindspots={ml.blindspots} />
-          </div>
-        </div>
-      )}
-
-      {ml && <EvidenceProfilePanel profile={ml.evidenceProfile} strength={ml.evidenceStrength} />}
-
-      {cluster.trendData?.trend && (
-        <div className="max-w-2xl">
-          <TrendWhy cluster={cluster} open />
-        </div>
-      )}
-
-      {cluster.trendData?.eventState?.whatChangedSincePreviousSnapshot &&
-        cluster.trendData.eventState.whatChangedSincePreviousSnapshot.length > 0 && (
-          <div className="max-w-2xl border-l-2 border-rule-strong pl-3">
-            <div className="label mb-1">What changed</div>
-            <ul className="flex flex-col gap-1 ui text-[12.5px] text-ink-2">
-              {cluster.trendData.eventState.whatChangedSincePreviousSnapshot.map((c, i) => (
-                <li key={i}>· {c}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-      {cluster.trendData?.politicalCoverage && (
-        <div className="max-w-2xl border-l-2 border-rule-strong pl-3">
-          <div className="label mb-1">Coverage completeness</div>
-          <p className="ui text-[12.5px] text-ink-2">{cluster.trendData.politicalCoverage.note}</p>
-          <p className="ui mt-1 text-[11px] text-ink-3">
-            A description of what this event&rsquo;s coverage contains — not a judgement of any party. IFFA
-            does not score political bias.
-          </p>
-        </div>
-      )}
-
-      {cluster.trendData?.localImpact && cluster.trendData.localImpact.statements.length > 0 && (
-        <div className="max-w-2xl border-l-2 border-rule-strong pl-3">
-          <div className="label mb-1">On the ground</div>
-          <p className="ui text-[12px] text-ink-3">
-            {cluster.trendData.localImpact.scale !== "none" && (
-              <span className="mr-1 font-semibold uppercase tracking-wide">{cluster.trendData.localImpact.scale}</span>
-            )}
-            {cluster.trendData.localImpact.affectedDistricts.join(", ") || cluster.trendData.localImpact.affectedTowns.join(", ")}
-          </p>
-          <ul className="mt-1.5 flex flex-col gap-1 ui text-[12.5px] text-ink-2">
-            {cluster.trendData.localImpact.statements.map((s, i) => (
-              <li key={i}>
-                <span className="text-ink-3">[{s.kinds.join(" / ")}]</span> {s.text}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {cluster.cap && (
-        <div>
-          <div className="label mb-2">Official alert — as issued</div>
-          <div className="card grid grid-cols-1 gap-x-6 gap-y-1.5 bg-surface-2 p-4 ui text-[13px] sm:grid-cols-2">
-            {cluster.cap.event && <Field k="Event" v={cluster.cap.event} />}
-            {cluster.cap.senderName && <Field k="Issuing authority" v={cluster.cap.senderName} />}
-            {cluster.cap.severity && <Field k="Severity" v={cluster.cap.severity} />}
-            {cluster.cap.certainty && <Field k="Certainty" v={cluster.cap.certainty} />}
-            {cluster.cap.effectiveFrom && <Field k="Effective from" v={fmtIST(cluster.cap.effectiveFrom)} />}
-            {cluster.cap.effectiveUntil && <Field k="Effective until" v={fmtIST(cluster.cap.effectiveUntil)} />}
-            {cluster.cap.areaDescription && <Field k="Stated area" v={cluster.cap.areaDescription} span />}
-          </div>
-          <p className="ui mt-2 text-[11.5px] text-ink-3">Reproduced from the issuing authority&rsquo;s alert, unmodified by IFFA.</p>
-        </div>
-      )}
+  // ── coverage-at-a-glance (always visible, under the brief) ────────────
+  const coverageGlance = ml ? (
+    <div className="card p-4">
+      <div className="label mb-1.5 text-[10px]">Coverage at a glance</div>
+      <div className="flex flex-wrap gap-x-6 gap-y-1.5 ui text-[13px] text-ink-2">
+        <span><span className="mono text-ink">{ml.coverage.uniquePublishers}</span> sources</span>
+        <span><span className="mono text-ink">{ml.coverage.independentSourceFamilies}</span> independent families</span>
+        <span>Tamil <span className="mono text-ink">{ml.coverage.tamilCount}</span> · English <span className="mono text-ink">{ml.coverage.englishCount}</span></span>
+        <span><span className="mono text-ink">{ml.coverage.officialCount}</span> official</span>
+        <span><span className="mono text-ink">{ml.evidenceProfile.primaryDocumentSupported}</span> primary-doc backed</span>
+      </div>
+      <div className="mt-3">
+        <div className="label mb-1 text-[10px]">Coverage alignment</div>
+        <AlignmentBar groups={ml.coverage.alignment} reason={ml.coverage.alignmentUnavailableReason} />
+      </div>
+      <div className="mt-3">
+        <BlindspotBadge blindspots={ml.blindspots} />
+      </div>
+    </div>
+  ) : (
+    <div className="card p-4 ui text-[13px] text-ink-2">
+      <span className="mono text-ink">{cluster.distinctPublishers}</span> publisher{cluster.distinctPublishers === 1 ? "" : "s"} ·{" "}
+      {articles.filter((a) => a.language === "ta").length} Tamil · {articles.filter((a) => a.language === "en").length} English
     </div>
   );
 
+  const capBox = cluster.cap ? (
+    <div>
+      <div className="label mb-2">Official alert — as issued</div>
+      <div className="card grid grid-cols-1 gap-x-6 gap-y-1.5 bg-surface-2 p-4 ui text-[13px] sm:grid-cols-2">
+        {cluster.cap.event && <Field k="Event" v={cluster.cap.event} />}
+        {cluster.cap.senderName && <Field k="Issuing authority" v={cluster.cap.senderName} />}
+        {cluster.cap.severity && <Field k="Severity" v={cluster.cap.severity} />}
+        {cluster.cap.certainty && <Field k="Certainty" v={cluster.cap.certainty} />}
+        {cluster.cap.effectiveFrom && <Field k="Effective from" v={fmtIST(cluster.cap.effectiveFrom)} />}
+        {cluster.cap.effectiveUntil && <Field k="Effective until" v={fmtIST(cluster.cap.effectiveUntil)} />}
+        {cluster.cap.areaDescription && <Field k="Stated area" v={cluster.cap.areaDescription} span />}
+      </div>
+      <p className="ui mt-2 text-[11.5px] text-ink-3">Reproduced from the issuing authority&rsquo;s alert, unmodified by IFFA.</p>
+    </div>
+  ) : null;
+
+  // ── tabs ─────────────────────────────────────────────────────────────
   const evidenceTab = (
     <div className="flex flex-col gap-5">
       {ml && <EvidenceProfilePanel profile={ml.evidenceProfile} strength={ml.evidenceStrength} />}
@@ -239,11 +199,22 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
     </div>
   );
 
-  const tabs: StoryTab[] = [
-    { id: "overview", label: "Overview", content: overview },
-    { id: "coverage", label: "Full coverage", count: articles.length, content: <FullCoverage rows={rows} /> },
-  ];
+  const tabs: StoryTab[] = [];
+  if (perspective.hasContrast || perspective.sharedFactualCore.length > 0) {
+    tabs.push({ id: "perspectives", label: "Perspectives", content: <PerspectivePanel pc={perspective} /> });
+  }
+  tabs.push({
+    id: "evidence",
+    label: "Evidence",
+    count: ml?.evidenceProfile.substantiveClaims,
+    content: evidenceTab,
+  });
   if (ml) {
+    tabs.push({
+      id: "headlines",
+      label: "Headlines",
+      content: <HeadlineComparison framing={ml.framing} articlePub={articlePub} />,
+    });
     tabs.push({
       id: "landscape",
       label: "Media landscape",
@@ -254,23 +225,10 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
         </div>
       ),
     });
-    tabs.push({
-      id: "headlines",
-      label: "Headlines",
-      content: <HeadlineComparison framing={ml.framing} articlePub={articlePub} />,
-    });
   }
-  tabs.push({
-    id: "evidence",
-    label: "Evidence",
-    count: ml?.evidenceProfile.substantiveClaims,
-    content: evidenceTab,
-  });
-  tabs.push({
-    id: "timeline",
-    label: "Timeline",
-    content: <StoryTimeline cluster={cluster} articles={articles} />,
-  });
+  tabs.push({ id: "coverage", label: "Full coverage", count: articles.length, content: <FullCoverage rows={rows} /> });
+  tabs.push({ id: "timeline", label: "Timeline", content: <StoryTimeline cluster={cluster} articles={articles} /> });
+  tabs.push({ id: "references", label: "References", count: brief.references.length, content: <ReferencesPanel references={brief.references} /> });
   if (ml && ml.discourse.length > 0) {
     tabs.push({
       id: "discourse",
@@ -294,6 +252,7 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 ui text-[12px] text-ink-3">
           <span className="label">{kind}</span>
           <span>{scopeLabel}</span>
+          {brief.place && <><span className="text-rule-strong">·</span><span>{brief.place}</span></>}
           <span className="text-rule-strong">·</span>
           <span>Updated {istTimestamp(cluster.updatedAt)}</span>
         </div>
@@ -329,7 +288,24 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
         )}
       </header>
 
-      <div className="mt-5 min-w-0">
+      <div className="mt-5 flex flex-col gap-5">
+        <Brief brief={brief} tamil={tamilBrief ?? null} />
+        {coverageGlance}
+        {capBox}
+
+        {cluster.trendData?.trend && (
+          <details className="max-w-2xl">
+            <summary className="ui cursor-pointer text-[12px] font-semibold text-ink-3 hover:text-accent">
+              Why is this story prominent? — editorial ranking
+            </summary>
+            <div className="mt-2">
+              <TrendWhy cluster={cluster} open />
+            </div>
+          </details>
+        )}
+      </div>
+
+      <div className="mt-6 min-w-0">
         <StoryTabs tabs={tabs} />
       </div>
 
