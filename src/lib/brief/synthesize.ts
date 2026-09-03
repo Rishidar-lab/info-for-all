@@ -63,7 +63,10 @@ class SentenceFactory {
 
 function cite(claims: Claim[] = [], articleIds: string[] = [], evidenceIds: string[] = []): CitationBinding {
   const claimIds = [...new Set(claims.map((c) => c.id))];
-  const sourceIds = [...new Set([...articleIds, ...claims.flatMap((c) => c.supportingArticleIds)])];
+  // prefer the claims' own supporters; extra article ids are a fallback only when
+  // there is no claim (CAP lead, confirmed-facts). Never dump the whole cluster.
+  const fromClaims = [...new Set(claims.flatMap((c) => c.supportingArticleIds))];
+  const sourceIds = fromClaims.length > 0 ? fromClaims : [...new Set(articleIds)].slice(0, 6);
   const evIds = [...new Set([...evidenceIds, ...claims.flatMap((c) => c.primaryEvidenceIds)])];
   return { claimIds, sourceIds, evidenceIds: evIds };
 }
@@ -244,14 +247,19 @@ function keyFactSentences(inp: BriefInputs, F: SentenceFactory, usedClaimIds: Se
     }
 
     if (c.status === "attributed" || c.type === "allegation" || c.type === "prediction") {
-      const { text, speaker: parsed } = splitAttribution(c.canonicalText);
+      const { text: raw, speaker: parsed } = splitAttribution(c.canonicalText);
       const provSpeaker = c.provenance.find((p) => p.attribution)?.attribution;
       const speaker = normSpeaker(parsed ?? provSpeaker ?? c.subjects[0]);
-      if (text.length < 12) {
+      const text = trimDangling(stripLeadActor(raw));
+      if (text.length < 14) {
         usedClaimIds.add(c.id);
         continue;
       }
-      push(F.make(speaker && !/^[A-Z]/.test(text) ? `${titleCaseAuthority(speaker)} said ${lowerFirst(text)}` : text, cite([c]), supportFor(c), speaker));
+      const rendered =
+        speaker && !ATTRIBUTION_CUE_RE.test(text.slice(0, 40))
+          ? `${titleCaseAuthority(speaker)} said ${lowerFirst(text)}`
+          : text;
+      push(F.make(rendered, cite([c]), supportFor(c), speaker));
     } else if (c.status === "corroborated" || c.status === "partially-corroborated" || (c.type === "statistic" && c.status === "single-source")) {
       push(F.make(cleanClaimText(c.canonicalText), cite([c]), supportFor(c)));
     }
@@ -306,16 +314,21 @@ function uncertaintySentences(inp: BriefInputs, slug: string): BriefUncertainty[
     out.push({ id: `${slug}-u${++n}`, text: text.replace(/\s+/g, " ").trim(), derivedFrom: from, citations: c });
   };
 
+  const isCrisis = cluster.isCrisis || cluster.trendData?.category === "crisis";
+  // crisis-shaped "no casualty / no CAP record" notes are noise on a non-crisis story
+  const crisisShaped = /casualty|evacuation|damage figure|CAP alert|on-ground report|on-the-ground report/i;
+  const keep = (t: string) => isCrisis || !crisisShaped.test(t);
+
   const es = cluster.trendData?.eventState;
   for (const q of es?.openQuestions ?? es?.unresolvedQuestions ?? []) {
     if (out.length >= 4) break;
-    if (/claim-by-claim comparison awaits review/i.test(q)) continue;
-    add(q, "event-state", cite([], inp.articles.map((a) => a.id)));
+    if (/claim-by-claim comparison awaits review/i.test(q) || !keep(q)) continue;
+    add(q, "event-state", cite([], inp.articles.slice(0, 5).map((a) => a.id)));
   }
   for (const u of claims?.unknowns ?? []) {
     if (out.length >= 4) break;
-    if (/claim-by-claim comparison awaits review/i.test(u)) continue;
-    add(u, "claim-unknowns", cite([], inp.articles.map((a) => a.id)));
+    if (/claim-by-claim comparison awaits review/i.test(u) || !keep(u)) continue;
+    add(u, "claim-unknowns", cite([], inp.articles.slice(0, 5).map((a) => a.id)));
   }
   const singles = usableClaims.filter((c) => c.status === "single-source" && c.type !== "event");
   if (singles.length && out.length < 4) {
@@ -603,6 +616,11 @@ function stripLeadActor(s: string): string {
   return s.replace(/^(?:the\s+)?(?:tamil nadu\s+)?(?:cm|chief minister|minister|governor|government|opposition)\b[\s,:-]*/i, "");
 }
 const JUNK_SPEAKER_RE = /^(a statement|as per|according to|sources?|the said|per the|report|it|they|petition|officials?)\b/i;
+const ATTRIBUTION_CUE_RE = /\b(said|says|announced?|stated?|alleged?|accus\w+|claimed?|warned?|forecast|urged?|proposed?|denied?|noted?)\b/i;
+/** Drop a sentence that ends on a dangling preposition/conjunction (a clipped claim). */
+function trimDangling(s: string): string {
+  return s.replace(/[\s,]+(under|for|to|with|and|of|in|on|at|by|from|as|that|which|the|a)\s*[.…]?\s*$/i, ".").replace(/\.\.$/, ".");
+}
 function normSpeaker(s: string | undefined): string | undefined {
   if (!s) return undefined;
   const t = s.trim();

@@ -32,6 +32,16 @@ test.describe("@prod live production smoke", () => {
     expect(src).toContain("/info-for-all/_next/static");
   });
 
+  test("@prod a story page leads with the native IFFA Brief", async ({ page }) => {
+    await page.goto(BASE + "/");
+    await page.locator("#top-stories article a[href*='/story/']").first().click();
+    await expect(page).toHaveURL(/\/story\//);
+    await expect(page.getByRole("region", { name: "IFFA Brief" })).toBeVisible();
+    await expect(page.getByText(/synthesises this brief from the reporting and primary records/i)).toBeVisible();
+    await expect(page.getByText(/does not write its own prose account/i)).toHaveCount(0);
+    await expect(page.getByRole("tab", { name: /References/i })).toBeVisible();
+  });
+
   test("@prod search ships a shell and loads its index shard", async ({ page }) => {
     const shard = await page.request.get(BASE + "/data/search/index.json");
     expect(shard.status()).toBe(200);

@@ -51,7 +51,9 @@ export function Brief({ brief, tamil }: { brief: IFFABrief; tamil?: IFFABrief | 
   const [openRef, setOpenRef] = useState<number | null>(null);
 
   const nums = (s: BriefSentence): number[] =>
-    [...new Set([...s.citations.sourceIds, ...s.citations.evidenceIds].map((id) => numById.get(id)).filter((n): n is number => !!n))].sort((a, b) => a - b);
+    [...new Set([...s.citations.sourceIds, ...s.citations.evidenceIds].map((id) => numById.get(id)).filter((n): n is number => !!n))]
+      .sort((a, b) => a - b)
+      .slice(0, 4);
 
   const openRefData = openRef ? order.find((o) => o.n === openRef)?.ref : undefined;
 
@@ -94,8 +96,8 @@ export function Brief({ brief, tamil }: { brief: IFFABrief; tamil?: IFFABrief | 
                 <li key={s.id} className="flex gap-2">
                   <span aria-hidden className="mt-0.5 shrink-0 text-agree">✓</span>
                   <span className="text-[13px] leading-relaxed text-ink-2">
-                    {s.attributedTo && !new RegExp(escapeRe(s.attributedTo), "i").test(s.text) && (
-                      <span className="text-ink-3">{titleCase(s.attributedTo)}: </span>
+                    {s.attributedTo && !new RegExp(escapeRe(s.attributedTo), "i").test(s.text) && !/\b(said|says|stated|announced|according to)\b/i.test(s.text.slice(0, 40)) && (
+                      <span className="text-ink-3">{speakerLabel(s.attributedTo)}: </span>
                     )}
                     {s.text} <Cites nums={nums(s)} onOpen={setOpenRef} support={s.support} />
                   </span>
@@ -244,4 +246,18 @@ function RefCard({ ref_, n, onClose }: { ref_: BriefReference; n: number; onClos
 }
 
 const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-const titleCase = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+const SPEAKER_LABELS: Record<string, string> = {
+  cm: "The Chief Minister",
+  "chief minister": "The Chief Minister",
+  government: "The government",
+  govt: "The government",
+  opposition: "The opposition",
+  police: "Police",
+  imd: "IMD",
+};
+function speakerLabel(s: string): string {
+  const low = s.toLowerCase().trim();
+  if (SPEAKER_LABELS[low]) return SPEAKER_LABELS[low];
+  if (low.length <= 5 && s === s.toUpperCase()) return s; // acronym
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
