@@ -23,13 +23,23 @@ test.describe("@prod live production smoke", () => {
     });
   }
 
-  test("@prod home: v0.9 label, situation bar, event cards, basePath assets", async ({ page }) => {
+  test("@prod home: version label, situation bar, event cards, basePath assets", async ({ page }) => {
     await page.goto(BASE + "/");
-    await expect(page.getByRole("contentinfo")).toContainText(/v0\.(9|10)/);
+    await expect(page.getByRole("contentinfo")).toContainText(/v0\.(9|10|11)/);
     await expect(page.getByText("Current situation")).toBeVisible();
     expect(await page.locator("article.card").count()).toBeGreaterThan(3);
     const src = await page.locator('script[src*="_next/static"]').first().getAttribute("src");
     expect(src).toContain("/info-for-all/_next/static");
+  });
+
+  test("@prod search ships a shell and loads its index shard", async ({ page }) => {
+    const shard = await page.request.get(BASE + "/data/search/index.json");
+    expect(shard.status()).toBe(200);
+    expect((await shard.json()).entries.length).toBeGreaterThan(50);
+    await page.goto(BASE + "/search/");
+    await expect(page.getByRole("searchbox")).toBeVisible();
+    await page.getByRole("searchbox").fill("tamil nadu");
+    await expect(page.locator("a[href*='/story/']").first()).toBeVisible({ timeout: 10_000 });
   });
 
   test("@prod no horizontal overflow at 390px", async ({ page }) => {

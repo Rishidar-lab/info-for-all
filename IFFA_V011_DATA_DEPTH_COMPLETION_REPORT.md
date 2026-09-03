@@ -260,7 +260,7 @@ that widens Tamil coverage. Converting those list pages to consume
 | 11 | source profiles show observation period + sample size | ✅ "LOW SAMPLE", "3/7" not "42.9%" |
 | 12 | home/story data sharded | ⚠️ **partial** — search index de-inlined to a served shard; 5-shard `/data/` surface wired into prebuild + deploy; list pages not yet paginated |
 | 13 | initial payload materially smaller | ⚠️ **reframed** — the ~7.6 MB was always the build input, never served; search route first-load **940 KB → 584 KB**; home unchanged at ~936 KB |
-| 14 | production verified | *(§14)* |
+| 14 | production verified | ✅ CI + Pages green; 15/15 `@prod` live E2E; shards serve at basePath |
 
 **Verdict: v0.11 ships as a real data-depth-and-calibration step.** Gate 9 (audit)
 is at 18/50. Gates 12/13 are partially met and the residue is honestly bounded:
@@ -289,14 +289,24 @@ Local verification before merge (all green):
 | `npm run build` | 351 pages, shards emitted |
 | Frozen v0.6 engine | **byte-identical vs `v0.10.0`** |
 
-`feat/v0.11-data-depth` (7 commits) fast-forward-merged to `main` and pushed.
-CI (`ci.yml`) + Pages deploy (`deploy-pages.yml`) monitored to green. Production
-verified: 17-route smoke, 28 `@prod` E2E, live `/methodology/quality` shows the
-v0.11 calibration + payload sections, live `/search` ships the 18 KB shell and
-fetches `/info-for-all/data/search/index.json`. Tag `v0.11.0` cut after
-verification.
+`feat/v0.11-data-depth` (7 commits, `5fdf0ea..96a8228`) fast-forward-merged to
+`main` and pushed.
 
-*(Deployment status appended after the CI/Pages run completes.)*
+- **CI** (`ci.yml`, run `33732668351`): ✅ success (~1m40s)
+- **Pages deploy** (`deploy-pages.yml`, run `33732668557`): ✅ success (~3m)
+- **Live verification** (`tests/e2e/prod.spec.ts --grep @prod`): **15 / 15 green**
+  against `https://rishidar-lab.github.io/info-for-all`
+  - all 12 core routes → 200
+  - footer shows `v0.11 — Data Depth & Calibration`
+  - `/data/{meta,search/index,index/latest,landscape/latest,sources/index}.json`
+    all 200 at the production basePath (search shard 345 KB, index shard 780 KB)
+  - `/search/` ships an 18.9 KB shell; typing "tamil nadu" resolves results
+    fetched from the shard (new `@prod` test)
+  - `/methodology/quality/` renders the v0.11 "Calibration & data depth" and
+    "Payload & data shape" sections
+  - no horizontal overflow at 390 px
+
+Tag **`v0.11.0`** cut on `96a8228` after verification.
 
 ---
 
