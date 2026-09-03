@@ -1,0 +1,609 @@
+{
+  "generatedAt": "2026-09-03T07:36:03.337Z",
+  "rows": [
+    {
+      "publisher": "The Hindu Tamil",
+      "domain": "hindutamil.in",
+      "language": "ta",
+      "region": "tamil-nadu",
+      "category": "general",
+      "currentlyEnabled": true,
+      "status": "DIRECT_FEED",
+      "probes": [
+        {
+          "url": "https://www.hindutamil.in/feed",
+          "candidateKind": "rss",
+          "code": "200",
+          "kind": "rss",
+          "items": 37,
+          "dated": true,
+          "tamil": true,
+          "blocked": false
+        }
+      ],
+      "note": "ENABLED v0.11 — /feed works (37 items); /rss/*.xml paths are Akamai-blocked."
+    },
+    {
+      "publisher": "ABP Tamil",
+      "domain": "tamil.abplive.com",
+      "language": "ta",
+      "region": "tamil-nadu",
+      "category": "general",
+      "currentlyEnabled": true,
+      "status": "DIRECT_FEED",
+      "probes": [
+        {
+          "url": "https://tamil.abplive.com/home/feed",
+          "candidateKind": "rss",
+          "code": "200",
+          "kind": "rss",
+          "items": 21,
+          "dated": true,
+          "tamil": true,
+          "blocked": false
+        }
+      ],
+      "note": "ENABLED v0.11 — 21 items."
+    },
+    {
+      "publisher": "Nakkheeran",
+      "domain": "nakkheeran.in",
+      "language": "ta",
+      "region": "tamil-nadu",
+      "category": "politics",
+      "currentlyEnabled": true,
+      "status": "DIRECT_FEED",
+      "probes": [
+        {
+          "url": "https://www.nakkheeran.in/rss",
+          "candidateKind": "rss",
+          "code": "200",
+          "kind": "rss",
+          "items": 50,
+          "dated": true,
+          "tamil": true,
+          "blocked": false
+        }
+      ],
+      "note": "ENABLED v0.11 — 50 items."
+    },
+    {
+      "publisher": "News18 Tamil",
+      "domain": "tamil.news18.com",
+      "language": "ta",
+      "region": "tamil-nadu",
+      "category": "general",
+      "currentlyEnabled": true,
+      "status": "DIRECT_FEED",
+      "probes": [
+        {
+          "url": "https://tamil.news18.com/commonfeeds/v1/tam/rss/tamil-nadu.xml",
+          "candidateKind": "rss",
+          "code": "200",
+          "kind": "rss",
+          "items": 200,
+          "dated": true,
+          "tamil": true,
+          "blocked": false
+        }
+      ],
+      "note": "ENABLED (v0.8) — high item count, 7-day age filter drops ~70%."
+    },
+    {
+      "publisher": "Puthiyathalaimurai",
+      "domain": "puthiyathalaimurai.com",
+      "language": "ta",
+      "region": "tamil-nadu",
+      "category": "general",
+      "currentlyEnabled": true,
+      "status": "DIRECT_FEED",
+      "probes": [
+        {
+          "url": "https://www.puthiyathalaimurai.com/stories.rss",
+          "candidateKind": "rss",
+          "code": "200",
+          "kind": "rss",
+          "items": 8,
+          "dated": true,
+          "tamil": true,
+          "blocked": false
+        }
+      ],
+      "note": "ENABLED — but the feed only carries ~7 items."
+    },
+    {
+      "publisher": "BBC Tamil",
+      "domain": "bbc.com/tamil",
+      "language": "ta",
+      "region": "india",
+      "category": "general",
+      "currentlyEnabled": true,
+      "status": "DIRECT_FEED",
+      "probes": [
+        {
+          "url": "https://feeds.bbci.co.uk/tamil/rss.xml",
+          "candidateKind": "rss",
+          "code": "200",
+          "kind": "rss",
+          "items": 24,
+          "dated": true,
+          "tamil": true,
+          "blocked": false
+        }
+      ],
+      "note": "ENABLED — world-news heavy; trustFeedScope=false drops most."
+    },
+    {
+      "publisher": "Dinamalar",
+      "domain": "dinamalar.com",
+      "language": "ta",
+      "region": "tamil-nadu",
+      "category": "general",
+      "currentlyEnabled": false,
+      "status": "NO_FEED",
+      "probes": [
+        {
+          "url": "https://www.dinamalar.com/rss_feed.asp",
+          "candidateKind": "rss",
+          "code": "404",
+          "kind": "html",
+          "items": 0,
+          "dated": false,
+          "tamil": true,
+          "blocked": false
+        },
+        {
+          "url": "https://static.dinamalar.com/rss/latest.xml",
+          "candidateKind": "rss",
+          "code": "404",
+          "kind": "?",
+          "items": 0,
+          "dated": false,
+          "tamil": false,
+          "blocked": false
+        }
+      ],
+      "note": "No working public feed found on any tried path (all 404)."
+    },
+    {
+      "publisher": "Daily Thanthi",
+      "domain": "dailythanthi.com",
+      "language": "ta",
+      "region": "tamil-nadu",
+      "category": "general",
+      "currentlyEnabled": false,
+      "status": "NO_FEED",
+      "probes": [
+        {
+          "url": "https://www.dailythanthi.com/rss/tamil-nadu.xml",
+          "candidateKind": "rss",
+          "code": "404",
+          "kind": "html",
+          "items": 0,
+          "dated": false,
+          "tamil": true,
+          "blocked": false
+        }
+      ],
+      "note": "No public feed found (404). Surfaces in Google News RSS."
+    },
+    {
+      "publisher": "Dinakaran",
+      "domain": "dinakaran.com",
+      "language": "ta",
+      "region": "tamil-nadu",
+      "category": "general",
+      "currentlyEnabled": false,
+      "status": "NO_FEED",
+      "probes": [
+        {
+          "url": "https://www.dinakaran.com/rss/tamilnadu.xml",
+          "candidateKind": "rss",
+          "code": "404",
+          "kind": "html",
+          "items": 0,
+          "dated": false,
+          "tamil": false,
+          "blocked": false
+        }
+      ],
+      "note": "No public feed found (404)."
+    },
+    {
+      "publisher": "Dinamani",
+      "domain": "dinamani.com",
+      "language": "ta",
+      "region": "tamil-nadu",
+      "category": "general",
+      "currentlyEnabled": false,
+      "status": "NO_FEED",
+      "probes": [
+        {
+          "url": "https://www.dinamani.com/rss/latest-news.xml",
+          "candidateKind": "rss",
+          "code": "404",
+          "kind": "html",
+          "items": 0,
+          "dated": false,
+          "tamil": true,
+          "blocked": false
+        }
+      ],
+      "note": "Akamai 'Access Denied' on the .xml paths. Surfaces in Google News RSS."
+    },
+    {
+      "publisher": "Vikatan",
+      "domain": "vikatan.com",
+      "language": "ta",
+      "region": "tamil-nadu",
+      "category": "general",
+      "currentlyEnabled": false,
+      "status": "DIRECT_FEED",
+      "probes": [
+        {
+          "url": "https://www.vikatan.com/feed",
+          "candidateKind": "rss",
+          "code": "200",
+          "kind": "rss",
+          "items": 25,
+          "dated": true,
+          "tamil": true,
+          "blocked": false
+        }
+      ],
+      "note": "302 to a non-feed; no working feed found. Surfaces in Google News RSS."
+    },
+    {
+      "publisher": "Maalai Malar",
+      "domain": "maalaimalar.com",
+      "language": "ta",
+      "region": "tamil-nadu",
+      "category": "general",
+      "currentlyEnabled": false,
+      "status": "NO_FEED",
+      "probes": [
+        {
+          "url": "https://www.maalaimalar.com/rss/tamilnadu.xml",
+          "candidateKind": "rss",
+          "code": "404",
+          "kind": "html",
+          "items": 0,
+          "dated": false,
+          "tamil": true,
+          "blocked": false
+        }
+      ],
+      "note": "No public feed found (404)."
+    },
+    {
+      "publisher": "DT Next",
+      "domain": "dtnext.in",
+      "language": "en",
+      "region": "tamil-nadu",
+      "category": "general",
+      "currentlyEnabled": false,
+      "status": "NO_FEED",
+      "probes": [
+        {
+          "url": "https://www.dtnext.in/rss/tamilnadu",
+          "candidateKind": "rss",
+          "code": "404",
+          "kind": "html",
+          "items": 0,
+          "dated": false,
+          "tamil": true,
+          "blocked": false
+        }
+      ],
+      "note": "No public feed found (404 on all tried paths)."
+    },
+    {
+      "publisher": "Tamil Samayam",
+      "domain": "tamil.samayam.com",
+      "language": "ta",
+      "region": "tamil-nadu",
+      "category": "general",
+      "currentlyEnabled": false,
+      "status": "NO_FEED",
+      "probes": [
+        {
+          "url": "https://tamil.samayam.com/rssfeedstopstories.cms",
+          "candidateKind": "rss",
+          "code": "404",
+          "kind": "?",
+          "items": 0,
+          "dated": false,
+          "tamil": false,
+          "blocked": false
+        }
+      ],
+      "note": "404 on tried .cms feed paths."
+    },
+    {
+      "publisher": "Polimer News",
+      "domain": "polimernews.com",
+      "language": "ta",
+      "region": "tamil-nadu",
+      "category": "general",
+      "currentlyEnabled": false,
+      "status": "PARTIAL_FEED",
+      "probes": [
+        {
+          "url": "https://feeds.feedburner.com/Polimernews",
+          "candidateKind": "atom",
+          "code": "200",
+          "kind": "atom",
+          "items": 3,
+          "dated": true,
+          "tamil": true,
+          "blocked": false
+        }
+      ],
+      "note": "FeedBurner Atom returns only ~3 items — too thin to enable."
+    },
+    {
+      "publisher": "Google News RSS (Tamil / Tamil Nadu)",
+      "domain": "news.google.com",
+      "language": "ta",
+      "region": "tamil-nadu",
+      "category": "discovery",
+      "currentlyEnabled": false,
+      "status": "DISCOVERY_ONLY",
+      "probes": [
+        {
+          "url": "https://news.google.com/rss/search?q=%E0%AE%A4%E0%AE%AE%E0%AE%BF%E0%AE%B4%E0%AF%8D%E0%AE%A8%E0%AE%BE%E0%AE%9F%E0%AF%81&hl=ta-IN&gl=IN&ceid=IN:ta",
+          "candidateKind": "discovery",
+          "code": "200",
+          "kind": "rss",
+          "items": 110,
+          "dated": true,
+          "tamil": true,
+          "blocked": false
+        }
+      ],
+      "note": "Returns ~110 Tamil items with publisher names (Daily Thanthi, Dinamani, Vikatan, Tamil Murasu…). news.google.com/robots.txt does NOT list /rss/ in its Allow set → recorded DISCOVERY_ONLY, NOT integrated pending a maintainer compliance decision. Single biggest potential Tamil unlock."
+    },
+    {
+      "publisher": "The Indian Express",
+      "domain": "indianexpress.com",
+      "language": "en",
+      "region": "india",
+      "category": "national",
+      "currentlyEnabled": true,
+      "status": "DIRECT_FEED",
+      "probes": [
+        {
+          "url": "https://indianexpress.com/section/india/feed/",
+          "candidateKind": "rss",
+          "code": "200",
+          "kind": "rss",
+          "items": 200,
+          "dated": true,
+          "tamil": false,
+          "blocked": false
+        }
+      ],
+      "note": "ENABLED v0.10."
+    },
+    {
+      "publisher": "The Free Press Journal",
+      "domain": "freepressjournal.in",
+      "language": "en",
+      "region": "india",
+      "category": "national",
+      "currentlyEnabled": true,
+      "status": "DIRECT_FEED",
+      "probes": [
+        {
+          "url": "https://www.freepressjournal.in/stories.rss",
+          "candidateKind": "rss",
+          "code": "200",
+          "kind": "rss",
+          "items": 65,
+          "dated": true,
+          "tamil": true,
+          "blocked": false
+        }
+      ],
+      "note": "ENABLED v0.11 — 65 items."
+    },
+    {
+      "publisher": "Business Standard",
+      "domain": "business-standard.com",
+      "language": "en",
+      "region": "india",
+      "category": "finance",
+      "currentlyEnabled": true,
+      "status": "BLOCKED",
+      "probes": [
+        {
+          "url": "https://www.business-standard.com/rss/home_page_top_stories.rss",
+          "candidateKind": "rss",
+          "code": "403",
+          "kind": "html",
+          "items": 0,
+          "dated": false,
+          "tamil": false,
+          "blocked": true
+        }
+      ],
+      "note": "ENABLED v0.10 (home_page_top_stories; the economy feed is 403)."
+    },
+    {
+      "publisher": "Moneycontrol",
+      "domain": "moneycontrol.com",
+      "language": "en",
+      "region": "india",
+      "category": "finance",
+      "currentlyEnabled": true,
+      "status": "DIRECT_FEED",
+      "probes": [
+        {
+          "url": "https://www.moneycontrol.com/rss/latestnews.xml",
+          "candidateKind": "rss",
+          "code": "200",
+          "kind": "rss",
+          "items": 15,
+          "dated": true,
+          "tamil": false,
+          "blocked": false
+        }
+      ],
+      "note": "ENABLED v0.10 — earlier Akamai block cleared."
+    },
+    {
+      "publisher": "Deccan Herald",
+      "domain": "deccanherald.com",
+      "language": "en",
+      "region": "india",
+      "category": "national",
+      "currentlyEnabled": false,
+      "status": "NO_FEED",
+      "probes": [
+        {
+          "url": "https://www.deccanherald.com/rss-feed/52",
+          "candidateKind": "rss",
+          "code": "404",
+          "kind": "html",
+          "items": 0,
+          "dated": false,
+          "tamil": false,
+          "blocked": false
+        }
+      ],
+      "note": "404 on tried paths."
+    },
+    {
+      "publisher": "Scroll.in",
+      "domain": "scroll.in",
+      "language": "en",
+      "region": "india",
+      "category": "national",
+      "currentlyEnabled": false,
+      "status": "NO_FEED",
+      "probes": [
+        {
+          "url": "https://scroll.in/feeds/all.rss",
+          "candidateKind": "rss",
+          "code": "404",
+          "kind": "html",
+          "items": 0,
+          "dated": false,
+          "tamil": false,
+          "blocked": false
+        }
+      ],
+      "note": "404 on tried paths."
+    },
+    {
+      "publisher": "The Wire",
+      "domain": "thewire.in",
+      "language": "en",
+      "region": "india",
+      "category": "national",
+      "currentlyEnabled": false,
+      "status": "NO_FEED",
+      "probes": [
+        {
+          "url": "https://thewire.in/rss",
+          "candidateKind": "rss",
+          "code": "200",
+          "kind": "html",
+          "items": 0,
+          "dated": false,
+          "tamil": false,
+          "blocked": false
+        }
+      ],
+      "note": "Returns an HTML page, no feed at /rss."
+    },
+    {
+      "publisher": "The Print",
+      "domain": "theprint.in",
+      "language": "en",
+      "region": "india",
+      "category": "national",
+      "currentlyEnabled": false,
+      "status": "NO_FEED",
+      "probes": [
+        {
+          "url": "https://theprint.in/feed/",
+          "candidateKind": "rss",
+          "code": "200",
+          "kind": "html",
+          "items": 0,
+          "dated": false,
+          "tamil": false,
+          "blocked": false
+        }
+      ],
+      "note": "/feed/ redirects to the homepage; no feed served."
+    },
+    {
+      "publisher": "Zee Business",
+      "domain": "zeebiz.com",
+      "language": "en",
+      "region": "india",
+      "category": "finance",
+      "currentlyEnabled": false,
+      "status": "NO_FEED",
+      "probes": [
+        {
+          "url": "https://www.zeebiz.com/latest.xml/feed",
+          "candidateKind": "rss",
+          "code": "404",
+          "kind": "html",
+          "items": 0,
+          "dated": false,
+          "tamil": false,
+          "blocked": false
+        }
+      ],
+      "note": "HTTP 403 (Akamai)."
+    },
+    {
+      "publisher": "PIB",
+      "domain": "pib.gov.in",
+      "language": "en",
+      "region": "india",
+      "category": "official",
+      "currentlyEnabled": false,
+      "status": "BLOCKED",
+      "probes": [
+        {
+          "url": "https://pib.gov.in/RssMain.aspx?ModId=6&Lang=1&Regid=1",
+          "candidateKind": "rss",
+          "code": "403",
+          "kind": "html",
+          "items": 0,
+          "dated": false,
+          "tamil": false,
+          "blocked": true
+        }
+      ],
+      "note": "DISABLED — 200 but no pubDate/description; cannot place on a timeline."
+    },
+    {
+      "publisher": "Prasar Bharati (NewsOnAir)",
+      "domain": "newsonair.gov.in",
+      "language": "en",
+      "region": "india",
+      "category": "official",
+      "currentlyEnabled": false,
+      "status": "MANUAL_ONLY",
+      "probes": [
+        {
+          "url": "https://www.newsonair.gov.in/feed/",
+          "candidateKind": "rss",
+          "code": "ERR TimeoutError: The operation was aborted ",
+          "kind": "?",
+          "items": 0,
+          "dated": false,
+          "tamil": false,
+          "blocked": false
+        }
+      ],
+      "note": "DISABLED — 301 loop hangs past 25s."
+    }
+  ]
+}

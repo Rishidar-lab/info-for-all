@@ -6,6 +6,9 @@ import { cn } from "@/lib/format";
 import { dataset } from "@/lib/live/dataset";
 import { hasTrendData, categoryCounts, situation, v09Metrics } from "@/lib/live/trends-view";
 import { v010Metrics } from "@/lib/media-landscape/quality-metrics";
+import stanceEval from "../../../../evaluation/reports/stance-latest.json";
+import framingEval from "../../../../evaluation/reports/framing-latest.json";
+import evidenceEval from "../../../../evaluation/reports/evidence-latest.json";
 
 /** IFFA test-suite tallies (from `npm test` + `npm run test:e2e`). */
 const IFFA_SUITES: [string, number][] = [
@@ -507,6 +510,76 @@ export default function QualityDashboard() {
               and the full method in{" "}
               <a href="https://github.com/Rishidar-lab/info-for-all/blob/main/docs/MEDIA-LANDSCAPE.md" className="text-accent hover:underline" target="_blank" rel="noopener noreferrer">
                 docs/MEDIA-LANDSCAPE.md
+              </a>.
+            </p>
+          </section>
+        );
+      })()}
+
+      {/* ── v0.11 Calibration & data depth ─────────────────────────── */}
+      {(() => {
+        const s = stanceEval as { n: number; humanVerified: number; accuracy: number; macroF1: number };
+        const f = framingEval as { n: number; precision: number; recall: number; exactMatch: number };
+        const ev = evidenceEval as { n: number; accuracy: number };
+        const m = v010Metrics();
+        const pct = (x: number) => `${Math.round(x * 100)}%`;
+        return (
+          <section>
+            <div className="mb-3 border-b border-rule-strong pb-2">
+              <div className="label mb-1">v0.11 · Calibration &amp; data depth</div>
+              <h2 className="font-serif text-[20px] font-semibold text-ink">
+                How well-measured is each media-landscape signal?
+              </h2>
+              <p className="ui mt-1 text-[12px] leading-relaxed text-ink-3">
+                The media-landscape layer shipped in v0.10 <strong>without a benchmark</strong>. These are the
+                first measurements. The stance / framing corpora are <strong>first-pass, not human-verified</strong>{" "}
+                — the numbers are <strong>indicative</strong>, not validated accuracy. Weak numbers are shown, not hidden.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+              <div className="card p-3">
+                <div className="mono text-[16px] font-semibold text-ink">{pct(s.accuracy)}</div>
+                <div className="ui text-[10px] text-ink-3">
+                  Stance classifier accuracy · macro-F1 {pct(s.macroF1)} · n={s.n} ({s.humanVerified} human-verified)
+                </div>
+              </div>
+              <div className="card p-3">
+                <div className="mono text-[16px] font-semibold text-ink">{pct(f.precision)} / {pct(f.recall)}</div>
+                <div className="ui text-[10px] text-ink-3">
+                  Framing emphasis — label precision / recall · exact-set {pct(f.exactMatch)} · n={f.n}
+                </div>
+              </div>
+              <div className="card p-3">
+                <div className="mono text-[16px] font-semibold text-agree">{pct(ev.accuracy)}</div>
+                <div className="ui text-[10px] text-ink-3">
+                  Claim-evidence status accuracy · n={ev.n} · built on the frozen claim engine
+                </div>
+              </div>
+              <div className="card p-3">
+                <div className="mono text-[16px] font-semibold text-ink">1</div>
+                <div className="ui text-[10px] text-ink-3">
+                  Days of alignment history — needs ≥7 before observed alignment is claimed
+                </div>
+              </div>
+              <div className="card p-3">
+                <div className="mono text-[16px] font-semibold text-ink">{m.alignmentQualified}/{m.alignmentTotal}</div>
+                <div className="ui text-[10px] text-ink-3">Alignment-qualified publishers (n≥20 political stories)</div>
+              </div>
+              <div className="card p-3">
+                <div className="mono text-[16px] font-semibold text-ink">{m.ownershipCompletenessPct}%</div>
+                <div className="ui text-[10px] text-ink-3">Ownership category recorded ({m.ownershipUnknown} UNKNOWN, by design)</div>
+              </div>
+            </div>
+            <p className="ui mt-3 text-[11.5px] leading-relaxed text-ink-3">
+              <strong>Implication:</strong> claim-evidence status is well-calibrated (the differentiator);{" "}
+              <strong>stance and framing are not yet strong enough to claim alignment accuracy</strong>, so observed
+              editorial alignment is shown as raw counts with a prominent caveat, gated on sample size, and never as
+              a &ldquo;DMK-leaning&rdquo; / &ldquo;BJP-leaning&rdquo; label. Full method + corpora:{" "}
+              <a href="https://github.com/Rishidar-lab/info-for-all/blob/main/evaluation/corpora/README.md" className="text-accent hover:underline" target="_blank" rel="noopener noreferrer">
+                evaluation/corpora
+              </a>,{" "}
+              <a href="https://github.com/Rishidar-lab/info-for-all/blob/main/evaluation/reports/v0.11-baseline.md" className="text-accent hover:underline" target="_blank" rel="noopener noreferrer">
+                v0.11-baseline.md
               </a>.
             </p>
           </section>

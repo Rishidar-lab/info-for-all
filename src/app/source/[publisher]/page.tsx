@@ -206,10 +206,15 @@ export default async function SourceProfile({ params }: { params: Promise<{ publ
               </thead>
               <tbody className="divide-y divide-rule">
                 {observed.entityStance.map((e) => {
-                  const pct = (x: number) => (e.n ? `${Math.round((x / e.n) * 100)}%` : "—");
+                  // v0.11 Phase P — no pseudo-precision for tiny samples.
+                  const pct = (x: number) =>
+                    !e.n ? "—" : e.n < 10 ? `${x}/${e.n}` : `${Math.round((x / e.n) * 100)}%`;
                   return (
-                    <tr key={e.entityId} className={cn(e.n < 5 && "text-ink-3")}>
-                      <td className="px-3 py-2 ui text-[12.5px] font-semibold">{e.entityName}</td>
+                    <tr key={e.entityId} className={cn(e.n < 10 && "text-ink-3")}>
+                      <td className="px-3 py-2 ui text-[12.5px] font-semibold">
+                        {e.entityName}
+                        {e.n < 20 && <span className="ml-1 ui text-[10px] font-normal uppercase tracking-wide text-ink-3">low sample</span>}
+                      </td>
                       <td className="px-3 py-2 mono text-[12px]">{e.n}</td>
                       <td className="px-3 py-2 mono text-[12px]">{pct(e.supportive)}</td>
                       <td className="px-3 py-2 mono text-[12px]">{pct(e.neutralDescriptive)}</td>

@@ -9,13 +9,28 @@ const TYPE_LABEL: Record<Blindspot["type"], string> = {
   SOURCE_FAMILY: "Source-family concentration",
 };
 
+const CONF_LABEL: Record<string, string> = {
+  INSUFFICIENT_COVERAGE: "insufficient coverage",
+  POSSIBLE_ASYMMETRY: "possible asymmetry",
+  CLEAR_ASYMMETRY: "clear asymmetry",
+};
+
 export function BlindspotBadge({ blindspots }: { blindspots: Blindspot[] }) {
+  const clear = blindspots.filter((b) => b.confidence === "CLEAR_ASYMMETRY");
+  const weak = blindspots.filter((b) => b.confidence !== "CLEAR_ASYMMETRY");
   if (!blindspots.length) {
-    return <span className="ui text-[11.5px] text-agree">Blindspot: none detected</span>;
+    return <span className="ui text-[11.5px] text-agree">Coverage asymmetry: none detected</span>;
+  }
+  if (!clear.length) {
+    return (
+      <span className="ui text-[11.5px] text-ink-3">
+        Coverage: {weak.map((b) => `${TYPE_LABEL[b.type].toLowerCase()} (small sample)`).join(" · ")}
+      </span>
+    );
   }
   return (
     <span className="ui text-[11.5px] font-semibold text-caution">
-      Blindspot: {blindspots.map((b) => TYPE_LABEL[b.type]).join(" · ")}
+      Blindspot: {clear.map((b) => TYPE_LABEL[b.type]).join(" · ")}
     </span>
   );
 }
@@ -40,7 +55,15 @@ export function BlindspotPanel({ blindspots }: { blindspots: Blindspot[] }) {
           {blindspots.map((b, i) => (
             <li key={i} className="card p-4">
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                <span className={cn("pill", "bg-caution-bg text-caution")}>{TYPE_LABEL[b.type]}</span>
+                <span
+                  className={cn(
+                    "pill",
+                    b.confidence === "CLEAR_ASYMMETRY" ? "bg-caution-bg text-caution" : "bg-surface-2 text-ink-3",
+                  )}
+                >
+                  {TYPE_LABEL[b.type]}
+                </span>
+                <span className="ui text-[11px] uppercase tracking-wide text-ink-3">{CONF_LABEL[b.confidence]}</span>
                 <span className="mono ui text-[12px] text-ink-2">
                   {b.overCoveredCount} vs {b.underCoveredCount} · {b.ratio}×
                 </span>

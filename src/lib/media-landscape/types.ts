@@ -334,6 +334,9 @@ export type BlindspotType =
   | "OWNERSHIP"
   | "SOURCE_FAMILY";
 
+/** How much statistical support a blindspot label has (v0.11 Phase J). */
+export type BlindspotConfidence = "INSUFFICIENT_COVERAGE" | "POSSIBLE_ASYMMETRY" | "CLEAR_ASYMMETRY";
+
 export interface Blindspot {
   type: BlindspotType;
   /** e.g. "Tamil-language" or "government-critical aligned" or "Kasturi & Sons". */
@@ -343,6 +346,12 @@ export interface Blindspot {
   underCoveredCount: number;
   /** overCovered / max(underCovered, 1) — the asymmetry ratio. */
   ratio: number;
+  /**
+   * v0.11 — how strong the evidence is. Below a minimum publisher / family
+   * count the label is INSUFFICIENT_COVERAGE ("primarily a local story", not a
+   * blindspot claim). No dramatic label without statistical support.
+   */
+  confidence: BlindspotConfidence;
   /** A neutral, one-line description. Always ends with the asymmetry-≠-truth note. */
   description: string;
 }
