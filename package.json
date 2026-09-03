@@ -1,13 +1,13 @@
 {
   "name": "iffa",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "private": true,
   "description": "IFFA — Info Free For All. A Tamil Nadu-first, India-aware real-time news and current-trend intelligence platform: reporting grouped into events, ranked by what is actually changing, with source independence, claim provenance and Tamil↔English semantics made visible.",
   "scripts": {
     "prepare-data": "tsx scripts/prepare-data.ts",
     "predev": "tsx scripts/prepare-data.ts",
     "dev": "next dev",
-    "prebuild": "tsx scripts/prepare-data.ts",
+    "prebuild": "tsx scripts/prepare-data.ts && tsx scripts/shard-dataset.ts",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -33,7 +33,8 @@
     "source-discovery-audit": "tsx scripts/source-discovery-audit.ts",
     "eval:stance": "tsx scripts/eval-stance.ts",
     "eval:framing": "tsx scripts/eval-framing.ts",
-    "eval:evidence": "tsx scripts/eval-evidence.ts"
+    "eval:evidence": "tsx scripts/eval-evidence.ts",
+    "shard": "tsx scripts/shard-dataset.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.8",

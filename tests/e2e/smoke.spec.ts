@@ -55,7 +55,7 @@ test.describe("IFFA branding + version", () => {
     await page.goto("/");
     await expect(page.getByRole("banner")).toContainText("IFFA");
     await expect(page.getByRole("contentinfo")).toContainText(/Info Free For All/i);
-    await expect(page.getByRole("contentinfo")).toContainText(/v0\.(9|10)/);
+    await expect(page.getByRole("contentinfo")).toContainText(/v0\.(9|10|11)/);
   });
 });
 

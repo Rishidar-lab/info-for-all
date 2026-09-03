@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 
 export interface SearchEntry {
@@ -19,12 +19,42 @@ function norm(s: string): string {
   return s.toLowerCase().replace(/^https?:\/\/(www\.)?/, "").replace(/[?#].*$/, "").replace(/\/$/, "");
 }
 
-export function Search({ index }: { index: SearchEntry[] }) {
+type LoadState = "loading" | "ready" | "error";
+
+/**
+ * v0.11 Phase N — <Search> loads its index from a served shard
+ * (`/data/search/index.json`) instead of receiving ≈340 KB of entries inlined
+ * into the /search page payload. The page ships an input box immediately; the
+ * index streams in a moment later.
+ */
+export function Search({ src }: { src: string }) {
   const [q, setQ] = useState("");
+  const [index, setIndex] = useState<SearchEntry[]>([]);
+  const [state, setState] = useState<LoadState>("loading");
+
+  useEffect(() => {
+    let live = true;
+    fetch(src)
+      .then((r) => {
+        if (!r.ok) throw new Error(`${r.status}`);
+        return r.json();
+      })
+      .then((data: { entries: SearchEntry[] }) => {
+        if (!live) return;
+        setIndex(Array.isArray(data.entries) ? data.entries : []);
+        setState("ready");
+      })
+      .catch(() => {
+        if (live) setState("error");
+      });
+    return () => {
+      live = false;
+    };
+  }, [src]);
 
   const results = useMemo(() => {
     const query = q.trim();
-    if (query.length < 2) return [];
+    if (query.length < 2 || index.length === 0) return [];
     // paste-a-URL path
     if (/^https?:\/\//i.test(query) || query.includes(".com/") || query.includes(".in/")) {
       const nq = norm(query);
@@ -55,10 +85,12 @@ export function Search({ index }: { index: SearchEntry[] }) {
         className="w-full rounded border border-rule-strong bg-surface px-3 py-2.5 text-[14px] text-ink outline-none focus:border-accent"
       />
       <p className="ui mt-1.5 text-[11.5px] text-ink-3">
-        Paste a news article URL to find (or start) its cross-source comparison.
+        {state === "loading" && "Loading the story index…"}
+        {state === "error" && "Could not load the story index. Reload the page to try again."}
+        {state === "ready" && "Paste a news article URL to find (or start) its cross-source comparison."}
       </p>
 
-      {q.trim().length >= 2 && (
+      {state === "ready" && q.trim().length >= 2 && (
         <div className="mt-4">
           {results.length === 0 ? (
             <p className="ui text-[13px] text-ink-3">No matching story in the current snapshot.</p>

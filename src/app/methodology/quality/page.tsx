@@ -586,6 +586,54 @@ export default function QualityDashboard() {
         );
       })()}
 
+      {/* ── v0.11 Phase N · payload & data shape ────────────────────── */}
+      <section>
+        <div className="mb-3 border-b border-rule-strong pb-2">
+          <div className="label mb-1">v0.11 · Payload &amp; data shape</div>
+          <h2 className="font-serif text-[20px] font-semibold text-ink">What each page actually ships</h2>
+          <p className="ui mt-1 text-[12px] leading-relaxed text-ink-3">
+            Measured on the exported static build (2026-09-03). The <strong>~7.6&nbsp;MB</strong> figure sometimes
+            quoted is <code>live-feed.json</code> — a <strong>build input that is never served</strong>. Next.js
+            per-page renders; no route loads the corpus. The search index is now a{" "}
+            <strong>served shard</strong> (<code>/data/search/index.json</code>), fetched on demand, not inlined.
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+          <div className="card p-3">
+            <div className="mono text-[16px] font-semibold text-agree">383K → 18K</div>
+            <div className="ui text-[10px] text-ink-3">Search page HTML — index de-inlined to a cacheable shard</div>
+          </div>
+          <div className="card p-3">
+            <div className="mono text-[16px] font-semibold text-agree">940K → 584K</div>
+            <div className="ui text-[10px] text-ink-3">Search route first load (HTML + shared JS)</div>
+          </div>
+          <div className="card p-3">
+            <div className="mono text-[16px] font-semibold text-ink">~936K</div>
+            <div className="ui text-[10px] text-ink-3">Home first load (373K HTML + 563K shared JS) — unchanged</div>
+          </div>
+          <div className="card p-3">
+            <div className="mono text-[16px] font-semibold text-ink">~1.0M</div>
+            <div className="ui text-[10px] text-ink-3">India / Tamil&nbsp;Nadu HTML — 60 dense cards, rendered markup (not corpus data)</div>
+          </div>
+          <div className="card p-3">
+            <div className="mono text-[16px] font-semibold text-ink">5 shards</div>
+            <div className="ui text-[10px] text-ink-3">
+              <code>meta</code> · <code>search</code> · <code>index</code> · <code>landscape</code> · <code>sources</code> under <code>/data/</code>
+            </div>
+          </div>
+          <div className="card p-3">
+            <div className="mono text-[16px] font-semibold text-ink">0</div>
+            <div className="ui text-[10px] text-ink-3">Routes that serialise the full dataset (verified)</div>
+          </div>
+        </div>
+        <p className="ui mt-3 text-[11.5px] leading-relaxed text-ink-3">
+          <strong>Still open:</strong> the India / Tamil&nbsp;Nadu list pages are ~1&nbsp;MB of rendered markup for
+          60 information-dense cards each. Cutting that is a card-density / pagination decision deferred past this
+          &ldquo;no-redesign&rdquo; release — and Tamil&nbsp;Nadu story visibility is deliberately <em>not</em> reduced
+          in the release that widens Tamil coverage.
+        </p>
+      </section>
+
       {/* ── metrics table ───────────────────────────────────────────── */}
       <section>
         <div className="mb-3 border-b border-rule-strong pb-2">

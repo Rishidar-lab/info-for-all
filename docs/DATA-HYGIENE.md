@@ -41,6 +41,28 @@ git add src/data/fixtures/live-feed.seed.json && git commit
 Do this when the feed *shape* changes or the committed demo data has gone stale
 — not routinely. `seed:refresh` refuses to write an empty or malformed snapshot.
 
+## Served data shards (v0.11 Phase N)
+
+`scripts/shard-dataset.ts` (`npm run shard`, and in the `prebuild` hook) reads
+the enriched `src/data/generated/live-feed.json` and writes small **served**
+shards under `public/data/`:
+
+| Shard | Contents | Consumed by |
+|---|---|---|
+| `meta.json` | generatedAt / health / counts | (available; external) |
+| `search/index.json` | one compact row per cluster (~345 KB) | `<Search>` fetches it on mount |
+| `index/latest.json` | 763 compact clusters, no framing / evidence-matrix internals | (available; v0.12 list pages) |
+| `landscape/latest.json` | India + Tamil Nadu landscape summary | (available; external) |
+| `sources/index.json` | per-publisher profile summary | (available; external) |
+
+`live-feed.json` itself is a **build input** — copied from the seed by
+`prepare-data`, read during SSG, **never served**. The shards are the served
+surface for anything that needs a summary rather than the whole corpus.
+
+`public/data/` is **gitignored** and rebuilt on every `npm run build` /
+`npm run shard`. Next copies `public/` into `out/`, so a shard at
+`public/data/x.json` is fetchable at `<basePath>/data/x.json`.
+
 ## Evaluation outputs
 
 Same principle. `npm run eval:claims` writes a timestamped
