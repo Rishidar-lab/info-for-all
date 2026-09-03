@@ -97,11 +97,22 @@ export type BriefWithholdReason =
 
 export interface BriefCoverage {
   sources: number;
+  /** All source families (incl. wire / press-release / thin). */
   families: number;
+  /** Families that did their own reporting — the "two independent newsrooms" bar (Milestone B §B.1). */
+  genuineFamilies: number;
+  /** One-line independence summary, e.g. "Two independent newsrooms" / "One dispatch, reprinted". */
+  familyLabel: string;
   tamil: number;
   english: number;
   official: number;
   primaryDocs: number;
+}
+
+/** How a family was merged past the registry — shown to the reader under a withheld brief. */
+export interface BriefFamilyMerge {
+  publishers: string[];
+  reason: string;
 }
 
 export interface BriefVerification {
@@ -131,6 +142,8 @@ export interface IFFABrief {
 
   withheldReason?: BriefWithholdReason;
   withheldDetail?: string;
+  /** Family merges past the registry — populated when the brief is withheld for thin independence. */
+  familyMerges?: BriefFamilyMerge[];
 
   coverage: BriefCoverage;
   verification: BriefVerification;

@@ -134,7 +134,7 @@ function baseBrief(over: Partial<IFFABrief> = {}): IFFABrief {
     whatChanged: [],
     disagreements: [],
     references: [],
-    coverage: { sources: 3, families: 3, tamil: 1, english: 2, official: 0, primaryDocs: 0 },
+    coverage: { sources: 3, families: 3, genuineFamilies: 3, familyLabel: "Multiple independent newsrooms", tamil: 1, english: 2, official: 0, primaryDocs: 0 },
     verification: { sentencesConsidered: 0, sentencesDropped: 0, dropReasons: [] },
     synthesizer: "deterministic-v1",
     ...over,
@@ -334,9 +334,9 @@ describe("synthesizeBrief — deterministic native brief", () => {
 // ── syndication / primary source ───────────────────────────────────────────
 
 describe("brief respects the frozen engine's guarantees", () => {
-  it("does not inflate corroboration from syndicated copies (one independent group)", () => {
-    const a1 = mkArticle({ id: "a1", publisher: "The Hindu", title: "PTI: Cabinet clears new policy", excerpt: "(PTI) The cabinet cleared the policy." });
-    const a2 = mkArticle({ id: "a2", publisher: "The Times of India", title: "PTI: Cabinet clears new policy", excerpt: "(PTI) The cabinet cleared the policy." });
+  it("withholds when two publishers both carry the same wire dispatch (§B.1)", () => {
+    const a1 = mkArticle({ id: "a1", publisher: "The Hindu", title: "Cabinet clears new policy (PTI)", excerpt: "(PTI) The cabinet cleared the policy on Wednesday." });
+    const a2 = mkArticle({ id: "a2", publisher: "The Times of India", title: "Cabinet clears new policy (PTI)", excerpt: "(PTI) The cabinet cleared the policy on Wednesday." });
     const ev = mkClaim({
       id: "c1",
       canonicalText: "The cabinet cleared a new policy",
@@ -344,12 +344,42 @@ describe("brief respects the frozen engine's guarantees", () => {
       status: "partially-corroborated",
       supportingArticleIds: ["a1", "a2"],
       supportingPublisherIds: ["The Hindu", "The Times of India"],
-      independentSourceGroups: [["a1", "a2"]], // one group — syndicated
+      independentSourceGroups: [["a1", "a2"]],
     });
     const cluster = mkCluster({ title: "Cabinet clears new policy", articles: [a1, a2], ec: mkEventClaims({ claims: [ev] }) });
     const b = verifyBrief(synthesizeBrief(cluster, [a1, a2], { language: "en" }), cluster, [a1, a2]);
-    const lead = b.shortVersion[0];
-    expect(lead.support).not.toBe("STRONG"); // 1 independent group ⇒ never "3+ families"
+    expect(b.withheldReason).toBe("NO_INDEPENDENT_COVERAGE");
+    expect(b.withheldDetail).toMatch(/PTI|dispatch|reprinted/i);
+  });
+
+  it("withholds when a syndicated repost is the only 'second source' (≥85% body overlap)", () => {
+    const body = "A wall of an old building in the market area collapsed early on Wednesday, and rescue teams were pressed into service to clear the debris.";
+    const a1 = mkArticle({ id: "a1", publisher: "The Hindu", title: "Wall collapses in market area", excerpt: body });
+    const a2 = mkArticle({ id: "a2", publisher: "Mint", title: "Wall collapses in market area", excerpt: body });
+    const ev = mkClaim({ id: "c1", canonicalText: "A wall collapsed in the market area", type: "event", status: "partially-corroborated", supportingArticleIds: ["a1", "a2"], supportingPublisherIds: ["The Hindu", "Mint"], independentSourceGroups: [["a1"], ["a2"]] });
+    const cluster = mkCluster({ title: "Wall collapses in market area", articles: [a1, a2], ec: mkEventClaims({ claims: [ev] }) });
+    const b = verifyBrief(synthesizeBrief(cluster, [a1, a2], { language: "en" }), cluster, [a1, a2]);
+    expect(b.withheldReason).toBe("NO_INDEPENDENT_COVERAGE");
+    expect(b.withheldDetail).toMatch(/verbatim|copy/i);
+  });
+
+  it("delivers when two genuinely independent newsrooms report it", () => {
+    const a1 = mkArticle({ id: "a1", publisher: "The Hindu", title: "Assembly passes the records bill", excerpt: "The assembly passed the records bill on Wednesday after a two-hour debate." });
+    const a2 = mkArticle({ id: "a2", publisher: "The Indian Express", title: "Records bill cleared", excerpt: "Members cleared the bill; the opposition sought two amendments that were rejected." });
+    const ev = mkClaim({ id: "c1", canonicalText: "The assembly passed the records bill", type: "event", status: "corroborated", supportingArticleIds: ["a1", "a2"], supportingPublisherIds: ["The Hindu", "The Indian Express"], independentSourceGroups: [["a1"], ["a2"]] });
+    const cluster = mkCluster({ title: "Assembly passes the records bill", articles: [a1, a2], ec: mkEventClaims({ claims: [ev] }) });
+    const b = verifyBrief(synthesizeBrief(cluster, [a1, a2], { language: "en" }), cluster, [a1, a2]);
+    expect(b.withheldReason).toBeUndefined();
+    expect(b.coverage.genuineFamilies).toBe(2);
+  });
+
+  it("a lead never claims '3+ families' from one independent group", () => {
+    const a1 = mkArticle({ id: "a1", publisher: "The Hindu", title: "Assembly clears the bill", excerpt: "The assembly cleared the bill after a debate on Wednesday afternoon." });
+    const a2 = mkArticle({ id: "a2", publisher: "The Indian Express", title: "Bill cleared by the assembly", excerpt: "The house cleared it; a walkout by the opposition preceded the vote." });
+    const ev = mkClaim({ id: "c1", canonicalText: "The assembly cleared the bill", type: "event", status: "partially-corroborated", supportingArticleIds: ["a1", "a2"], supportingPublisherIds: ["The Hindu", "The Indian Express"], independentSourceGroups: [["a1", "a2"]] });
+    const cluster = mkCluster({ title: "Assembly clears the bill", articles: [a1, a2], ec: mkEventClaims({ claims: [ev] }) });
+    const b = verifyBrief(synthesizeBrief(cluster, [a1, a2], { language: "en" }), cluster, [a1, a2]);
+    expect(b.shortVersion[0]?.support).not.toBe("STRONG");
   });
 
   it("a primary source does not become objective truth — it stays attributed/official", () => {
@@ -379,8 +409,8 @@ describe("brief respects the frozen engine's guarantees", () => {
 
 describe("Tamil and English briefs share claim ids", () => {
   it("Tamil sentences carry the same citations as their English counterparts", () => {
-    const a1 = mkArticle({ id: "a1", publisher: "The Hindu Tamil", language: "ta", title: "தஞ்சாவூரில் 200 பேர் நிவாரண முகாம்களுக்கு மாற்றம்", excerpt: "தஞ்சாவூர் மாவட்டத்தில் 200 பேர் பாதுகாப்பான இடங்களுக்கு மாற்றப்பட்டனர்." });
-    const a2 = mkArticle({ id: "a2", publisher: "The Hindu", language: "en", title: "200 shifted to relief camps in Thanjavur", excerpt: "About 200 people were moved to relief camps." });
+    const a1 = mkArticle({ id: "a1", publisher: "News18 Tamil", language: "ta", title: "தஞ்சாவூரில் 200 பேர் நிவாரண முகாம்களுக்கு மாற்றம்", excerpt: "தஞ்சாவூர் மாவட்டத்தில் 200 பேர் பாதுகாப்பான இடங்களுக்கு மாற்றப்பட்டனர்." });
+    const a2 = mkArticle({ id: "a2", publisher: "The Hindu", language: "en", title: "200 shifted to relief camps in Thanjavur", excerpt: "About 200 people were moved to relief camps by the district administration." });
     const ev = mkClaim({
       id: "c1",
       canonicalText: "About 200 people were moved to relief camps in Thanjavur.",
@@ -390,10 +420,10 @@ describe("Tamil and English briefs share claim ids", () => {
       objects: ["200"],
       predicates: ["rescued"],
       supportingArticleIds: ["a1", "a2"],
-      supportingPublisherIds: ["The Hindu Tamil", "The Hindu"],
+      supportingPublisherIds: ["News18 Tamil", "The Hindu"],
       independentSourceGroups: [["a1"], ["a2"]],
       provenance: [
-        { articleId: "a1", publisherId: "The Hindu Tamil", sourceUrl: "https://ex.test/a1", language: "ta", sourceTextOriginal: "தஞ்சாவூர் மாவட்டத்தில் 200 பேர் மாற்றப்பட்டனர்.", extractionMethod: "rule", confidence: 0.6, seenAt: "2026-09-03T06:00:00.000Z" },
+        { articleId: "a1", publisherId: "News18 Tamil", sourceUrl: "https://ex.test/a1", language: "ta", sourceTextOriginal: "தஞ்சாவூர் மாவட்டத்தில் 200 பேர் மாற்றப்பட்டனர்.", extractionMethod: "rule", confidence: 0.6, seenAt: "2026-09-03T06:00:00.000Z" },
       ],
     });
     const cluster = mkCluster({ title: "Thanjavur flood relief", scope: "tamil-nadu", districts: ["Thanjavur"], articles: [a1, a2], ec: mkEventClaims({ claims: [ev] }) });

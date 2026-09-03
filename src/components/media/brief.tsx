@@ -75,8 +75,16 @@ export function Brief({ brief, tamil }: { brief: IFFABrief; tamil?: IFFABrief | 
             {lang === "ta" ? "தமிழ் சுருக்கம் இன்னும் தயாராகவில்லை" : "IFFA Brief not yet available"}
           </p>
           <p className="ui mt-1 text-[12.5px] text-ink-2">{active.withheldDetail ?? WITHHOLD_LABEL[active.withheldReason]}</p>
+          {active.familyMerges && active.familyMerges.length > 0 && (
+            <ul className="mt-1.5 flex flex-col gap-0.5 ui text-[11.5px] text-ink-3">
+              {active.familyMerges.map((m, i) => (
+                <li key={i}>· {m.publishers.join(" + ")} counted as one — {m.reason}</li>
+              ))}
+            </ul>
+          )}
           <p className="ui mt-1.5 text-[11px] text-ink-3">
-            Coverage and every source are listed below. A brief is written only when the evidence supports one — it is never padded.
+            Coverage and every source are listed below. A brief is written only when a genuinely independent
+            second source or a primary record exists — it is never padded.
           </p>
         </div>
       ) : (
