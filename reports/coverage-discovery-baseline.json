@@ -1,0 +1,390 @@
+{
+  "generatedAt": "2026-09-03T16:54:12.735Z",
+  "snapshot": "2026-09-03T07:59:03.528Z",
+  "corpus": {
+    "articles": 913,
+    "clusters": 763,
+    "routableClusters": 763,
+    "publishers": 24,
+    "tamilArticles": 154,
+    "englishArticles": 756,
+    "tamilNaduClusters": 117,
+    "indiaClusters": 646
+  },
+  "byCategory": {
+    "crisis": {
+      "clusters": 74,
+      "articles": 115,
+      "publishers": 17,
+      "genuineFamiliesMean": 0.76,
+      "famDist": {
+        "1": 72,
+        "2": 2,
+        "3-5": 0,
+        "6-10": 0,
+        "11+": 0
+      },
+      "briefsDelivered": 25,
+      "tamilNadu": 8
+    },
+    "politics": {
+      "clusters": 222,
+      "articles": 278,
+      "publishers": 21,
+      "genuineFamiliesMean": 1.09,
+      "famDist": {
+        "1": 210,
+        "2": 6,
+        "3-5": 6,
+        "6-10": 0,
+        "11+": 0
+      },
+      "briefsDelivered": 13,
+      "tamilNadu": 62
+    },
+    "other-relevant": {
+      "clusters": 380,
+      "articles": 403,
+      "publishers": 24,
+      "genuineFamiliesMean": 1.02,
+      "famDist": {
+        "1": 373,
+        "2": 5,
+        "3-5": 1,
+        "6-10": 1,
+        "11+": 0
+      },
+      "briefsDelivered": 12,
+      "tamilNadu": 41
+    },
+    "finance": {
+      "clusters": 43,
+      "articles": 57,
+      "publishers": 13,
+      "genuineFamiliesMean": 1,
+      "famDist": {
+        "1": 39,
+        "2": 4,
+        "3-5": 0,
+        "6-10": 0,
+        "11+": 0
+      },
+      "briefsDelivered": 6,
+      "tamilNadu": 2
+    },
+    "sports": {
+      "clusters": 38,
+      "articles": 54,
+      "publishers": 8,
+      "genuineFamiliesMean": 1.08,
+      "famDist": {
+        "1": 35,
+        "2": 3,
+        "3-5": 0,
+        "6-10": 0,
+        "11+": 0
+      },
+      "briefsDelivered": 3,
+      "tamilNadu": 4
+    },
+    "entertainment": {
+      "clusters": 4,
+      "articles": 4,
+      "publishers": 3,
+      "genuineFamiliesMean": 1,
+      "famDist": {
+        "1": 4,
+        "2": 0,
+        "3-5": 0,
+        "6-10": 0,
+        "11+": 0
+      },
+      "briefsDelivered": 0,
+      "tamilNadu": 0
+    },
+    "celebrity": {
+      "clusters": 2,
+      "articles": 2,
+      "publishers": 2,
+      "genuineFamiliesMean": 1,
+      "famDist": {
+        "1": 2,
+        "2": 0,
+        "3-5": 0,
+        "6-10": 0,
+        "11+": 0
+      },
+      "briefsDelivered": 0,
+      "tamilNadu": 0
+    }
+  },
+  "genuineFamilyDistribution": {
+    "1": 735,
+    "2": 20,
+    "3-5": 7,
+    "6-10": 1,
+    "11+": 0
+  },
+  "delivery": {
+    "tamilNadu": {
+      "clusters": 117,
+      "briefsDelivered": 7
+    },
+    "india": {
+      "clusters": 646,
+      "briefsDelivered": 52
+    }
+  },
+  "frontDoor": {
+    "categories": {
+      "politics": 14,
+      "crisis": 5,
+      "finance": 1
+    },
+    "nativeComprehension": "10/20",
+    "genuineFamiliesMean": 1.6,
+    "singleFamilyStories": 12,
+    "rows": [
+      {
+        "slug": "rs-1-200-crore-secretariat-olympic-city-formula-1-track-6kspx1",
+        "title": "Rs 1,200-crore Secretariat, Olympic City, Formula 1 track: Vijay's Che",
+        "category": "politics",
+        "tamilNadu": true,
+        "publishers": 5,
+        "genuineFamilies": 5,
+        "tamil": 1,
+        "english": 6,
+        "briefDelivered": true,
+        "understood": true
+      },
+      {
+        "slug": "flood-1lahjk",
+        "title": "Flood",
+        "category": "crisis",
+        "tamilNadu": false,
+        "publishers": 1,
+        "genuineFamilies": 0,
+        "tamil": 0,
+        "english": 1,
+        "briefDelivered": true,
+        "understood": true
+      },
+      {
+        "slug": "supreme-court-rules-that-bci-has-no-power-to-punish-law-r7vfk3",
+        "title": "Supreme Court rules that BCI has no power to punish law students",
+        "category": "politics",
+        "tamilNadu": false,
+        "publishers": 2,
+        "genuineFamilies": 2,
+        "tamil": 0,
+        "english": 2,
+        "briefDelivered": true,
+        "understood": true
+      },
+      {
+        "slug": "setback-for-mk-stalin-as-high-court-rejects-plea-against-12j3hy",
+        "title": "Setback for MK Stalin as High Court rejects plea against TVK's Kolathu",
+        "category": "politics",
+        "tamilNadu": true,
+        "publishers": 4,
+        "genuineFamilies": 4,
+        "tamil": 0,
+        "english": 10,
+        "briefDelivered": true,
+        "understood": true
+      },
+      {
+        "slug": "4-260-7lrrqx",
+        "title": "கிருஷ்ண ஜெயந்தி மற்றும் வாரக் கடைசி நாட்களை முன்னிட்டு 4,260 சிறப்பு ப",
+        "category": "politics",
+        "tamilNadu": true,
+        "publishers": 2,
+        "genuineFamilies": 2,
+        "tamil": 2,
+        "english": 0,
+        "briefDelivered": true,
+        "understood": true
+      },
+      {
+        "slug": "udhayanidhi-stalin-speech-dmk-prk2a4",
+        "title": "Udhayanidhi Stalin Speech | \"ரீல்ஸ் அதிக ரீச் ஆனால் போதும்..\" - பொங்கி",
+        "category": "politics",
+        "tamilNadu": true,
+        "publishers": 2,
+        "genuineFamilies": 2,
+        "tamil": 2,
+        "english": 0,
+        "briefDelivered": true,
+        "understood": true
+      },
+      {
+        "slug": "tamil-for-madras-hc-cm-vijay-to-move-resolution-urging-c-2ky1rb",
+        "title": "Tamil for Madras HC: CM Vijay to move resolution urging Centre's appro",
+        "category": "politics",
+        "tamilNadu": true,
+        "publishers": 2,
+        "genuineFamilies": 2,
+        "tamil": 0,
+        "english": 2,
+        "briefDelivered": true,
+        "understood": true
+      },
+      {
+        "slug": "flood-1ons97",
+        "title": "Flood",
+        "category": "crisis",
+        "tamilNadu": false,
+        "publishers": 1,
+        "genuineFamilies": 0,
+        "tamil": 0,
+        "english": 3,
+        "briefDelivered": true,
+        "understood": true
+      },
+      {
+        "slug": "20-1ohpzc",
+        "title": "\"சென்னையில் 20 லட்சம் சதுர அடியில் புதிய சட்டப்பேரவை மற்றும் தலைமைச் ச",
+        "category": "politics",
+        "tamilNadu": true,
+        "publishers": 3,
+        "genuineFamilies": 3,
+        "tamil": 6,
+        "english": 0,
+        "briefDelivered": true,
+        "understood": true
+      },
+      {
+        "slug": "item-tw7xq3",
+        "title": "பெரம்பலூர் அருகே லாரி மீது ஆம்னி பேருந்து மோதி இருவர் உயிரிழப்பு",
+        "category": "crisis",
+        "tamilNadu": true,
+        "publishers": 1,
+        "genuineFamilies": 1,
+        "tamil": 1,
+        "english": 0,
+        "briefDelivered": false,
+        "understood": false
+      },
+      {
+        "slug": "pwd-decides-to-tighten-safety-measures-at-construction-s-8i7yw1",
+        "title": "PWD decides to tighten safety measures at construction sites in Kerala",
+        "category": "politics",
+        "tamilNadu": false,
+        "publishers": 1,
+        "genuineFamilies": 1,
+        "tamil": 0,
+        "english": 1,
+        "briefDelivered": false,
+        "understood": false
+      },
+      {
+        "slug": "war-over-7-8-gdp-growth-data-opposition-attacks-govt-nvi-1w1n5a",
+        "title": "War Over 7.8% GDP Growth Data, Opposition Attacks Govt & NVIDIA CEO Je",
+        "category": "finance",
+        "tamilNadu": false,
+        "publishers": 1,
+        "genuineFamilies": 1,
+        "tamil": 0,
+        "english": 1,
+        "briefDelivered": false,
+        "understood": false
+      },
+      {
+        "slug": "assam-two-police-personnel-shot-dead-by-colleague-1h4cea",
+        "title": "Assam: Two police personnel shot dead by colleague",
+        "category": "crisis",
+        "tamilNadu": false,
+        "publishers": 1,
+        "genuineFamilies": 1,
+        "tamil": 0,
+        "english": 1,
+        "briefDelivered": false,
+        "understood": false
+      },
+      {
+        "slug": "79-of-polavaram-left-main-canal-works-done-in-ysr-s-tenu-pc0y4m",
+        "title": "79% of Polavaram Left Main Canal works done in YSR’s tenure, Naidu cla",
+        "category": "politics",
+        "tamilNadu": false,
+        "publishers": 1,
+        "genuineFamilies": 1,
+        "tamil": 0,
+        "english": 1,
+        "briefDelivered": false,
+        "understood": false
+      },
+      {
+        "slug": "ed-raids-residence-of-wanted-ganja-supplier-in-cyberabad-1dzppd",
+        "title": "ED raids residence of wanted ganja supplier in Cyberabad’s Nanakramgud",
+        "category": "politics",
+        "tamilNadu": false,
+        "publishers": 1,
+        "genuineFamilies": 1,
+        "tamil": 0,
+        "english": 1,
+        "briefDelivered": false,
+        "understood": false
+      },
+      {
+        "slug": "cm-cm-vijay-speech-tn-police-recruitment-1yyr3q",
+        "title": "அறிவிப்புக்கு மேல் அறிவிப்பு - அதிரடி காட்டிய CM விஜய் | CM Vijay Spee",
+        "category": "politics",
+        "tamilNadu": true,
+        "publishers": 1,
+        "genuineFamilies": 1,
+        "tamil": 9,
+        "english": 0,
+        "briefDelivered": false,
+        "understood": false
+      },
+      {
+        "slug": "digital-driving-licences-vehicle-registration-certificat-wvsjnl",
+        "title": "Digital driving licences, vehicle registration certificates to be laun",
+        "category": "politics",
+        "tamilNadu": true,
+        "publishers": 2,
+        "genuineFamilies": 2,
+        "tamil": 0,
+        "english": 2,
+        "briefDelivered": true,
+        "understood": true
+      },
+      {
+        "slug": "tn-assembly-adopts-resolution-urging-centre-to-recognise-1qft4y",
+        "title": "TN Assembly adopts resolution urging Centre to recognise Tamil as High",
+        "category": "politics",
+        "tamilNadu": true,
+        "publishers": 1,
+        "genuineFamilies": 1,
+        "tamil": 0,
+        "english": 1,
+        "briefDelivered": false,
+        "understood": false
+      },
+      {
+        "slug": "keralam-seeks-mullaperiyar-safety-review-as-per-2025-tor-1cwo1k",
+        "title": "Keralam seeks Mullaperiyar safety review as per 2025 ToR",
+        "category": "crisis",
+        "tamilNadu": true,
+        "publishers": 1,
+        "genuineFamilies": 1,
+        "tamil": 0,
+        "english": 1,
+        "briefDelivered": false,
+        "understood": false
+      },
+      {
+        "slug": "tvk-minister-ramesh-tvk-1yqo1v",
+        "title": "கோயில்களில் செல்போன்கள் தடையா, இல்லையா..? - அமைச்சர் அதிரடி பதில் | TV",
+        "category": "politics",
+        "tamilNadu": true,
+        "publishers": 1,
+        "genuineFamilies": 1,
+        "tamil": 1,
+        "english": 0,
+        "briefDelivered": false,
+        "understood": false
+      }
+    ]
+  }
+}
