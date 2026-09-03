@@ -148,8 +148,14 @@ describe("v0.10 — Blindspot engine (Phase 6): asymmetry, never truth", () => {
       art({ publisher: "Sportstar", title: "C" }),
       art({ publisher: "The Times of India", title: "D" }),
     ];
-    const bs = detectBlindspots(cluster({ publishers: arts.map((a) => a.publisher) }), arts, CTX);
+    // SOURCE_FAMILY / OWNERSHIP concentration is only flagged on a consequential
+    // story (v0.11 audit F3) — a politics cluster qualifies.
+    const c = cluster({ publishers: arts.map((a) => a.publisher), trendData: { category: "politics" } } as never);
+    const bs = detectBlindspots(c, arts, CTX);
     expect(bs.some((b) => b.type === "SOURCE_FAMILY")).toBe(true);
+    // ...but NOT on a routine other-relevant cluster
+    const routine = cluster({ publishers: arts.map((a) => a.publisher), trendData: { category: "other-relevant" } } as never);
+    expect(detectBlindspots(routine, arts, CTX).some((b) => b.type === "SOURCE_FAMILY")).toBe(false);
   });
 });
 

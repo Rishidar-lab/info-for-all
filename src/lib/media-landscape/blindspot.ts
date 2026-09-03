@@ -107,17 +107,28 @@ export function detectBlindspots(
       ),
     );
 
-  // ── OWNERSHIP ──
-  const own = tally(articles, (a) => ctx.profiles.get(a.publisher)?.ownership.category ?? "UNKNOWN");
-  const og = biggestGap(own);
-  if (og && og.over !== "UNKNOWN")
-    add(make("OWNERSHIP", og, (g) => `Sources owned by ${g.over.toLowerCase().replace(/_/g, " ")} entities dominate this coverage (${g.overN} vs ${g.underN}).`));
+  // OWNERSHIP / SOURCE_FAMILY concentration is only interesting on a
+  // consequential story — routine sports / other-relevant content is expected to
+  // cluster by family and the flag is just noise (v0.11 manual audit, F3).
+  const consequential =
+    cluster.isCrisis ||
+    (cluster.trendData?.severity?.level ?? "informational") !== "informational" ||
+    ["urgent", "high"].includes(cluster.trendData?.editorial?.band ?? "") ||
+    ["politics", "crisis", "finance"].includes(cluster.trendData?.category ?? "");
 
-  // ── SOURCE FAMILY ──
-  const fam = tally(articles, (a) => ctx.families.get(a.publisher) ?? "unaffiliated");
-  const fg = biggestGap(fam);
-  if (fg && fg.overN >= 3)
-    add(make("SOURCE_FAMILY", fg, (g) => `${g.overN} of ${articles.length} reports come from a single source family (${g.over}).`));
+  if (consequential) {
+    // ── OWNERSHIP ──
+    const own = tally(articles, (a) => ctx.profiles.get(a.publisher)?.ownership.category ?? "UNKNOWN");
+    const og = biggestGap(own);
+    if (og && og.over !== "UNKNOWN")
+      add(make("OWNERSHIP", og, (g) => `Sources owned by ${g.over.toLowerCase().replace(/_/g, " ")} entities dominate this coverage (${g.overN} vs ${g.underN}).`));
+
+    // ── SOURCE FAMILY ──
+    const fam = tally(articles, (a) => ctx.families.get(a.publisher) ?? "unaffiliated");
+    const fg = biggestGap(fam);
+    if (fg && fg.overN >= 3)
+      add(make("SOURCE_FAMILY", fg, (g) => `${g.overN} of ${articles.length} reports come from a single source family (${g.over}).`));
+  }
 
   // ── POLITICAL COVERAGE (needs framing stances) ──
   if (framing) {
