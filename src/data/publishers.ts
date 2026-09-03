@@ -486,6 +486,86 @@ export const PUBLISHERS: PublisherRegistryEntry[] = [
     externalRatings: [],
   },
 
+  // ── v0.11 Phase A/B — Tamil-native + regional ────────────────────────
+  {
+    id: "the-hindu-tamil",
+    name: "The Hindu Tamil",
+    domain: "hindutamil.in",
+    languages: ["ta"],
+    regions: ["tamil-nadu"],
+    ownership: {
+      category: "MEDIA_CONGLOMERATE",
+      owner: "The Hindu Group",
+      parent: "Kasturi & Sons Ltd",
+      ultimateParent: "Kasturi & Sons Ltd",
+      fundingType: "mixed-commercial",
+      provenance: publicRecord("இந்து தமிழ் திசை is the Tamil daily of The Hindu Group (masthead)", "https://www.hindutamil.in/", "high"),
+    },
+    familyKey: "kasturi-and-sons",
+    externalRatings: [],
+  },
+  {
+    id: "abp-tamil",
+    name: "ABP Tamil",
+    domain: "tamil.abplive.com",
+    languages: ["ta"],
+    regions: ["tamil-nadu", "india"],
+    ownership: {
+      category: "MEDIA_CONGLOMERATE",
+      owner: "ABP Network Pvt Ltd",
+      parent: "ABP Group",
+      ultimateParent: "ABP Group (Sarkar family)",
+      fundingType: "advertising",
+      provenance: publicRecord(
+        "ABP Tamil is part of ABP Network / ABP Group; the Sarkar family's control of ABP is on the public record",
+        "https://tamil.abplive.com/about-us",
+        "moderate",
+      ),
+    },
+    familyKey: "abp-group",
+    externalRatings: [],
+  },
+  {
+    id: "nakkheeran",
+    name: "Nakkheeran",
+    domain: "nakkheeran.in",
+    languages: ["ta"],
+    regions: ["tamil-nadu"],
+    ownership: {
+      category: "INDIVIDUAL",
+      owner: "Nakkheeran Publications (RR Gopal / 'Nakkheeran' Gopal)",
+      fundingType: "mixed-commercial",
+      provenance: publicRecord(
+        "Nakkheeran is a Tamil news publication long associated with its founder-editor R. R. Gopal ('Nakkheeran' Gopal)",
+        "https://www.nakkheeran.in/",
+        "moderate",
+      ),
+    },
+    familyKey: "nakkheeran",
+    externalRatings: [],
+  },
+  {
+    id: "the-free-press-journal",
+    name: "The Free Press Journal",
+    domain: "freepressjournal.in",
+    languages: ["en"],
+    regions: ["india"],
+    ownership: {
+      category: "MEDIA_CONGLOMERATE",
+      owner: "Free Press Journal (Free Press House)",
+      parent: "The Free Press Journal group",
+      ultimateParent: "Karanjia / Abhyankar family",
+      fundingType: "mixed-commercial",
+      provenance: publicRecord(
+        "One of India's oldest English dailies (est. 1928), Mumbai; long-run family ownership",
+        "https://www.freepressjournal.in/about-us",
+        "moderate",
+      ),
+    },
+    familyKey: "free-press-journal",
+    externalRatings: [],
+  },
+
   // ── Official / government / intergovernmental ─────────────────────────
   {
     id: "reserve-bank-of-india",

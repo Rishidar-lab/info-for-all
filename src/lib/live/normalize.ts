@@ -104,7 +104,13 @@ export function normalizeItem(feed: FeedSource, item: RawItem, fetchedAt: string
           : "archived"
       : "developing";
 
-  const language = detectLanguage([title, excerpt].filter(Boolean).join(" "));
+  // Detect on the TITLE first (feed excerpts are often English boilerplate that
+  // drags a Tamil headline to "en"); fall back to title + excerpt.
+  const titleLang = detectLanguage(title);
+  const language =
+    titleLang !== "unknown"
+      ? titleLang
+      : detectLanguage([title, excerpt].filter(Boolean).join(" "));
 
   // Crisis if: an official alert with a crisis type, OR strong crisis-type match in TN/India.
   const isCrisis =
@@ -147,7 +153,14 @@ export function normalizeItem(feed: FeedSource, item: RawItem, fetchedAt: string
     sourceUrl: feed.homepage,
     publishedAt: publishedIso,
     fetchedAt,
-    language: language === "unknown" && feed.language !== "mixed" ? feed.language : language,
+    language:
+      // a Tamil feed whose item carries any Tamil script is Tamil, whatever the
+      // English prefix; an "unknown" item inherits the feed's declared language.
+      feed.language === "ta" && /[஀-௿]/.test(title)
+        ? "ta"
+        : language === "unknown" && feed.language !== "mixed"
+          ? feed.language
+          : language,
     scope,
     state: geo.state,
     districts: geo.districts,

@@ -197,8 +197,13 @@ export function normalisedTitleKey(title: string): string {
 export function detectLanguage(text: string): "ta" | "en" | "unknown" {
   const tamil = (text.match(TAMIL_BLOCK) || []).length;
   const latin = (text.match(/[A-Za-z]/g) || []).length;
-  if (tamil > 4 && tamil >= latin) return "ta";
+  // A headline carrying a real amount of Tamil script IS a Tamil-language item,
+  // even with an English section prefix ("TN Assembly | …") or an English-heavy
+  // feed excerpt. v0.11: a hard Tamil floor, plus the original relative rule.
+  if (tamil >= 12) return "ta";
+  if (tamil > 4 && tamil * 2 >= latin) return "ta";
   if (latin > 4) return "en";
+  if (tamil > 0) return "ta";
   return "unknown";
 }
 

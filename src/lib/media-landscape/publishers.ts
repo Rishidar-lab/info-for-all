@@ -126,6 +126,9 @@ const FAMILY_LABELS: Record<string, string> = {
   "business-standard": "Business Standard Pvt Ltd (Kotak)",
   "pravda-media-foundation": "Pravda Media Foundation (Alt News)",
   "factly-media": "Factly Media & Research",
+  "abp-group": "ABP Group",
+  "nakkheeran": "Nakkheeran Publications",
+  "free-press-journal": "The Free Press Journal group",
 };
 
 /** Group publishers into corporate/newsroom families. Solo publishers → one-member families. */
