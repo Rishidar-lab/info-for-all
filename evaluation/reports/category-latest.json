@@ -1,10 +1,40 @@
 {
-  "corpusSize": 144,
+  "corpusSize": 175,
   "accuracy": 1,
   "macroF1": 1,
   "perCat": [
     {
       "cat": "crisis",
+      "support": 27,
+      "tp": 27,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1,
+      "recall": 1,
+      "f1": 1
+    },
+    {
+      "cat": "politics",
+      "support": 61,
+      "tp": 61,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1,
+      "recall": 1,
+      "f1": 1
+    },
+    {
+      "cat": "finance",
+      "support": 28,
+      "tp": 28,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1,
+      "recall": 1,
+      "f1": 1
+    },
+    {
+      "cat": "sports",
       "support": 21,
       "tp": 21,
       "fp": 0,
@@ -14,39 +44,9 @@
       "f1": 1
     },
     {
-      "cat": "politics",
-      "support": 55,
-      "tp": 55,
-      "fp": 0,
-      "fn": 0,
-      "precision": 1,
-      "recall": 1,
-      "f1": 1
-    },
-    {
-      "cat": "finance",
-      "support": 22,
-      "tp": 22,
-      "fp": 0,
-      "fn": 0,
-      "precision": 1,
-      "recall": 1,
-      "f1": 1
-    },
-    {
-      "cat": "sports",
-      "support": 17,
-      "tp": 17,
-      "fp": 0,
-      "fn": 0,
-      "precision": 1,
-      "recall": 1,
-      "f1": 1
-    },
-    {
       "cat": "other-relevant",
-      "support": 27,
-      "tp": 27,
+      "support": 36,
+      "tp": 36,
       "fp": 0,
       "fn": 0,
       "precision": 1,
@@ -76,7 +76,7 @@
   ],
   "confusion": {
     "crisis": {
-      "crisis": 21,
+      "crisis": 27,
       "politics": 0,
       "finance": 0,
       "sports": 0,
@@ -86,7 +86,7 @@
     },
     "politics": {
       "crisis": 0,
-      "politics": 55,
+      "politics": 61,
       "finance": 0,
       "sports": 0,
       "other-relevant": 0,
@@ -96,7 +96,7 @@
     "finance": {
       "crisis": 0,
       "politics": 0,
-      "finance": 22,
+      "finance": 28,
       "sports": 0,
       "other-relevant": 0,
       "entertainment": 0,
@@ -106,7 +106,7 @@
       "crisis": 0,
       "politics": 0,
       "finance": 0,
-      "sports": 17,
+      "sports": 21,
       "other-relevant": 0,
       "entertainment": 0,
       "celebrity": 0
@@ -116,7 +116,7 @@
       "politics": 0,
       "finance": 0,
       "sports": 0,
-      "other-relevant": 27,
+      "other-relevant": 36,
       "entertainment": 0,
       "celebrity": 0
     },
@@ -144,6 +144,12 @@
   "secondaryTotal": 10,
   "secTP": 21,
   "secFP": 0,
-  "secFN": 0,
-  "secErrors": []
+  "secFN": 5,
+  "secErrors": [
+    "FN  finance\tMadras High Court orders the state to clear ₹430 crore in pending ",
+    "FN  crisis\tSivaganga collector bans the sale of loose sweets during Deepavali",
+    "FN  crisis\tAnna University postpones semester exams in Chennai and Chengalpat",
+    "FN  finance\tState cabinet approves a 3% DA hike for government employees, effe",
+    "FN  finance\tCoimbatore airport handles a record 2.1 million passengers this fi"
+  ]
 }

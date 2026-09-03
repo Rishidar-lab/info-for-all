@@ -3,21 +3,21 @@
 _The Common Ground Index is **experimental**. This report measures how 
 stable it is — it is not a claim that the weights are correct._
 
-- events analysed (≥2 publishers, CGI present): **8**
-- mean CGI: **58.1** · band distribution: {"moderate":5,"low":2,"high":1}
+- events analysed (≥2 publishers, CGI present): **19**
+- mean CGI: **55.6** · band distribution: {"moderate":14,"low":5}
 
 ## Weight perturbation (±20%), ranked by impact
 
 | Weight | Change | value | mean |Δscore| | max |Δ| | band flips |
 |---|---|---|---|---|---|
-| corroboratedGain | −20% | 45→36 | 4.5 | 9 | 0 |
-| corroboratedGain | +20% | 45→54 | 4.13 | 9 | 2 |
-| thinBaseCap | −20% | 68→54 | 2.5 | 14 | 0 |
-| thinBaseCap | +20% | 68→82 | 1.75 | 14 | 1 |
-| singleSourcePenalty | +20% | 25→30 | 1 | 2 | 0 |
-| singleSourcePenalty | −20% | 25→20 | 0.75 | 3 | 0 |
-| attributedPenalty | −20% | 12→10 | 0.5 | 1 | 0 |
-| attributedPenalty | +20% | 12→14 | 0.5 | 1 | 0 |
+| thinBaseCap | −20% | 68→54 | 6.95 | 14 | 0 |
+| thinBaseCap | +20% | 68→82 | 6.63 | 14 | 9 |
+| corroboratedGain | −20% | 45→36 | 1.74 | 6 | 0 |
+| corroboratedGain | +20% | 45→54 | 1.63 | 6 | 4 |
+| singleSourcePenalty | −20% | 25→20 | 0.74 | 5 | 0 |
+| singleSourcePenalty | +20% | 25→30 | 0.74 | 5 | 0 |
+| attributedPenalty | +20% | 12→14 | 0.47 | 2 | 0 |
+| attributedPenalty | −20% | 12→10 | 0.37 | 1 | 0 |
 | evidenceBonus | −20% | 10→8 | 0 | 0 | 0 |
 | evidenceBonus | +20% | 10→12 | 0 | 0 | 0 |
 | disputedPenalty | −20% | 30→24 | 0 | 0 | 0 |
@@ -29,7 +29,7 @@ stable it is — it is not a claim that the weights are correct._
 
 ## Scenario: no primary evidence retrieved
 
-Stripping every CAP/SACHET record: mean CGI drop **0** points, **0** of 8 events change band.
+Stripping every CAP/SACHET record: mean CGI drop **0** points, **0** of 19 events change band.
 
 ## Reading this
 
