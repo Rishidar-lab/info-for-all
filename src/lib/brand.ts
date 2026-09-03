@@ -20,12 +20,12 @@ export const BRAND = {
   tagline: "See what matters. See what changed. See the evidence.",
   /** One-line description of what IFFA is. */
   blurb:
-    "A Tamil Nadu-first, India-aware real-time news and current-trend intelligence platform. " +
-    "IFFA groups reporting into events, ranks them by what is actually changing, and shows " +
-    "how reliable each claim is and how Tamil and English sources describe the same story.",
+    "A Tamil Nadu-first, India-aware news-comparison and media-landscape platform. For every " +
+    "story IFFA shows who is reporting it, who is not, who owns those sources, how their framing " +
+    "differs, which claims agree, which are disputed, and which have primary-document evidence.",
   region: "Tamil Nadu & India",
-  version: "0.9",
-  versionLabel: "v0.9 — Editorial Intelligence",
+  version: "0.10",
+  versionLabel: "v0.10 — Media Landscape Intelligence",
   repoUrl: "https://github.com/Rishidar-lab/info-for-all",
   siteUrl: "https://rishidar-lab.github.io/info-for-all",
 } as const;

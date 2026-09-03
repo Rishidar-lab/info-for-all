@@ -3,6 +3,7 @@ import Link from "next/link";
 import { FEED_SOURCES, DESCRIBED_FEEDS, CANDIDATE_FEEDS } from "@/data/feeds";
 import { CATEGORY_LABEL } from "@/lib/domain/categories";
 import { dataset, istTimestamp } from "@/lib/live/dataset";
+import { publisherByName } from "@/data/publishers";
 
 const AUTHORITY_LABEL: Record<string, string> = {
   "primary-authority": "Primary authority",
@@ -100,40 +101,53 @@ export default function SourcesPage() {
       <section>
         <div className="mb-3 border-b border-rule-strong pb-2">
           <div className="label mb-1">Publishers</div>
-          <h2 className="font-serif text-[19px] font-semibold text-ink">Who IFFA ingests, and how much</h2>
+          <h2 className="font-serif text-[19px] font-semibold text-ink">Who IFFA ingests, who owns them</h2>
           <p className="ui mt-1 text-[12px] leading-relaxed text-ink-3">
-            Verified metadata only — article counts, languages and comparison appearances are measured
-            from the current snapshot. IFFA does not record ownership or political-orientation metadata.
+            Article counts and languages are measured from the current snapshot. Ownership is from IFFA&rsquo;s
+            provenance-backed registry — it is metadata, never a bias determinant, and{" "}
+            <code className="text-ink-2">UNKNOWN</code> where unverified. Open a publisher for its full profile,
+            or <Link href="/source/compare" className="text-accent hover:underline">compare sources</Link>.
           </p>
         </div>
         <div className="card w-full min-w-0 overflow-x-auto">
-          <table className="w-full min-w-[760px] border-collapse text-left">
+          <table className="w-full min-w-[820px] border-collapse text-left">
             <thead>
               <tr className="border-b border-rule-strong bg-surface-2 ui text-[11px] uppercase tracking-wider text-ink-3">
                 <th className="px-4 py-2.5 font-semibold">Publisher</th>
-                <th className="px-4 py-2.5 font-semibold">Kind</th>
+                <th className="px-4 py-2.5 font-semibold">Ownership</th>
+                <th className="px-4 py-2.5 font-semibold">Ultimate parent</th>
                 <th className="px-4 py-2.5 font-semibold">Languages</th>
                 <th className="px-4 py-2.5 font-semibold">Articles</th>
                 <th className="px-4 py-2.5 font-semibold">In comparisons</th>
-                <th className="px-4 py-2.5 font-semibold">Poss. syndicated</th>
                 <th className="px-4 py-2.5 font-semibold">Last ingested</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-rule">
-              {publishers.map((p) => (
-                <tr key={p.publisher} className="align-top">
-                  <td className="px-4 py-3">
-                    <div className="ui text-[13.5px] font-semibold text-ink">{p.publisher}</div>
-                    <div className="ui text-[11.5px] text-ink-3">{p.domains.join(", ")}</div>
-                  </td>
-                  <td className="px-4 py-3 ui text-[12.5px] text-ink-2">{p.official ? "Official / primary" : "Independent"}</td>
-                  <td className="px-4 py-3 ui text-[12.5px] text-ink-2">{p.languages.join(", ") || "—"}</td>
-                  <td className="px-4 py-3 mono text-[13px] text-ink">{p.articleCount}</td>
-                  <td className="px-4 py-3 mono text-[13px] text-ink">{p.comparisonCount}</td>
-                  <td className="px-4 py-3 mono text-[13px] text-ink-2">{p.possibleSyndicated}</td>
-                  <td className="px-4 py-3 ui text-[11.5px] text-ink-3">{p.lastIngested ? istTimestamp(p.lastIngested) : "—"}</td>
-                </tr>
-              ))}
+              {publishers.map((p) => {
+                const reg = publisherByName(p.publisher);
+                return (
+                  <tr key={p.publisher} className="align-top">
+                    <td className="px-4 py-3">
+                      {reg ? (
+                        <Link href={`/source/${reg.id}`} className="ui text-[13.5px] font-semibold text-ink hover:text-accent">
+                          {p.publisher}
+                        </Link>
+                      ) : (
+                        <span className="ui text-[13.5px] font-semibold text-ink">{p.publisher}</span>
+                      )}
+                      <div className="ui text-[11.5px] text-ink-3">{p.domains.join(", ")}</div>
+                    </td>
+                    <td className="px-4 py-3 ui text-[12px] text-ink-2">
+                      {reg ? reg.ownership.category.replace(/_/g, " ") : p.official ? "Official / primary" : "—"}
+                    </td>
+                    <td className="px-4 py-3 ui text-[11.5px] text-ink-3">{reg?.ownership.ultimateParent ?? reg?.ownership.parent ?? "—"}</td>
+                    <td className="px-4 py-3 ui text-[12.5px] text-ink-2">{p.languages.join(", ") || "—"}</td>
+                    <td className="px-4 py-3 mono text-[13px] text-ink">{p.articleCount}</td>
+                    <td className="px-4 py-3 mono text-[13px] text-ink">{p.comparisonCount}</td>
+                    <td className="px-4 py-3 ui text-[11.5px] text-ink-3">{p.lastIngested ? istTimestamp(p.lastIngested) : "—"}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

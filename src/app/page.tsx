@@ -4,6 +4,7 @@ import { StatusBanner } from "@/components/live/status-banner";
 import { SituationBar } from "@/components/iffa/situation-bar";
 import { CategoryNav } from "@/components/iffa/category-nav";
 import { EventList } from "@/components/iffa/event-list";
+import { StoryCardGrid } from "@/components/media/story-card";
 import { dataset } from "@/lib/live/dataset";
 import {
   urgentClusters,
@@ -32,16 +33,20 @@ export default function HomePage() {
     <div className="flex flex-col gap-8">
       <section className="border-b border-rule-strong pb-6">
         <p className="label">{BRAND.name} · {BRAND.full}</p>
-        <h1 className="mt-2 max-w-3xl font-serif text-[30px] leading-[1.14] tracking-tight sm:text-[38px]">
-          Current events without the noise
+        <h1 className="mt-2 max-w-3xl font-serif text-[30px] leading-[1.1] tracking-tight sm:text-[40px]">
+          See the coverage, not just the headline
         </h1>
         <p className="mt-3 max-w-2xl text-[15.5px] leading-relaxed text-ink-2">
-          {BRAND.tagline} {BRAND.name} ingests broadly but shows selectively: every event is
-          scored for <strong>editorial priority</strong> — how locally relevant it is, how
-          consequential, how much genuinely new information it carries, and how independently it
-          is corroborated. Tamil&nbsp;Nadu first; crisis, politics, finance and sports before
-          anything else. Every ranking explains itself.
+          For every story: <strong>who is reporting it, who isn&rsquo;t, who owns those sources</strong>,
+          how their headlines and framing differ, which claims the reporting agrees on, which are
+          disputed, and which have primary-document evidence. Tamil&nbsp;Nadu and India, Tamil and
+          English. Not a news feed — a media-landscape comparison.
         </p>
+        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 ui text-[12.5px] font-semibold">
+          <Link href="/landscape" className="text-accent hover:underline">Today&rsquo;s media landscape →</Link>
+          <Link href="/tamil-nadu/landscape" className="text-accent hover:underline">Tamil Nadu landscape</Link>
+          <Link href="/source/compare" className="text-accent hover:underline">Compare sources</Link>
+        </div>
       </section>
 
       <StatusBanner />
@@ -49,33 +54,33 @@ export default function HomePage() {
       <CategoryNav />
 
       {urgent.length > 0 && (
-        <EventList
-          id="urgent"
-          n="00"
-          label="Urgent"
-          title="Requires attention now"
-          note="A severe or critical event with a new development and independent corroboration."
-          clusters={urgent}
-          emphasis
-          showWhy
-          columns={1}
-          emptyText=""
-        />
+        <section id="urgent">
+          <div className="mb-3 border-b border-rule-strong pb-1.5">
+            <div className="label">00 · Urgent</div>
+            <h2 className="font-serif text-[20px] font-semibold text-ink">Requires attention now</h2>
+          </div>
+          <StoryCardGrid clusters={urgent} />
+        </section>
       )}
 
-      <EventList
-        id="right-now"
-        n="01"
-        label="Right now"
-        title="What matters right now"
-        note="Editorial-priority ranked, with source-concentration control so one publisher cannot fill the page. Expand “why” on any card."
-        clusters={rightNow}
-        emphasis
-        showWhy
-        ranked
-        columns={2}
-        emptyText="No event cleared the editorial bar in the latest refresh. See “More” below."
-      />
+      <section id="top-stories">
+        <div className="mb-3 border-b border-rule-strong pb-1.5">
+          <div className="label">01 · Top stories</div>
+          <h2 className="font-serif text-[20px] font-semibold text-ink">The most-covered stories right now</h2>
+          <p className="ui mt-1 text-[12px] leading-relaxed text-ink-3">
+            Ranked by editorial priority, with source-concentration control. Each card shows the source
+            count, independent families, coverage alignment, evidence profile and any blindspot — open a
+            story to compare every source.
+          </p>
+        </div>
+        {rightNow.length > 0 ? (
+          <StoryCardGrid clusters={rightNow} ranked />
+        ) : (
+          <p className="card bg-surface-2 px-4 py-3 ui text-[13px] text-ink-2">
+            No story cleared the editorial bar in the latest refresh. See &ldquo;More&rdquo; below.
+          </p>
+        )}
+      </section>
 
       {fastRising.length > 0 && (
         <EventList

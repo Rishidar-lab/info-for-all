@@ -25,6 +25,30 @@ export default function AboutPage() {
       </header>
 
       <section>
+        <h2 className="font-serif text-[20px] font-semibold">Media landscape (v0.10)</h2>
+        <p className="mt-2 text-[14.5px] leading-relaxed text-ink-2">
+          For every story IFFA shows <strong>who is reporting it, who is not, who owns those
+          sources</strong>, how their headlines and framing differ, which claims the reporting
+          agrees on, which are disputed, and which have <strong>primary-document</strong> evidence.
+          Ownership is provenance-backed <em>metadata</em> — it never determines a publisher&rsquo;s
+          alignment or reliability, and <code>UNKNOWN</code> is used wherever it is unverified.
+          There is <strong>no single bias score</strong>; observed editorial alignment is
+          corpus-derived, entity-specific (never a US left/right axis), and is withheld below a
+          documented sample size. <strong>Bias is not falsehood</strong>, coverage asymmetry is
+          not falsehood, and forum consensus is not evidence — see{" "}
+          <a
+            href="https://github.com/Rishidar-lab/info-for-all/blob/main/docs/MEDIA-LANDSCAPE.md"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent hover:underline"
+          >
+            docs/MEDIA-LANDSCAPE.md
+          </a>{" "}
+          and the <Link href="/methodology" className="text-accent hover:underline">methodology hub</Link>.
+        </p>
+      </section>
+
+      <section>
         <h2 className="font-serif text-[20px] font-semibold">Scope</h2>
         <p className="mt-2 text-[14.5px] leading-relaxed text-ink-2">
           <strong>P0:</strong> Tamil Nadu (district-level). <strong>P1:</strong> India national.{" "}

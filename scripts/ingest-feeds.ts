@@ -33,6 +33,27 @@ import type { FeedStatus, LiveArticle, LiveDataset, FeedHealth } from "../src/li
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = resolve(ROOT, "src/data/generated/live-feed.json");
+const DISCOURSE = resolve(ROOT, "src/data/generated/discourse.json");
+const DISCOURSE_SEED = resolve(ROOT, "src/data/fixtures/discourse.seed.json");
+
+/** v0.10 — load whatever discourse the separate `ingest:discourse` step produced. */
+function loadDiscourse(): {
+  mentions: import("../src/lib/media-landscape/types").DiscourseMention[];
+  sources: { platform: string; channel: string; url: string; status: string; itemsSeen: number }[];
+} {
+  for (const p of [DISCOURSE, DISCOURSE_SEED]) {
+    if (!existsSync(p)) continue;
+    try {
+      const d = JSON.parse(readFileSync(p, "utf8")) as { mentions?: unknown; sources?: unknown };
+      if (Array.isArray(d.mentions)) {
+        return { mentions: d.mentions as never, sources: (Array.isArray(d.sources) ? d.sources : []) as never };
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+  return { mentions: [], sources: [] };
+}
 const USER_AGENT =
   "IFFA-ingest/0.8 (+https://github.com/Rishidar-lab/info-for-all; Tamil Nadu / India public-safety aggregation; contact via repo issues)";
 const FETCH_TIMEOUT_MS = 20_000;
@@ -362,7 +383,10 @@ async function main() {
   // category / geo tier / independence / timeline / trend score per cluster,
   // plus dataset-level trending / watching / situation. First-seen tracking
   // uses the previous snapshot carried between runs by actions/cache.
-  const dataset = enrichDataset(baseDataset, { now, previous });
+  const discourse = loadDiscourse();
+  if (discourse.mentions.length) console.log(`  discourse: ${discourse.mentions.length} public mention(s) loaded`);
+  const dataset = enrichDataset(baseDataset, { now, previous, discourse: discourse.mentions });
+  if (discourse.sources.length) dataset.discourseSources = discourse.sources;
 
   mkdirSync(dirname(OUT), { recursive: true });
   // Defensive: every text field is already cleaned, but a lone UTF-16 surrogate
