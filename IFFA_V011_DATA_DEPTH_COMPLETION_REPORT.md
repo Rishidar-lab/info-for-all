@@ -306,7 +306,7 @@ Local verification before merge (all green):
     "Payload & data shape" sections
   - no horizontal overflow at 390 px
 
-Tag **`v0.11.0`** cut on `96a8228` after verification.
+Tag **`v0.11.0`** cut on `a012912` (report + `@prod` test finalised) after verification.
 
 ---
 
