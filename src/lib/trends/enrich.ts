@@ -32,6 +32,7 @@ import { detectPolicyEvent, isMarketReaction, parseMarketMoves } from "@/lib/dom
 import { detectFixture } from "@/lib/domain/sports";
 import { assessSeverity } from "@/lib/domain/severity";
 import { computeEditorialPriority, buildSurfaces } from "@/lib/editorial";
+import { buildMediaLandscape, buildLandscapeContext } from "@/lib/media-landscape";
 
 const OFFICIAL_PRIMARY = new Set(["official-alert", "primary-document"]);
 
@@ -310,6 +311,17 @@ export function enrichDataset(dataset: LiveDataset, opts: EnrichOptions = {}): E
   for (const c of dataset.clusters) {
     if (c.trendData?.category !== "politics" || c.trendData.geoTier === "out") continue;
     c.trendData.politicalCoverage = assessPoliticalCoverage(c, articlesOf(c, byId));
+  }
+
+  // ── v0.10: media landscape (who covers this, who owns them, how framing
+  //    differs, which claims agree, where coverage is asymmetric). Runs last so
+  //    it sees the finished category / claims / independence data. ──
+  const landscapeCtx = buildLandscapeContext(dataset);
+  for (const c of dataset.clusters) {
+    if (!c.trendData) continue;
+    const arts = articlesOf(c, byId);
+    if (arts.length === 0) continue;
+    c.trendData.mediaLandscape = buildMediaLandscape(c, arts, landscapeCtx);
   }
 
   const { trending, watching } = rankTrendingWatching(dataset.clusters);

@@ -17,4 +17,11 @@ export {
   familyIndex,
   OWNERSHIP_CATEGORIES,
 } from "./publishers";
-export { SAMPLE_BANDS, sampleBand } from "./alignment";
+export { SAMPLE_BANDS, sampleBand, sampleBandLabel, MIN_SAMPLE_FOR_ALIGNMENT } from "./alignment";
+export { buildCoverageLandscape, coverageContext, type CoverageContext } from "./coverage";
+export { compareFraming } from "./framing";
+export { detectBlindspots } from "./blindspot";
+export { buildClaimEvidence, buildEvidenceProfile, evidenceStrength } from "./evidence";
+export { buildMediaLandscape, buildLandscapeContext } from "./landscape";
+export { POLITICAL_ENTITIES, entitiesIn, primaryEntity, entityById } from "./entities";
+export { readStance } from "./stance";

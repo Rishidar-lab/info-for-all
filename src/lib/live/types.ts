@@ -411,6 +411,14 @@ export interface ClusterTrendData {
     penalties: { name: string; amount: number; reason: string }[];
     suppressedByRule?: string;
   };
+
+  /**
+   * v0.10 — MEDIA LANDSCAPE: who covers this story, who owns them, how their
+   * framing differs, which claims agree/dispute, which have primary evidence,
+   * and where coverage is asymmetric. See src/lib/media-landscape/.
+   * `MediaLandscape` from that module (kept loose here to avoid a deep import).
+   */
+  mediaLandscape?: import("../media-landscape/types").MediaLandscape;
 }
 
 export interface SituationSnapshot {
