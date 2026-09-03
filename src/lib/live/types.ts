@@ -19,6 +19,7 @@ export type EvidenceRole =
   | "on-ground-report"
   | "independent-report"
   | "expert-analysis"
+  | "fact-check"
   | "developing-unverified";
 
 export type VerificationStatus =

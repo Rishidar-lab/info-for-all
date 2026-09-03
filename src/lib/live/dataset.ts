@@ -18,6 +18,7 @@ export const EVIDENCE_ROLE_LABEL: Record<EvidenceRole, string> = {
   "on-ground-report": "On-ground report",
   "independent-report": "Independent report",
   "expert-analysis": "Expert analysis",
+  "fact-check": "Fact check",
   "developing-unverified": "Developing / unverified",
 };
 
@@ -62,6 +63,7 @@ export const EVIDENCE_ROLE_STYLE: Record<EvidenceRole, { text: string; bg: strin
   "on-ground-report": { text: "text-ink-2", bg: "bg-surface-2" },
   "independent-report": { text: "text-ink-2", bg: "bg-surface-2" },
   "expert-analysis": { text: "text-ink-2", bg: "bg-surface-2" },
+  "fact-check": { text: "text-accent", bg: "bg-surface-2" },
   "developing-unverified": { text: "text-caution", bg: "bg-caution-bg" },
 };
 

@@ -122,6 +122,10 @@ const FAMILY_LABELS: Record<string, string> = {
   bbc: "BBC",
   mongabay: "Mongabay (non-profit)",
   "un-ocha": "UN OCHA",
+  "indian-express-group": "The Indian Express Group",
+  "business-standard": "Business Standard Pvt Ltd (Kotak)",
+  "pravda-media-foundation": "Pravda Media Foundation (Alt News)",
+  "factly-media": "Factly Media & Research",
 };
 
 /** Group publishers into corporate/newsroom families. Solo publishers → one-member families. */

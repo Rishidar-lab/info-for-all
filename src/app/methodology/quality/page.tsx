@@ -5,6 +5,7 @@ import categoryEval from "../../../../evaluation/reports/category-latest.json";
 import { cn } from "@/lib/format";
 import { dataset } from "@/lib/live/dataset";
 import { hasTrendData, categoryCounts, situation, v09Metrics } from "@/lib/live/trends-view";
+import { v010Metrics } from "@/lib/media-landscape/quality-metrics";
 
 /** IFFA test-suite tallies (from `npm test` + `npm run test:e2e`). */
 const IFFA_SUITES: [string, number][] = [
@@ -458,6 +459,56 @@ export default function QualityDashboard() {
                 record / source families), never graded on a left–right or government–opposition axis.
               </li>
             </ul>
+          </section>
+        );
+      })()}
+
+      {/* ── v0.10 Media Landscape layer ─────────────────────────────── */}
+      {(() => {
+        const m = v010Metrics();
+        const tile = (k: string, v: React.ReactNode, hint?: string) => (
+          <div key={k} className="card p-3">
+            <div className="mono text-[16px] font-semibold text-ink">{v}</div>
+            <div className="ui text-[10px] leading-snug text-ink-3">{k}</div>
+            {hint && <div className="ui mt-0.5 text-[9.5px] text-ink-3">{hint}</div>}
+          </div>
+        );
+        return (
+          <section>
+            <div className="mb-3 border-b border-rule-strong pb-2">
+              <div className="label mb-1">v0.10 · Media Landscape layer</div>
+              <h2 className="font-serif text-[20px] font-semibold text-ink">
+                Who covers a story, who owns them, which claims have evidence
+              </h2>
+              <p className="ui mt-1 text-[12px] leading-relaxed text-ink-3">
+                Straight counts over the current snapshot ({new Date(dataset.generatedAt).toISOString().slice(0, 16).replace("T", " ")}Z)
+                and the publisher registry. Ownership is metadata, never a bias determinant. Bias ≠ falsehood.
+                Where real data is missing it reads &ldquo;unknown&rdquo; / &ldquo;insufficient&rdquo;, never a guess.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+              {tile("Publishers profiled", m.publishersProfiled, `${m.publishersIngested} seen in this snapshot`)}
+              {tile("Ownership completeness", `${m.ownershipCompletenessPct}%`, `${m.ownershipUnknown} UNKNOWN, by design not inference`)}
+              {tile("External-ratings coverage", `${m.externalRatingsCoveragePct}%`, "no provider integrated yet")}
+              {tile("Source families", m.sourceFamilies, `${m.multiPublisherFamilies} multi-publisher`)}
+              {tile("Alignment-qualified publishers", `${m.alignmentQualified}/${m.alignmentTotal}`, "n ≥ 20 political stories")}
+              {tile("Clusters with a landscape", `${m.clustersWithLandscape}/${m.clustersTotal}`)}
+              {tile("Clusters with a blindspot", m.clustersWithBlindspot)}
+              {tile("Clusters with a claim-evidence matrix", m.clustersWithEvidenceMatrix)}
+              {tile("Claim-evidence claims", m.totalMatrixClaims)}
+              {tile("Primary-document-supported", `${m.primaryDocSupportedClaims}/${m.totalMatrixClaims}`)}
+              {tile("Corroborated / disputed claims", `${m.corroboratedClaims} / ${m.disputedClaims}`)}
+              {tile("Discourse mentions / emerging claims", `${m.discourseMentions} / ${m.emergingClaims}`, "public discourse never = corroboration")}
+            </div>
+            <p className="ui mt-3 text-[11.5px] leading-relaxed text-ink-3">
+              Observed editorial alignment is <strong>snapshot-scoped</strong> until IFFA has accumulated a
+              rolling window of daily history; below n = 20 political stories no alignment is shown. See the
+              per-publisher profiles on <Link href="/sources" className="text-accent hover:underline">the source directory</Link>{" "}
+              and the full method in{" "}
+              <a href="https://github.com/Rishidar-lab/info-for-all/blob/main/docs/MEDIA-LANDSCAPE.md" className="text-accent hover:underline" target="_blank" rel="noopener noreferrer">
+                docs/MEDIA-LANDSCAPE.md
+              </a>.
+            </p>
           </section>
         );
       })()}
