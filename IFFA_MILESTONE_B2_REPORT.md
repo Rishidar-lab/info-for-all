@@ -134,9 +134,12 @@ runs. **The whole research path replays with zero network in CI.**
 
 `src/components/media/brief.tsx`:
 
-- `SINGLE_SOURCE_NO_RECORD` → "One newsroom reported this. We checked *N* official
-  sources — NDMA SACHET (releases held in IFFA's corpus); Reserve Bank of India
-  … — and none carry it."
+- `SINGLE_SOURCE_NO_RECORD` → "One newsroom reported this. We checked 1 official
+  source — NDMA SACHET (releases held in IFFA's corpus) — and it does not carry
+  it." Shown only when a source of the *right kind* was actually checked; for a
+  political / court claim IFFA holds no relevant press-release feed, so the reason
+  stays the honest generic `NO_INDEPENDENT_COVERAGE` rather than name an unrelated
+  source.
 - `SOLE_REPORT_ECHOES_OFFICIAL_RECORD` → "The only report we have restates a
   government release. That is one source, not two."
 - `record_contradicts_reporting` → a red banner + both values in "Where sources
@@ -155,7 +158,7 @@ runs. **The whole research path replays with zero network in CI.**
 | adapters surfaced ≥1 record | — | 17 clusters |
 | claims **corroborated** | — | **0** |
 | claims **contradicted** | — | **0** |
-| withheld pages upgraded to `SINGLE_SOURCE_NO_RECORD` (names the sources checked) | 0 | **94** |
+| withheld pages upgraded to `SINGLE_SOURCE_NO_RECORD` (names a *relevant* source that came up empty) | 0 | **17** |
 | `SOLE_REPORT_ECHOES_OFFICIAL_RECORD` (echo gate withheld a false second source) | — | 0 |
 | `official_record_only` briefs | — | 0 |
 | unsupported sentences published | 0 | **0** |
@@ -166,15 +169,14 @@ runs. **The whole research path replays with zero network in CI.**
 
 ### Why 0 corroborations
 
-The 94 clusters the trigger fired on are political-speech coverage, court matters
-with no case number, and single-outlet regional news. The reachable clean
-primary corpus is **RBI + NDMA SACHET** (73 official articles in the snapshot) —
-neither covers those stories. The one adapter with real reach into TN government
-action, `tn_dipr_listing`, returns image scans that cannot anchor a claim.
+The 102 clusters the trigger fired on are political-speech coverage, court
+matters with no case number, and single-outlet regional news. The reachable
+clean primary corpus is **RBI + NDMA SACHET** (73 official articles in the
+snapshot) — neither covers those stories. The one adapter with real reach into
+TN government action, `tn_dipr_listing`, returns image scans that cannot anchor a
+claim.
 
-**§B.2's real product win on this snapshot is §B.2.5:** 94 withheld pages now tell
-the reader *which* official sources were checked and came up empty — genuinely
-informative, and the correct output when there is no second source. The
+**§B.2.5:** 17 withheld weather/casualty pages now name a relevant official source (NDMA SACHET) that came up empty — the correct, concrete output when no second source exists. For political/court/appointment claims IFFA holds no relevant press-release feed, so the reason stays the honest generic one rather than listing an unrelated source. The
 machinery (trigger, adapters, echo gate, strict matcher, offline replay) pays off
 as (a) IFFA's official-feed corpus grows, (b) monsoon season fills the weather
 class, and (c) a UA-policy / partnership decision (§9) unlocks PIB / TN DIPR full

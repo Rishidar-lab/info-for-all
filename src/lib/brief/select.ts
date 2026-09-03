@@ -188,14 +188,16 @@ export function selectBriefInputs(
 
   if (!genuineOk && !anchorOk) {
     const g = independence.genuineIndependentFamilies;
-    // §B.2.5 — name the sources we checked, so the reader learns something.
-    if (research && researchTrail && researchTrail.checkedSources.length > 0 && research.exhausted) {
+    // §B.2.5 — name the sources we ACTUALLY checked (a real feed, not a "no feed
+    // exists" placeholder), so the reader learns something concrete.
+    const realSources = (researchTrail?.checkedSources ?? []).filter((s) => !/^no press-release feed/i.test(s));
+    if (research && realSources.length > 0 && research.exhausted) {
       return {
         ...base,
         withhold: {
           reason: "SINGLE_SOURCE_NO_RECORD",
           detail:
-            `${g === 0 ? "No independent newsroom" : "One newsroom"} reported this. We checked ${researchTrail.checkedSources.length} official source${researchTrail.checkedSources.length === 1 ? "" : "s"} — ${researchTrail.checkedSources.join("; ")} — and none carry it.` +
+            `${g === 0 ? "No independent newsroom" : "One newsroom"} reported this. We checked ${realSources.length} official source${realSources.length === 1 ? "" : "s"} — ${realSources.join("; ")} — and ${realSources.length === 1 ? "it does not" : "none"} carry it.` +
             collapsedLine,
           familyMerges: merges.length ? merges : undefined,
         },

@@ -106,7 +106,8 @@ export async function runResearch(
     for (const { q } of queries) if (routeAdapter(ad, q)) checkedAdapters.add(ad.id);
   }
 
-  const named = sourcesFor(adapters, queries.map((x) => x.q), ctx);
+  const claimTypes = new Set(queries.map((x) => x.q.claimType));
+  const named = sourcesFor(adapters, queries.map((x) => x.q), ctx, [...claimTypes]);
   for (const n of named) checkedSources.add(n);
 
   const corroborated = matches.some((m) => m.outcome === "corroborated");
@@ -122,10 +123,21 @@ export async function runResearch(
 }
 
 function routeAdapter(ad: RecordAdapter, q: ResearchQuery): boolean {
-  if (ad.id === "corpus_official") return true;
+  if (ad.id === "corpus_official") return q.claimType !== "sports" && q.claimType !== "entertainment";
   if (ad.id === "pib_rss") return ["official_action", "appointment", "scheme_allocation"].includes(q.claimType);
   if (ad.id === "tn_dipr_listing") return q.places.some((p) => /tamil nadu|chennai|madurai|coimbatore|salem|trichy|erode|cuddalore/i.test(p)) || (q.authority ?? "").includes("Tamil Nadu");
   return false;
+}
+
+/** Which corpus publishers are the right kind of source for this claim (may be empty). */
+function relevantCorpusPublishers(publishers: string[], claimType: string): string[] {
+  return publishers.filter((p) => {
+    const l = p.toLowerCase();
+    if (/reserve bank|rbi|sebi/.test(l)) return claimType === "quantity";
+    if (/sachet|ndma|meteorolog|imd/.test(l)) return claimType === "weather_event" || claimType === "casualty_count";
+    if (/pib|press information/.test(l)) return ["official_action", "appointment", "scheme_allocation"].includes(claimType);
+    return true;
+  });
 }
 
 function hasFixture(ad: RecordAdapter, ctx: AdapterContext): boolean {
@@ -138,14 +150,16 @@ function hasFixture(ad: RecordAdapter, ctx: AdapterContext): boolean {
   }
 }
 
-function sourcesFor(adapters: RecordAdapter[], queries: ResearchQuery[], ctx: AdapterContext): string[] {
+function sourcesFor(adapters: RecordAdapter[], queries: ResearchQuery[], ctx: AdapterContext, claimTypes: string[]): string[] {
   const names: string[] = [];
   for (const ad of adapters) {
     if (!queries.some((q) => routeAdapter(ad, q))) continue;
     if (ad.id === "corpus_official") {
-      const pubs = [...new Set(ctx.corpusOfficialArticles.map((a) => a.publisher))].sort();
+      const all = [...new Set(ctx.corpusOfficialArticles.map((a) => a.publisher))].sort();
+      const pubs = [...new Set(claimTypes.flatMap((t) => relevantCorpusPublishers(all, t)))].sort();
       if (pubs.length) names.push(...pubs.map((p) => `${p} (releases held in IFFA's corpus)`));
-      else names.push("IFFA's ingested official feeds");
+      else if (claimTypes.some((t) => ["official_action", "appointment", "scheme_allocation", "electoral", "court"].includes(t)))
+        names.push("no press-release feed for this authority is in IFFA's corpus yet");
     }
     if (ad.id === "pib_rss") names.push("Press Information Bureau (release index)");
     if (ad.id === "tn_dipr_listing") names.push("Tamil Nadu DIPR (press-release index)");
