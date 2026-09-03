@@ -42,7 +42,10 @@ jobs:
       - name: Restore last-known-good feed snapshot
         uses: actions/cache/restore@v4
         with:
-          path: src/data/generated/live-feed.json
+          path: |
+            src/data/generated/live-feed.json
+            src/data/generated/discourse.json
+            src/data/generated/history
           key: live-feed-${{ github.run_id }}
           restore-keys: |
             live-feed-
@@ -56,6 +59,13 @@ jobs:
       - name: Ingest feeds
         run: npm run ingest
 
+      # v0.10 — append today's compact per-publisher aggregate to the history
+      # store (carried between runs by the cache). Builds up the rolling
+      # alignment windows; non-fatal.
+      - name: Append media-landscape history
+        run: npm run history:append
+        continue-on-error: true
+
       - name: Validate generated feed
         run: npx tsx scripts/validate-feed.ts
 
@@ -68,7 +78,10 @@ jobs:
         if: always()
         uses: actions/cache/save@v4
         with:
-          path: src/data/generated/live-feed.json
+          path: |
+            src/data/generated/live-feed.json
+            src/data/generated/discourse.json
+            src/data/generated/history
           key: live-feed-${{ github.run_id }}
 
       - name: Build static export

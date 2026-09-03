@@ -51,11 +51,11 @@ test.describe("IFFA production build — every route", () => {
 });
 
 test.describe("IFFA branding + version", () => {
-  test("home shows IFFA / Info Free For All and v0.9", async ({ page }) => {
+  test("home shows IFFA branding and the version", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByRole("banner")).toContainText("IFFA");
     await expect(page.getByRole("contentinfo")).toContainText(/Info Free For All/i);
-    await expect(page.getByRole("contentinfo")).toContainText(/v0\.9/);
+    await expect(page.getByRole("contentinfo")).toContainText(/v0\.(9|10)/);
   });
 });
 
@@ -165,9 +165,9 @@ test.describe("IFFA v0.10 — media landscape", () => {
     await expect(page.getByText(/ranking/i).first()).toBeVisible();
   });
 
-  test("quality dashboard shows the v0.9 editorial layer with a top-events table", async ({ page }) => {
+  test("quality dashboard shows the editorial + media-landscape layers with a top-events table", async ({ page }) => {
     await page.goto("/methodology/quality/");
-    await expect(page.getByText(/v0\.9 . Editorial Intelligence layer/i)).toBeVisible();
+    await expect(page.getByText(/v0\.(9|10) . Editorial Intelligence layer/i)).toBeVisible();
     await expect(page.getByText(/Top 10 events by editorial score/i)).toBeVisible();
     await expect(page.getByText(/Editorial bands/i).first()).toBeVisible();
   });

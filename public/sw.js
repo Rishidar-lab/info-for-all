@@ -12,7 +12,7 @@
  *
  * No background sync, no push. Bump CACHE to invalidate.
  */
-const CACHE = "iffa-v0.9";
+const CACHE = "iffa-v0.10";
 const OFFLINE_URL = "./offline.html";
 const HOME_URL = "./";
 const META_URL = "./__iffa_sw_meta"; // synthetic key holding the last-fetch time
