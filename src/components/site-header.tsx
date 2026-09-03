@@ -2,18 +2,21 @@ import Link from "next/link";
 import { BRAND } from "@/lib/brand";
 
 const PRIMARY = [
-  { href: "/", label: "Right now" },
+  { href: "/", label: "Top stories" },
+  { href: "/landscape/", label: "Media landscape" },
   { href: "/crisis/", label: "Crisis" },
   { href: "/politics/", label: "Politics" },
   { href: "/finance/", label: "Finance" },
   { href: "/sports/", label: "Sports" },
-  { href: "/trends/", label: "Trends" },
+  { href: "/search/", label: "Search" },
 ] as const;
 
 const SECONDARY = [
-  { href: "/tamil-nadu/", label: "Tamil Nadu" },
+  { href: "/tamil-nadu/landscape/", label: "Tamil Nadu landscape" },
   { href: "/india/", label: "India" },
   { href: "/sources/", label: "Sources" },
+  { href: "/source/compare/", label: "Compare sources" },
+  { href: "/trends/", label: "Trends" },
   { href: "/about/", label: "Methodology" },
   { href: "/methodology/quality/", label: "Quality" },
 ] as const;
@@ -31,9 +34,9 @@ export function SiteHeader() {
             <span className="ui hidden text-[11px] text-ink-3 md:inline">{BRAND.region}</span>
           </Link>
 
-          <nav className="ui flex items-center gap-x-3.5 gap-y-1 text-[13px]">
+          <nav className="ui flex flex-wrap items-center gap-x-3.5 gap-y-1 text-[13px]">
             {PRIMARY.map((item) => (
-              <Link key={item.href} href={item.href} className="link-quiet text-ink-2 hover:text-accent">
+              <Link key={item.href} href={item.href} className="link-quiet whitespace-nowrap text-ink-2 hover:text-accent">
                 {item.label}
               </Link>
             ))}
