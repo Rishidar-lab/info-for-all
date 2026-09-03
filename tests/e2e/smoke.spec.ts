@@ -78,6 +78,20 @@ test.describe("IFFA event-first UI", () => {
     await expect(page.getByText(/Timeline|What changed|first reported/i).first()).toBeVisible();
   });
 
+  test("a story page leads with the native IFFA Brief and links every fact to a source", async ({ page }) => {
+    await page.goto("/");
+    // pick a well-covered story
+    await page.locator("#top-stories article a[href^='/story/']").first().click();
+    await expect(page).toHaveURL(/\/story\//);
+    const briefEl = page.getByRole("region", { name: "IFFA Brief" });
+    await expect(briefEl).toBeVisible();
+    // the old product statement is gone
+    await expect(page.getByText(/does not write its own prose account/i)).toHaveCount(0);
+    await expect(page.getByText(/synthesises this brief from the reporting and primary records/i)).toBeVisible();
+    // References tab exists
+    await expect(page.getByRole("tab", { name: /References/i })).toBeVisible();
+  });
+
   test("category nav works", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("link", { name: "Crisis", exact: true }).first().click();
@@ -142,17 +156,18 @@ test.describe("IFFA v0.10 — media landscape", () => {
     await expect(page.getByText("Background / more")).toBeVisible();
   });
 
-  test("a story page's Overview exposes the interpretable ranking breakdown", async ({ page }) => {
+  test("a story page exposes the interpretable ranking breakdown and no truth percentage", async ({ page }) => {
     await page.goto("/");
     await page.locator("#top-stories article a[href^='/story/']").first().click();
-    const why = page.locator("details summary", { hasText: /score/i }).first();
+    const why = page.locator("details summary", { hasText: /prominent|ranking|score/i }).first();
     if (await why.count()) {
       await why.click();
       await expect(
         page.locator("text=/relevance|consequence|independent|new information|recency|Priority domain/i").first(),
       ).toBeVisible();
     }
-    // the evidence profile never shows a truth percentage
+    // the evidence profile never shows a truth percentage (now inside the Evidence tab)
+    await page.getByRole("tab", { name: /Evidence/i }).click();
     await expect(page.getByText(/not a .+percent.* true|Counts, not a/i).first()).toBeVisible();
   });
 

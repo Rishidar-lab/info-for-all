@@ -25,7 +25,7 @@ export const BRAND = {
     "differs, which claims agree, which are disputed, and which have primary-document evidence.",
   region: "Tamil Nadu & India",
   version: "0.11",
-  versionLabel: "v0.11 — Data Depth & Calibration",
+  versionLabel: "v0.11 — Data Depth & Calibration · Ground-Parity Milestone A",
   repoUrl: "https://github.com/Rishidar-lab/info-for-all",
   siteUrl: "https://rishidar-lab.github.io/info-for-all",
 } as const;
