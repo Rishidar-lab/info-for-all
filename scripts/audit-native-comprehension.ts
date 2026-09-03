@@ -32,6 +32,13 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const ACTIVE = resolve(ROOT, "src/data/generated/live-feed.json");
 const dataset = JSON.parse(readFileSync(ACTIVE, "utf8")) as LiveDataset;
 
+let researchBySlug: Record<string, unknown> = {};
+try {
+  researchBySlug = (JSON.parse(readFileSync(resolve(ROOT, "src/data/generated/research.json"), "utf8")) as { bySlug?: Record<string, unknown> }).bySlug ?? {};
+} catch {
+  /* §B.2 research pass has not run */
+}
+
 const artById = new Map(dataset.articles.map((a) => [a.id, a]));
 const clusterArts = (c: LiveCluster): LiveArticle[] =>
   c.articleIds.map((id) => artById.get(id)).filter((a): a is LiveArticle => !!a);
@@ -40,7 +47,7 @@ const clusterArts = (c: LiveCluster): LiveArticle[] =>
 type SynthFn = (
   c: LiveCluster,
   arts: LiveArticle[],
-  opts: { language: "en" | "ta" },
+  opts: { language: "en" | "ta"; research?: unknown },
 ) => import("../src/lib/brief/types").IFFABrief;
 type VerifyFn = (
   b: import("../src/lib/brief/types").IFFABrief,
@@ -151,7 +158,7 @@ for (const c of sample(20)) {
   let afterNote = "brief lib not built";
   if (synthesizeBrief && verifyBrief) {
     try {
-      const raw = synthesizeBrief(c, arts, { language: "en" });
+      const raw = synthesizeBrief(c, arts, { language: "en", research: (researchBySlug[c.slug] as never) ?? null });
       const b = verifyBrief(raw, c, arts);
       if (b.withheldReason) {
         understoodAfter = false;
@@ -224,7 +231,7 @@ if (synthesizeBrief && verifyBrief) {
   for (const c of multi) {
     const a = clusterArts(c);
     try {
-      const b = verifyBrief(synthesizeBrief(c, a, { language: "en" }), c, a);
+      const b = verifyBrief(synthesizeBrief(c, a, { language: "en", research: (researchBySlug[c.slug] as never) ?? null }), c, a);
       if (b.withheldReason) held++;
       else delivered++;
       for (const r of b.verification.dropReasons) {

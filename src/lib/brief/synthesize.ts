@@ -18,6 +18,7 @@ import { CRISIS_TYPE_LABEL } from "@/lib/live/crisis";
 import { publisherByName } from "@/data/publishers";
 import { familyIndex } from "@/lib/media-landscape/publishers";
 import { isJunkFact, selectBriefInputs, type BriefInputs } from "./select";
+import type { ClusterResearch } from "@/lib/research/types";
 import {
   cleanClaimText,
   cleanHeadline,
@@ -40,6 +41,8 @@ import type {
 export interface SynthesizeOptions {
   language: "en" | "ta";
   now?: number;
+  /** §B.2 — the committed research result for this cluster, when the trigger fired. */
+  research?: ClusterResearch | null;
 }
 
 const GENERIC_CHANGE =
@@ -512,7 +515,7 @@ function references(inp: BriefInputs): BriefReference[] {
  * before rendering — it drops any sentence that fails structural checks.
  */
 export function synthesizeBrief(cluster: LiveCluster, articles: LiveArticle[], opts: SynthesizeOptions): IFFABrief {
-  const inp = selectBriefInputs(cluster, articles);
+  const inp = selectBriefInputs(cluster, articles, opts.research);
   const slug = cluster.slug || cluster.id;
   const F = new SentenceFactory(slug);
   const generatedAt = new Date(opts.now ?? Date.now()).toISOString();
@@ -538,6 +541,26 @@ export function synthesizeBrief(cluster: LiveCluster, articles: LiveArticle[], o
     coverage: inp.coverage,
     verification: { sentencesConsidered: 0, sentencesDropped: 0, dropReasons: [] },
     synthesizer: "deterministic-v1",
+    researchTrail: inp.researchTrail,
+    officialRecordOnly: inp.officialRecordOnly,
+  };
+
+  const withResearchDisagreements = (ds: ReturnType<typeof disagreements>) => {
+    const c = inp.researchTrail?.contradiction;
+    if (!c) return ds;
+    return [
+      {
+        topic: c.field,
+        positions: [
+          { value: c.reportingValue, sourceIds: [], publishers: ["the reporting"] },
+          { value: c.recordValue, sourceIds: [], publishers: [c.authority] },
+        ],
+        bestSupported: c.recordValue,
+        reasoning: `${c.authority}'s primary record states ${c.recordValue}. A record is not automatically the truth, but it outweighs an unconfirmed report. The earlier figure stays on the timeline.`,
+        possiblyTemporalUpdate: false,
+      },
+      ...ds,
+    ];
   };
 
   if (inp.withhold) {
@@ -545,7 +568,7 @@ export function synthesizeBrief(cluster: LiveCluster, articles: LiveArticle[], o
     base.withheldDetail = inp.withhold.detail;
     base.familyMerges = inp.withhold.familyMerges;
     // still surface disagreements + references so the page is not empty
-    base.disagreements = disagreements(inp);
+    base.disagreements = withResearchDisagreements(disagreements(inp));
     return base;
   }
 
@@ -561,7 +584,7 @@ export function synthesizeBrief(cluster: LiveCluster, articles: LiveArticle[], o
   base.whyItMatters = why;
   base.whatChanged = changed;
   base.uncertainties = uncertain;
-  base.disagreements = disagreements(inp);
+  base.disagreements = withResearchDisagreements(disagreements(inp));
   base.verification.sentencesConsidered =
     lead.length + keyFacts.length + why.length + changed.length;
 

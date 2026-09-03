@@ -82,6 +82,12 @@ export function Brief({ brief, tamil }: { brief: IFFABrief; tamil?: IFFABrief | 
               ))}
             </ul>
           )}
+          {active.researchTrail && active.researchTrail.checkedSources.length > 0 && active.withheldReason !== "SINGLE_SOURCE_NO_RECORD" && (
+            <p className="ui mt-1.5 text-[11.5px] text-ink-3">
+              Official sources checked: {active.researchTrail.checkedSources.join("; ")}
+              {active.researchTrail.recordsFound > 0 ? ` — ${active.researchTrail.recordsFound} record(s) found, none confirming the specific claims.` : " — none carry it."}
+            </p>
+          )}
           <p className="ui mt-1.5 text-[11px] text-ink-3">
             Coverage and every source are listed below. A brief is written only when a genuinely independent
             second source or a primary record exists — it is never padded.
@@ -89,6 +95,25 @@ export function Brief({ brief, tamil }: { brief: IFFABrief; tamil?: IFFABrief | 
         </div>
       ) : (
         <>
+          {active.officialRecordOnly && (
+            <div className="mb-3 rounded border-l-2 border-evidence bg-evidence-bg/50 p-2.5">
+              <p className="ui text-[12px] font-semibold text-evidence">Government record — not independent journalism</p>
+              <p className="ui mt-0.5 text-[11.5px] text-ink-2">
+                This brief rests on an official record. No independent newsroom has confirmed it yet.
+              </p>
+            </div>
+          )}
+          {active.researchTrail?.contradiction && (
+            <div className="mb-3 rounded border-l-2 border-dispute bg-dispute-bg/50 p-2.5">
+              <p className="ui text-[12px] font-semibold text-dispute">A primary record contradicts the reporting</p>
+              <p className="ui mt-0.5 text-[11.5px] text-ink-2">
+                The reporting says <span className="mono">{active.researchTrail.contradiction.reportingValue}</span>;{" "}
+                {active.researchTrail.contradiction.authority}&rsquo;s record says{" "}
+                <span className="mono">{active.researchTrail.contradiction.recordValue}</span>. Both are shown under
+                &ldquo;Where sources disagree&rdquo;.
+              </p>
+            </div>
+          )}
           <div className="label mb-1.5 text-[10px] text-ink-3">The short version</div>
           <div className="flex flex-col gap-2">
             {active.shortVersion.map((s) => (

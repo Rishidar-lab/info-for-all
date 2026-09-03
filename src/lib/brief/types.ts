@@ -93,7 +93,18 @@ export type BriefWithholdReason =
   | "COLLECTING"
   | "NO_INDEPENDENT_COVERAGE"
   | "INSUFFICIENT_EVIDENCE"
-  | "NO_VERIFIABLE_SENTENCE";
+  | "NO_VERIFIABLE_SENTENCE"
+  // Milestone B §B.2.5 — reasons a reader can use
+  | "SINGLE_SOURCE_NO_RECORD" // one newsroom; N official sources checked, none carry it
+  | "SOLE_REPORT_ECHOES_OFFICIAL_RECORD"; // the only report restates a government release
+
+/** §B.2.5 — the research trail shown under a withheld / record-only brief. */
+export interface BriefResearchTrail {
+  checkedSources: string[];
+  recordsFound: number;
+  /** A record states a different value than the reporting — surfaced as a disagreement. */
+  contradiction?: { field: string; reportingValue: string; recordValue: string; authority: string };
+}
 
 export interface BriefCoverage {
   sources: number;
@@ -144,6 +155,14 @@ export interface IFFABrief {
   withheldDetail?: string;
   /** Family merges past the registry — populated when the brief is withheld for thin independence. */
   familyMerges?: BriefFamilyMerge[];
+  /** §B.2.5 — the research trail (sources checked, records found, any contradiction). */
+  researchTrail?: BriefResearchTrail;
+  /**
+   * §B.2.1 — TRUE when this brief rests only on an official record with no
+   * independent newsroom. It is a government record, not journalism, and the
+   * UI must say so.
+   */
+  officialRecordOnly?: boolean;
 
   coverage: BriefCoverage;
   verification: BriefVerification;
