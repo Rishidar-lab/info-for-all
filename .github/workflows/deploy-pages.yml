@@ -45,6 +45,7 @@ jobs:
           path: |
             src/data/generated/live-feed.json
             src/data/generated/discourse.json
+            src/data/generated/research.json
             src/data/generated/history
           key: live-feed-${{ github.run_id }}
           restore-keys: |
@@ -69,6 +70,13 @@ jobs:
       - name: Validate generated feed
         run: npx tsx scripts/validate-feed.ts
 
+      # Milestone B §B.2 — run the research pass ONLINE (fetches the PIB / TN DIPR
+      # listings, links corpus official records to withheld clusters). Non-fatal:
+      # prebuild re-runs it offline from the committed fixtures if this is skipped.
+      - name: Research pass (primary-record linking)
+        run: RESEARCH_ONLINE=1 npm run research
+        continue-on-error: true
+
       # Claim-quality gate — fails the deploy if the claim layer regresses past
       # the release thresholds (false corroboration, attribution retention, …).
       - name: Claim quality gate
@@ -81,6 +89,7 @@ jobs:
           path: |
             src/data/generated/live-feed.json
             src/data/generated/discourse.json
+            src/data/generated/research.json
             src/data/generated/history
           key: live-feed-${{ github.run_id }}
 

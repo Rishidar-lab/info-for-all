@@ -42,3 +42,11 @@ if (existsSync(ACTIVE) && !force) {
 mkdirSync(dirname(ACTIVE), { recursive: true });
 copyFileSync(SEED, ACTIVE);
 console.log(`prepare-data: seeded ${ACTIVE} from the version-controlled fixture`);
+
+// Milestone B §B.2 — the research pass output follows the same seed pattern.
+const RESEARCH_SEED = resolve(ROOT, "src/data/fixtures/research.seed.json");
+const RESEARCH_ACTIVE = resolve(ROOT, "src/data/generated/research.json");
+if (existsSync(RESEARCH_SEED) && (!existsSync(RESEARCH_ACTIVE) || force)) {
+  copyFileSync(RESEARCH_SEED, RESEARCH_ACTIVE);
+  console.log(`prepare-data: seeded ${RESEARCH_ACTIVE} from the version-controlled fixture`);
+}

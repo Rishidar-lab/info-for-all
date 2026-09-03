@@ -1,0 +1,2258 @@
+{
+  "generatedAt": "2026-09-03T16:13:23.632Z",
+  "offline": true,
+  "snapshot": "2026-09-03T07:59:03.528Z",
+  "bySlug": {
+    "india-s-esports-gaming-community-rallies-as-s8ul-s-gulre-14xd3j": {
+      "slug": "india-s-esports-gaming-community-rallies-as-s8ul-s-gulre-14xd3j",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "varanasi-floods-pm-reviews-relief-operations-as-ganga-wa-u156nd": {
+      "slug": "varanasi-floods-pm-reviews-relief-operations-as-ganga-wa-u156nd",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "pm-modi-takes-stock-of-flood-situation-in-varanasi-as-wa-94gms2": {
+      "slug": "pm-modi-takes-stock-of-flood-situation-in-varanasi-as-wa-94gms2",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "gurugram-civic-body-office-receives-bomb-threat-email-ev-q1zyzu": {
+      "slug": "gurugram-civic-body-office-receives-bomb-threat-email-ev-q1zyzu",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "up-floods-over-16k-evacuated-as-23-districts-hit-3-kille-16d50m": {
+      "slug": "up-floods-over-16k-evacuated-as-23-districts-hit-3-kille-16d50m",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET",
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [
+        {
+          "id": "corpus:4b0xgsi7m3ta",
+          "adapter": "corpus_official",
+          "tier": "primary_official",
+          "authority": "NDMA SACHET",
+          "title": "Moderate Thunderstorm lightning accompanied with intense rain and gusty wind with speed 30-40 kmph. very likely to affect over some parts of North 24 Parganas, South 24 Parganas districts during next 2-3 hours from 13:13, 03-09-2026.",
+          "text": "Moderate Thunderstorm lightning accompanied with intense rain and gusty wind with speed 30-40 kmph. very likely to affect over some parts of North 24 Parganas, South 24 Parganas districts during next 2-3 hours from 13:13, 03-09-2026.. Thunderstorm with Lightning — some parts",
+          "bodyAvailable": true,
+          "publishedAt": "2026-09-03T07:42:00.000Z",
+          "url": "https://sachet.ndma.gov.in/cap_public_website/FetchXMLFile?identifier=1788421375297017",
+          "sha256": "37df90cfe0f478607d3007ef5cd79b79c0c46e186eb0fe9ab03ca5d9cad17395",
+          "fetchedAt": "2026-09-03T16:13:23.632Z"
+        },
+        {
+          "id": "corpus:19qceky1rdk3",
+          "adapter": "corpus_official",
+          "tier": "primary_official",
+          "authority": "NDMA SACHET",
+          "title": "Moderate Thunderstorm lightning accompanied with intense rain and gusty wind with speed 30-40 kmph. very likely to affect over some parts of Murshidabad district during next 2-3 hours from 12:59, 03-09-2026.",
+          "text": "Moderate Thunderstorm lightning accompanied with intense rain and gusty wind with speed 30-40 kmph. very likely to affect over some parts of Murshidabad district during next 2-3 hours from 12:59, 03-09-2026.. Thunderstorm with Lightning — Murshidabad district of West Bengal",
+          "bodyAvailable": true,
+          "publishedAt": "2026-09-03T07:30:00.000Z",
+          "url": "https://sachet.ndma.gov.in/cap_public_website/FetchXMLFile?identifier=1788420671439017",
+          "sha256": "6f3f3905476cec281364f145d266c68b33bd53b4904d3b4353db529a9ea0f03a",
+          "fetchedAt": "2026-09-03T16:13:23.632Z"
+        }
+      ],
+      "matches": [
+        {
+          "claimId": "17be5vk1970u",
+          "claimText": "3 people were reported killed.",
+          "recordId": "corpus:4b0xgsi7m3ta",
+          "outcome": "not_found",
+          "reason": "NDMA SACHET's record does not name the same people, places or figures"
+        },
+        {
+          "claimId": "17be5vk1970u",
+          "claimText": "3 people were reported killed.",
+          "recordId": "corpus:19qceky1rdk3",
+          "outcome": "not_found",
+          "reason": "NDMA SACHET's record does not name the same people, places or figures"
+        },
+        {
+          "claimId": "1ay0yt2h0gna",
+          "claimText": "UP floods: Over 16K evacuated as 23 districts hit; 3 killed, relief ops scaled up",
+          "recordId": "corpus:4b0xgsi7m3ta",
+          "outcome": "not_found",
+          "reason": "NDMA SACHET's record does not name the same people, places or figures"
+        },
+        {
+          "claimId": "1ay0yt2h0gna",
+          "claimText": "UP floods: Over 16K evacuated as 23 districts hit; 3 killed, relief ops scaled up",
+          "recordId": "corpus:19qceky1rdk3",
+          "outcome": "not_found",
+          "reason": "NDMA SACHET's record does not name the same people, places or figures"
+        }
+      ],
+      "exhausted": true
+    },
+    "tn-assembly-minister-aadhav-sowmiya-anbumani-tvk-vs-pmk-1fdu35": {
+      "slug": "tn-assembly-minister-aadhav-sowmiya-anbumani-tvk-vs-pmk-1fdu35",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "tvk-minister-ramesh-tvk-1yqo1v": {
+      "slug": "tvk-minister-ramesh-tvk-1yqo1v",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "rahul-gandhi-will-help-tamil-nadu-cm-vijay-become-prime-1a96f8": {
+      "slug": "rahul-gandhi-will-help-tamil-nadu-cm-vijay-become-prime-1a96f8",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official",
+        "tn_dipr_listing"
+      ],
+      "checkedSources": [
+        "Tamil Nadu DIPR",
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)",
+        "Tamil Nadu DIPR (press-release index)"
+      ],
+      "records": [
+        {
+          "id": "tndipr:pr030926b",
+          "adapter": "tn_dipr_listing",
+          "tier": "primary_official",
+          "authority": "Tamil Nadu DIPR",
+          "title": "Tamil Nadu DIPR press release, 2026-09-03",
+          "text": "Tamil Nadu DIPR press release, 2026-09-03",
+          "bodyAvailable": false,
+          "publishedAt": "2026-09-03T00:00:00.000Z",
+          "url": "https://cms.tn.gov.in/cms_migrated/document/press_release/pr030926b.jpg",
+          "sha256": "5ad37eb08048c44da02926c529a860c0f298cd7a33447d5f5b7e127aafaa3ff8",
+          "fetchedAt": "2026-09-03T16:13:23.632Z",
+          "requiresOcr": true,
+          "ocrConfidence": null
+        },
+        {
+          "id": "tndipr:pr030926a",
+          "adapter": "tn_dipr_listing",
+          "tier": "primary_official",
+          "authority": "Tamil Nadu DIPR",
+          "title": "Tamil Nadu DIPR press release, 2026-09-03",
+          "text": "Tamil Nadu DIPR press release, 2026-09-03",
+          "bodyAvailable": false,
+          "publishedAt": "2026-09-03T00:00:00.000Z",
+          "url": "https://cms.tn.gov.in/cms_migrated/document/press_release/pr030926a.jpg",
+          "sha256": "406fd9ca91682026c719837f0da83e280e4cb000d5db84f504ad11a8e40eb9cb",
+          "fetchedAt": "2026-09-03T16:13:23.632Z",
+          "requiresOcr": true,
+          "ocrConfidence": null
+        }
+      ],
+      "matches": [
+        {
+          "claimId": "1a96f8u6h6js:title",
+          "claimText": "Rahul Gandhi will help Tamil Nadu CM Vijay become Prime Minister in 2029: TVK MLA",
+          "recordId": "tndipr:pr030926b",
+          "outcome": "not_found",
+          "reason": "record is a scan we have not verified"
+        },
+        {
+          "claimId": "1a96f8u6h6js:title",
+          "claimText": "Rahul Gandhi will help Tamil Nadu CM Vijay become Prime Minister in 2029: TVK MLA",
+          "recordId": "tndipr:pr030926a",
+          "outcome": "not_found",
+          "reason": "record is a scan we have not verified"
+        }
+      ],
+      "exhausted": true
+    },
+    "t-n-cm-announces-major-drinking-water-and-underground-se-18fof2": {
+      "slug": "t-n-cm-announces-major-drinking-water-and-underground-se-18fof2",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official",
+        "tn_dipr_listing"
+      ],
+      "checkedSources": [
+        "Tamil Nadu DIPR",
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)",
+        "Tamil Nadu DIPR (press-release index)"
+      ],
+      "records": [
+        {
+          "id": "tndipr:pr030926b",
+          "adapter": "tn_dipr_listing",
+          "tier": "primary_official",
+          "authority": "Tamil Nadu DIPR",
+          "title": "Tamil Nadu DIPR press release, 2026-09-03",
+          "text": "Tamil Nadu DIPR press release, 2026-09-03",
+          "bodyAvailable": false,
+          "publishedAt": "2026-09-03T00:00:00.000Z",
+          "url": "https://cms.tn.gov.in/cms_migrated/document/press_release/pr030926b.jpg",
+          "sha256": "5ad37eb08048c44da02926c529a860c0f298cd7a33447d5f5b7e127aafaa3ff8",
+          "fetchedAt": "2026-09-03T16:13:23.632Z",
+          "requiresOcr": true,
+          "ocrConfidence": null
+        },
+        {
+          "id": "tndipr:pr030926a",
+          "adapter": "tn_dipr_listing",
+          "tier": "primary_official",
+          "authority": "Tamil Nadu DIPR",
+          "title": "Tamil Nadu DIPR press release, 2026-09-03",
+          "text": "Tamil Nadu DIPR press release, 2026-09-03",
+          "bodyAvailable": false,
+          "publishedAt": "2026-09-03T00:00:00.000Z",
+          "url": "https://cms.tn.gov.in/cms_migrated/document/press_release/pr030926a.jpg",
+          "sha256": "406fd9ca91682026c719837f0da83e280e4cb000d5db84f504ad11a8e40eb9cb",
+          "fetchedAt": "2026-09-03T16:13:23.632Z",
+          "requiresOcr": true,
+          "ocrConfidence": null
+        }
+      ],
+      "matches": [
+        {
+          "claimId": "18fof2o1v6xl:title",
+          "claimText": "T.N. CM announces major drinking water and underground sewage projects for Madurai; ₹1,850-cr for road repairs in Chennai and urban areas",
+          "recordId": "tndipr:pr030926b",
+          "outcome": "not_found",
+          "reason": "record is a scan we have not verified"
+        },
+        {
+          "claimId": "18fof2o1v6xl:title",
+          "claimText": "T.N. CM announces major drinking water and underground sewage projects for Madurai; ₹1,850-cr for road repairs in Chennai and urban areas",
+          "recordId": "tndipr:pr030926a",
+          "outcome": "not_found",
+          "reason": "record is a scan we have not verified"
+        }
+      ],
+      "exhausted": true
+    },
+    "madhya-pradesh-september-3-2026-weather-update-strong-mo-1stx8k": {
+      "slug": "madhya-pradesh-september-3-2026-weather-update-strong-mo-1stx8k",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET",
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [
+        {
+          "id": "corpus:57r0h9p9a4en",
+          "adapter": "corpus_official",
+          "tier": "primary_official",
+          "authority": "NDMA SACHET",
+          "title": "अगले 24 घंटों में अलग-अलग स्थानों पर बहुत भारी बारिश (115.6 - 204.4 मिमी), आंधी, बिजली गिरने और तेज़ हवा (गति 30-40 किमी प्रति घंटे) होने की संभावना है।",
+          "text": "अगले 24 घंटों में अलग-अलग स्थानों पर बहुत भारी बारिश (115.6 - 204.4 मिमी), आंधी, बिजली गिरने और तेज़ हवा (गति 30-40 किमी प्रति घंटे) होने की संभावना है।. Very Heavy Rain — 13 districts of Madhya Pradesh",
+          "bodyAvailable": true,
+          "publishedAt": "2026-09-03T06:43:00.000Z",
+          "url": "https://sachet.ndma.gov.in/cap_public_website/FetchXMLFile?identifier=1788418656038021",
+          "sha256": "2f908e4a71cf00fb4a92bc9b73b4ccad125bf3e04abc5869fdbbf5eab16966b7",
+          "fetchedAt": "2026-09-03T16:13:23.632Z"
+        },
+        {
+          "id": "corpus:56thbrsneqxl",
+          "adapter": "corpus_official",
+          "tier": "primary_official",
+          "authority": "NDMA SACHET",
+          "title": "अगले 24 घंटों में दमोह और टीकमगढ़ में कुछ जगहों पर बहुत भारी बारिश (204.5 mm से ज़्यादा), आंधी-तूफान और तेज़ हवाओं (30-40 kmph की रफ़्तार) के साथ बिजली गिरने की संभावना है।",
+          "text": "अगले 24 घंटों में दमोह और टीकमगढ़ में कुछ जगहों पर बहुत भारी बारिश (204.5 mm से ज़्यादा), आंधी-तूफान और तेज़ हवाओं (30-40 kmph की रफ़्तार) के साथ बिजली गिरने की संभावना है।. Extremely Heavy Rain — Damoh,Tikamgarh districts of Madhya Pradesh",
+          "bodyAvailable": true,
+          "publishedAt": "2026-09-03T06:43:00.000Z",
+          "url": "https://sachet.ndma.gov.in/cap_public_website/FetchXMLFile?identifier=1788418655759021",
+          "sha256": "f679f80d02bd73bc516bda8bda5443ba29ed8e52984cce4c358ae696c74ee856",
+          "fetchedAt": "2026-09-03T16:13:23.632Z"
+        }
+      ],
+      "matches": [
+        {
+          "claimId": "5y2z726fg94g",
+          "claimText": "India Meteorological Department forecast: The India Meteorological Department (IMD) has forecast light rainfall at several places during the day, while no rain alert has been issued for…",
+          "recordId": "corpus:57r0h9p9a4en",
+          "outcome": "not_found",
+          "reason": "NDMA SACHET's record is silent on this specific claim"
+        },
+        {
+          "claimId": "5y2z726fg94g",
+          "claimText": "India Meteorological Department forecast: The India Meteorological Department (IMD) has forecast light rainfall at several places during the day, while no rain alert has been issued for…",
+          "recordId": "corpus:56thbrsneqxl",
+          "outcome": "not_found",
+          "reason": "NDMA SACHET's record is silent on this specific claim"
+        },
+        {
+          "claimId": "1pqkolfs19yw",
+          "claimText": "IMD / weather authority issued a red rainfall warning.",
+          "recordId": "corpus:57r0h9p9a4en",
+          "outcome": "not_found",
+          "reason": "NDMA SACHET's record is silent on this specific claim"
+        },
+        {
+          "claimId": "1pqkolfs19yw",
+          "claimText": "IMD / weather authority issued a red rainfall warning.",
+          "recordId": "corpus:56thbrsneqxl",
+          "outcome": "not_found",
+          "reason": "NDMA SACHET's record is silent on this specific claim"
+        },
+        {
+          "claimId": "1jee351a6nho",
+          "claimText": "Forecast reported: Madhya Pradesh September 3, 2026 Weather Update: Strong Monsoon System Activates, Brace For Heavy Rain On Krishna Janmashtami",
+          "recordId": "corpus:57r0h9p9a4en",
+          "outcome": "not_found",
+          "reason": "NDMA SACHET's record is silent on this specific claim"
+        },
+        {
+          "claimId": "1jee351a6nho",
+          "claimText": "Forecast reported: Madhya Pradesh September 3, 2026 Weather Update: Strong Monsoon System Activates, Brace For Heavy Rain On Krishna Janmashtami",
+          "recordId": "corpus:56thbrsneqxl",
+          "outcome": "not_found",
+          "reason": "NDMA SACHET's record is silent on this specific claim"
+        },
+        {
+          "claimId": "1j0vir4hi9g2",
+          "claimText": "Madhya Pradesh September 3, 2026 Weather Update: Strong Monsoon System Activates, Brace For Heavy Rain On Krishna Janmashtami",
+          "recordId": "corpus:57r0h9p9a4en",
+          "outcome": "not_found",
+          "reason": "NDMA SACHET's record is silent on this specific claim"
+        },
+        {
+          "claimId": "1j0vir4hi9g2",
+          "claimText": "Madhya Pradesh September 3, 2026 Weather Update: Strong Monsoon System Activates, Brace For Heavy Rain On Krishna Janmashtami",
+          "recordId": "corpus:56thbrsneqxl",
+          "outcome": "not_found",
+          "reason": "NDMA SACHET's record is silent on this specific claim"
+        }
+      ],
+      "exhausted": true
+    },
+    "district-judge-withdraws-order-prohibiting-litigants-veh-1fdzzs": {
+      "slug": "district-judge-withdraws-order-prohibiting-litigants-veh-1fdzzs",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "7-8-or-2-6-modi-govt-vs-subhash-chandra-garg-on-india-s-9zuus3": {
+      "slug": "7-8-or-2-6-modi-govt-vs-subhash-chandra-garg-on-india-s-9zuus3",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "red-hexagon-on-your-snack-pack-what-fssai-s-new-proposed-ugoyi4": {
+      "slug": "red-hexagon-on-your-snack-pack-what-fssai-s-new-proposed-ugoyi4",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "supreme-court-asks-prashant-bhushan-to-approach-delhi-hi-101bcw": {
+      "slug": "supreme-court-asks-prashant-bhushan-to-approach-delhi-hi-101bcw",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "supreme-court-declines-to-entertain-plea-challenging-cur-lt2ft8": {
+      "slug": "supreme-court-declines-to-entertain-plea-challenging-cur-lt2ft8",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "mumbai-lakes-near-full-capacity-at-95-94-imd-predicts-li-8ls2ld": {
+      "slug": "mumbai-lakes-near-full-capacity-at-95-94-imd-predicts-li-8ls2ld",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "tamil-nadu-assembly-files-on-sanitation-workers-demands-60zxxr": {
+      "slug": "tamil-nadu-assembly-files-on-sanitation-workers-demands-60zxxr",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official",
+        "tn_dipr_listing"
+      ],
+      "checkedSources": [
+        "Tamil Nadu DIPR",
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)",
+        "Tamil Nadu DIPR (press-release index)"
+      ],
+      "records": [
+        {
+          "id": "tndipr:pr030926b",
+          "adapter": "tn_dipr_listing",
+          "tier": "primary_official",
+          "authority": "Tamil Nadu DIPR",
+          "title": "Tamil Nadu DIPR press release, 2026-09-03",
+          "text": "Tamil Nadu DIPR press release, 2026-09-03",
+          "bodyAvailable": false,
+          "publishedAt": "2026-09-03T00:00:00.000Z",
+          "url": "https://cms.tn.gov.in/cms_migrated/document/press_release/pr030926b.jpg",
+          "sha256": "5ad37eb08048c44da02926c529a860c0f298cd7a33447d5f5b7e127aafaa3ff8",
+          "fetchedAt": "2026-09-03T16:13:23.632Z",
+          "requiresOcr": true,
+          "ocrConfidence": null
+        },
+        {
+          "id": "tndipr:pr030926a",
+          "adapter": "tn_dipr_listing",
+          "tier": "primary_official",
+          "authority": "Tamil Nadu DIPR",
+          "title": "Tamil Nadu DIPR press release, 2026-09-03",
+          "text": "Tamil Nadu DIPR press release, 2026-09-03",
+          "bodyAvailable": false,
+          "publishedAt": "2026-09-03T00:00:00.000Z",
+          "url": "https://cms.tn.gov.in/cms_migrated/document/press_release/pr030926a.jpg",
+          "sha256": "406fd9ca91682026c719837f0da83e280e4cb000d5db84f504ad11a8e40eb9cb",
+          "fetchedAt": "2026-09-03T16:13:23.632Z",
+          "requiresOcr": true,
+          "ocrConfidence": null
+        }
+      ],
+      "matches": [
+        {
+          "claimId": "1lk8jfp1ofsm",
+          "claimText": "Minister stated: Tamil Nadu Assembly | Files on sanitation workers’ demands ready, says Minister",
+          "recordId": "tndipr:pr030926b",
+          "outcome": "not_found",
+          "reason": "record is a scan we have not verified"
+        },
+        {
+          "claimId": "1lk8jfp1ofsm",
+          "claimText": "Minister stated: Tamil Nadu Assembly | Files on sanitation workers’ demands ready, says Minister",
+          "recordId": "tndipr:pr030926a",
+          "outcome": "not_found",
+          "reason": "record is a scan we have not verified"
+        },
+        {
+          "claimId": "1rv1vzzwhwh2",
+          "claimText": "TVK stated: Making a suo motu statement in the Assembly, he said the TVK government would respect the democratic rights of farmers and teachers who had…",
+          "recordId": "tndipr:pr030926b",
+          "outcome": "not_found",
+          "reason": "record is a scan we have not verified"
+        },
+        {
+          "claimId": "1rv1vzzwhwh2",
+          "claimText": "TVK stated: Making a suo motu statement in the Assembly, he said the TVK government would respect the democratic rights of farmers and teachers who had…",
+          "recordId": "tndipr:pr030926a",
+          "outcome": "not_found",
+          "reason": "record is a scan we have not verified"
+        },
+        {
+          "claimId": "aszzqk672fn2",
+          "claimText": "Tamil Nadu government to withdraw cases filed against farmers, teachers during DMK regime: CM Vijay",
+          "recordId": "tndipr:pr030926b",
+          "outcome": "not_found",
+          "reason": "record is a scan we have not verified"
+        },
+        {
+          "claimId": "aszzqk672fn2",
+          "claimText": "Tamil Nadu government to withdraw cases filed against farmers, teachers during DMK regime: CM Vijay",
+          "recordId": "tndipr:pr030926a",
+          "outcome": "not_found",
+          "reason": "record is a scan we have not verified"
+        }
+      ],
+      "exhausted": true
+    },
+    "i-will-break-it-again-meet-neil-samraj-the-17-year-old-t-isga98": {
+      "slug": "i-will-break-it-again-meet-neil-samraj-the-17-year-old-t-isga98",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official",
+        "tn_dipr_listing"
+      ],
+      "checkedSources": [
+        "Tamil Nadu DIPR",
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)",
+        "Tamil Nadu DIPR (press-release index)"
+      ],
+      "records": [
+        {
+          "id": "tndipr:pr030926b",
+          "adapter": "tn_dipr_listing",
+          "tier": "primary_official",
+          "authority": "Tamil Nadu DIPR",
+          "title": "Tamil Nadu DIPR press release, 2026-09-03",
+          "text": "Tamil Nadu DIPR press release, 2026-09-03",
+          "bodyAvailable": false,
+          "publishedAt": "2026-09-03T00:00:00.000Z",
+          "url": "https://cms.tn.gov.in/cms_migrated/document/press_release/pr030926b.jpg",
+          "sha256": "5ad37eb08048c44da02926c529a860c0f298cd7a33447d5f5b7e127aafaa3ff8",
+          "fetchedAt": "2026-09-03T16:13:23.632Z",
+          "requiresOcr": true,
+          "ocrConfidence": null
+        },
+        {
+          "id": "tndipr:pr030926a",
+          "adapter": "tn_dipr_listing",
+          "tier": "primary_official",
+          "authority": "Tamil Nadu DIPR",
+          "title": "Tamil Nadu DIPR press release, 2026-09-03",
+          "text": "Tamil Nadu DIPR press release, 2026-09-03",
+          "bodyAvailable": false,
+          "publishedAt": "2026-09-03T00:00:00.000Z",
+          "url": "https://cms.tn.gov.in/cms_migrated/document/press_release/pr030926a.jpg",
+          "sha256": "406fd9ca91682026c719837f0da83e280e4cb000d5db84f504ad11a8e40eb9cb",
+          "fetchedAt": "2026-09-03T16:13:23.632Z",
+          "requiresOcr": true,
+          "ocrConfidence": null
+        }
+      ],
+      "matches": [
+        {
+          "claimId": "193vu9h17isd",
+          "claimText": "‘I will break it again’: Meet Neil Samraj, the 17-year-old Tamil Nadu sprinter who broke 100m National Record",
+          "recordId": "tndipr:pr030926b",
+          "outcome": "not_found",
+          "reason": "record is a scan we have not verified"
+        },
+        {
+          "claimId": "193vu9h17isd",
+          "claimText": "‘I will break it again’: Meet Neil Samraj, the 17-year-old Tamil Nadu sprinter who broke 100m National Record",
+          "recordId": "tndipr:pr030926a",
+          "outcome": "not_found",
+          "reason": "record is a scan we have not verified"
+        }
+      ],
+      "exhausted": true
+    },
+    "tamil-nadu-cm-vijay-proposes-4-800-crore-desalination-pl-bo5a0i": {
+      "slug": "tamil-nadu-cm-vijay-proposes-4-800-crore-desalination-pl-bo5a0i",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official",
+        "tn_dipr_listing"
+      ],
+      "checkedSources": [
+        "Tamil Nadu DIPR",
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)",
+        "Tamil Nadu DIPR (press-release index)"
+      ],
+      "records": [
+        {
+          "id": "tndipr:pr030926b",
+          "adapter": "tn_dipr_listing",
+          "tier": "primary_official",
+          "authority": "Tamil Nadu DIPR",
+          "title": "Tamil Nadu DIPR press release, 2026-09-03",
+          "text": "Tamil Nadu DIPR press release, 2026-09-03",
+          "bodyAvailable": false,
+          "publishedAt": "2026-09-03T00:00:00.000Z",
+          "url": "https://cms.tn.gov.in/cms_migrated/document/press_release/pr030926b.jpg",
+          "sha256": "5ad37eb08048c44da02926c529a860c0f298cd7a33447d5f5b7e127aafaa3ff8",
+          "fetchedAt": "2026-09-03T16:13:23.632Z",
+          "requiresOcr": true,
+          "ocrConfidence": null
+        },
+        {
+          "id": "tndipr:pr030926a",
+          "adapter": "tn_dipr_listing",
+          "tier": "primary_official",
+          "authority": "Tamil Nadu DIPR",
+          "title": "Tamil Nadu DIPR press release, 2026-09-03",
+          "text": "Tamil Nadu DIPR press release, 2026-09-03",
+          "bodyAvailable": false,
+          "publishedAt": "2026-09-03T00:00:00.000Z",
+          "url": "https://cms.tn.gov.in/cms_migrated/document/press_release/pr030926a.jpg",
+          "sha256": "406fd9ca91682026c719837f0da83e280e4cb000d5db84f504ad11a8e40eb9cb",
+          "fetchedAt": "2026-09-03T16:13:23.632Z",
+          "requiresOcr": true,
+          "ocrConfidence": null
+        }
+      ],
+      "matches": [
+        {
+          "claimId": "bo5a0i1036zq:title",
+          "claimText": "Tamil Nadu CM Vijay proposes ₹4,800-crore desalination plant at Minjur with 400-million-litre capacity",
+          "recordId": "tndipr:pr030926b",
+          "outcome": "not_found",
+          "reason": "record is a scan we have not verified"
+        },
+        {
+          "claimId": "bo5a0i1036zq:title",
+          "claimText": "Tamil Nadu CM Vijay proposes ₹4,800-crore desalination plant at Minjur with 400-million-litre capacity",
+          "recordId": "tndipr:pr030926a",
+          "outcome": "not_found",
+          "reason": "record is a scan we have not verified"
+        }
+      ],
+      "exhausted": true
+    },
+    "tamil-nadu-assembly-state-government-to-launch-health-in-e0ka98": {
+      "slug": "tamil-nadu-assembly-state-government-to-launch-health-in-e0ka98",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official",
+        "tn_dipr_listing"
+      ],
+      "checkedSources": [
+        "Tamil Nadu DIPR",
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)",
+        "Tamil Nadu DIPR (press-release index)"
+      ],
+      "records": [
+        {
+          "id": "tndipr:pr030926b",
+          "adapter": "tn_dipr_listing",
+          "tier": "primary_official",
+          "authority": "Tamil Nadu DIPR",
+          "title": "Tamil Nadu DIPR press release, 2026-09-03",
+          "text": "Tamil Nadu DIPR press release, 2026-09-03",
+          "bodyAvailable": false,
+          "publishedAt": "2026-09-03T00:00:00.000Z",
+          "url": "https://cms.tn.gov.in/cms_migrated/document/press_release/pr030926b.jpg",
+          "sha256": "5ad37eb08048c44da02926c529a860c0f298cd7a33447d5f5b7e127aafaa3ff8",
+          "fetchedAt": "2026-09-03T16:13:23.632Z",
+          "requiresOcr": true,
+          "ocrConfidence": null
+        },
+        {
+          "id": "tndipr:pr030926a",
+          "adapter": "tn_dipr_listing",
+          "tier": "primary_official",
+          "authority": "Tamil Nadu DIPR",
+          "title": "Tamil Nadu DIPR press release, 2026-09-03",
+          "text": "Tamil Nadu DIPR press release, 2026-09-03",
+          "bodyAvailable": false,
+          "publishedAt": "2026-09-03T00:00:00.000Z",
+          "url": "https://cms.tn.gov.in/cms_migrated/document/press_release/pr030926a.jpg",
+          "sha256": "406fd9ca91682026c719837f0da83e280e4cb000d5db84f504ad11a8e40eb9cb",
+          "fetchedAt": "2026-09-03T16:13:23.632Z",
+          "requiresOcr": true,
+          "ocrConfidence": null
+        }
+      ],
+      "matches": [
+        {
+          "claimId": "e0ka9880vlgu:title",
+          "claimText": "Tamil Nadu Assembly: State government to launch health insurance for the elderly",
+          "recordId": "tndipr:pr030926b",
+          "outcome": "not_found",
+          "reason": "record is a scan we have not verified"
+        },
+        {
+          "claimId": "e0ka9880vlgu:title",
+          "claimText": "Tamil Nadu Assembly: State government to launch health insurance for the elderly",
+          "recordId": "tndipr:pr030926a",
+          "outcome": "not_found",
+          "reason": "record is a scan we have not verified"
+        }
+      ],
+      "exhausted": true
+    },
+    "tamil-nadu-government-to-formulate-peri-menopausal-care-16x3bn": {
+      "slug": "tamil-nadu-government-to-formulate-peri-menopausal-care-16x3bn",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official",
+        "tn_dipr_listing"
+      ],
+      "checkedSources": [
+        "Tamil Nadu DIPR",
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)",
+        "Tamil Nadu DIPR (press-release index)"
+      ],
+      "records": [
+        {
+          "id": "tndipr:pr030926b",
+          "adapter": "tn_dipr_listing",
+          "tier": "primary_official",
+          "authority": "Tamil Nadu DIPR",
+          "title": "Tamil Nadu DIPR press release, 2026-09-03",
+          "text": "Tamil Nadu DIPR press release, 2026-09-03",
+          "bodyAvailable": false,
+          "publishedAt": "2026-09-03T00:00:00.000Z",
+          "url": "https://cms.tn.gov.in/cms_migrated/document/press_release/pr030926b.jpg",
+          "sha256": "5ad37eb08048c44da02926c529a860c0f298cd7a33447d5f5b7e127aafaa3ff8",
+          "fetchedAt": "2026-09-03T16:13:23.632Z",
+          "requiresOcr": true,
+          "ocrConfidence": null
+        },
+        {
+          "id": "tndipr:pr030926a",
+          "adapter": "tn_dipr_listing",
+          "tier": "primary_official",
+          "authority": "Tamil Nadu DIPR",
+          "title": "Tamil Nadu DIPR press release, 2026-09-03",
+          "text": "Tamil Nadu DIPR press release, 2026-09-03",
+          "bodyAvailable": false,
+          "publishedAt": "2026-09-03T00:00:00.000Z",
+          "url": "https://cms.tn.gov.in/cms_migrated/document/press_release/pr030926a.jpg",
+          "sha256": "406fd9ca91682026c719837f0da83e280e4cb000d5db84f504ad11a8e40eb9cb",
+          "fetchedAt": "2026-09-03T16:13:23.632Z",
+          "requiresOcr": true,
+          "ocrConfidence": null
+        }
+      ],
+      "matches": [
+        {
+          "claimId": "16x3bnrxqunh:title",
+          "claimText": "Tamil Nadu government to formulate ‘Peri-Menopausal Care Policy’",
+          "recordId": "tndipr:pr030926b",
+          "outcome": "not_found",
+          "reason": "record is a scan we have not verified"
+        },
+        {
+          "claimId": "16x3bnrxqunh:title",
+          "claimText": "Tamil Nadu government to formulate ‘Peri-Menopausal Care Policy’",
+          "recordId": "tndipr:pr030926a",
+          "outcome": "not_found",
+          "reason": "record is a scan we have not verified"
+        }
+      ],
+      "exhausted": true
+    },
+    "tamil-nadu-health-minister-clarifies-on-gold-ring-scheme-16ygfp": {
+      "slug": "tamil-nadu-health-minister-clarifies-on-gold-ring-scheme-16ygfp",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official",
+        "tn_dipr_listing"
+      ],
+      "checkedSources": [
+        "Tamil Nadu DIPR",
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)",
+        "Tamil Nadu DIPR (press-release index)"
+      ],
+      "records": [
+        {
+          "id": "tndipr:pr030926b",
+          "adapter": "tn_dipr_listing",
+          "tier": "primary_official",
+          "authority": "Tamil Nadu DIPR",
+          "title": "Tamil Nadu DIPR press release, 2026-09-03",
+          "text": "Tamil Nadu DIPR press release, 2026-09-03",
+          "bodyAvailable": false,
+          "publishedAt": "2026-09-03T00:00:00.000Z",
+          "url": "https://cms.tn.gov.in/cms_migrated/document/press_release/pr030926b.jpg",
+          "sha256": "5ad37eb08048c44da02926c529a860c0f298cd7a33447d5f5b7e127aafaa3ff8",
+          "fetchedAt": "2026-09-03T16:13:23.632Z",
+          "requiresOcr": true,
+          "ocrConfidence": null
+        },
+        {
+          "id": "tndipr:pr030926a",
+          "adapter": "tn_dipr_listing",
+          "tier": "primary_official",
+          "authority": "Tamil Nadu DIPR",
+          "title": "Tamil Nadu DIPR press release, 2026-09-03",
+          "text": "Tamil Nadu DIPR press release, 2026-09-03",
+          "bodyAvailable": false,
+          "publishedAt": "2026-09-03T00:00:00.000Z",
+          "url": "https://cms.tn.gov.in/cms_migrated/document/press_release/pr030926a.jpg",
+          "sha256": "406fd9ca91682026c719837f0da83e280e4cb000d5db84f504ad11a8e40eb9cb",
+          "fetchedAt": "2026-09-03T16:13:23.632Z",
+          "requiresOcr": true,
+          "ocrConfidence": null
+        }
+      ],
+      "matches": [
+        {
+          "claimId": "16ygfpg1q4ze:title",
+          "claimText": "Tamil Nadu Health Minister clarifies on gold ring scheme tender",
+          "recordId": "tndipr:pr030926b",
+          "outcome": "not_found",
+          "reason": "record is a scan we have not verified"
+        },
+        {
+          "claimId": "16ygfpg1q4ze:title",
+          "claimText": "Tamil Nadu Health Minister clarifies on gold ring scheme tender",
+          "recordId": "tndipr:pr030926a",
+          "outcome": "not_found",
+          "reason": "record is a scan we have not verified"
+        }
+      ],
+      "exhausted": true
+    },
+    "more-teachers-better-access-fewer-pupils-india-s-governm-q2i74p": {
+      "slug": "more-teachers-better-access-fewer-pupils-india-s-governm-q2i74p",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "booth-level-agents-liable-only-for-verifiable-informatio-2fvhdv": {
+      "slug": "booth-level-agents-liable-only-for-verifiable-informatio-2fvhdv",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "east-bengal-drawn-with-hwacheon-ho-chi-minh-city-4-25-sc-1l79rw": {
+      "slug": "east-bengal-drawn-with-hwacheon-ho-chi-minh-city-4-25-sc-1l79rw",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "majority-of-india-s-gig-workers-remain-out-of-the-govern-y1vbm3": {
+      "slug": "majority-of-india-s-gig-workers-remain-out-of-the-govern-y1vbm3",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "tmc-writes-to-president-and-bengal-governor-over-office-13z7u5": {
+      "slug": "tmc-writes-to-president-and-bengal-governor-over-office-13z7u5",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "tn-assembly-adopts-resolution-urging-centre-to-recognise-1qft4y": {
+      "slug": "tn-assembly-adopts-resolution-urging-centre-to-recognise-1qft4y",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "netagiri-karne-neta-ke-pass-jao-main-toh-ghar-ka-mukhiya-1t3z63": {
+      "slug": "netagiri-karne-neta-ke-pass-jao-main-toh-ghar-ka-mukhiya-1t3z63",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "mumbai-s-redevelopment-boom-accelerates-as-1-000-project-totnxk": {
+      "slug": "mumbai-s-redevelopment-boom-accelerates-as-1-000-project-totnxk",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "puri-s-jagannath-temple-has-1-912-cr-in-bank-owns-60-821-1qaj8p": {
+      "slug": "puri-s-jagannath-temple-has-1-912-cr-in-bank-owns-60-821-1qaj8p",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "stray-dogs-from-public-places-in-goa-to-be-shifted-to-sh-pftf1m": {
+      "slug": "stray-dogs-from-public-places-in-goa-to-be-shifted-to-sh-pftf1m",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "no-cremation-ground-panna-villagers-burn-pyre-under-plas-1etmgm": {
+      "slug": "no-cremation-ground-panna-villagers-burn-pyre-under-plas-1etmgm",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "top-court-sets-aside-425-crore-fine-on-gujarat-diamantai-iu1fof": {
+      "slug": "top-court-sets-aside-425-crore-fine-on-gujarat-diamantai-iu1fof",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET",
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [
+        {
+          "id": "corpus:1wy7mjoau4ny",
+          "adapter": "corpus_official",
+          "tier": "primary_official",
+          "authority": "NDMA SACHET",
+          "title": "Light Rain is very likely to occur at isolated places over Chhotaudepur, Dahod, Morbi, Narmada, Navsari, Rajkot, Surat, Surendranagar, Tapi, The Dangs, Valsad in next 3 hours.",
+          "text": "Light Rain is very likely to occur at isolated places over Chhotaudepur, Dahod, Morbi, Narmada, Navsari, Rajkot, Surat, Surendranagar, Tapi, The Dangs, Valsad in next 3 hours.. Light Rain — 11 districts of Gujarat",
+          "bodyAvailable": false,
+          "publishedAt": "2026-09-03T07:44:00.000Z",
+          "url": "https://sachet.ndma.gov.in/cap_public_website/FetchXMLFile?identifier=1788421525835020",
+          "sha256": "79ee2edc69b10fcc11946bcad4fb36d1704a1a1ec51256a1ec46323607c225a7",
+          "fetchedAt": "2026-09-03T16:13:23.632Z"
+        }
+      ],
+      "matches": [
+        {
+          "claimId": "iu1fof1ivu68:title",
+          "claimText": "Top court sets aside ₹425-crore fine on Gujarat diamantaire, cautions on AI use",
+          "recordId": "corpus:1wy7mjoau4ny",
+          "outcome": "not_found",
+          "reason": "NDMA SACHET's record is not the right kind of source for this claim"
+        }
+      ],
+      "exhausted": true
+    },
+    "karnataka-approves-29-679-crore-investment-proposals-toy-aibmpj": {
+      "slug": "karnataka-approves-29-679-crore-investment-proposals-toy-aibmpj",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "minister-surekha-attacks-telangana-cm-revanth-seeks-cont-6zbg88": {
+      "slug": "minister-surekha-attacks-telangana-cm-revanth-seeks-cont-6zbg88",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "evms-used-in-kolathur-constituency-being-verified-after-1ph389": {
+      "slug": "evms-used-in-kolathur-constituency-being-verified-after-1ph389",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "tamil-in-madras-hc-tn-assembly-resolution-moved-rs-1-800-17oa66": {
+      "slug": "tamil-in-madras-hc-tn-assembly-resolution-moved-rs-1-800-17oa66",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "persistent-systems-shares-fall-over-3-after-board-approv-1fkvjs": {
+      "slug": "persistent-systems-shares-fall-over-3-after-board-approv-1fkvjs",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "can-naughty-boy-help-redeem-isro-s-lost-sheen-big-launch-o95yf0": {
+      "slug": "can-naughty-boy-help-redeem-isro-s-lost-sheen-big-launch-o95yf0",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "concocted-story-allahabad-high-court-cancels-25-year-old-reft9h": {
+      "slug": "concocted-story-allahabad-high-court-cancels-25-year-old-reft9h",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "manipur-assembly-passes-resolution-seeking-nrc-update-be-2nz7wb": {
+      "slug": "manipur-assembly-passes-resolution-seeking-nrc-update-be-2nz7wb",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "consent-irrelevant-in-pocso-cases-says-kerala-high-court-1peq3d": {
+      "slug": "consent-irrelevant-in-pocso-cases-says-kerala-high-court-1peq3d",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "bihar-cabinet-approves-allocation-of-9169-crore-for-ulbs-yj26o2": {
+      "slug": "bihar-cabinet-approves-allocation-of-9169-crore-for-ulbs-yj26o2",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET",
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [
+        {
+          "id": "corpus:1b7m7v394sa4",
+          "adapter": "corpus_official",
+          "tier": "primary_official",
+          "authority": "NDMA SACHET",
+          "title": "River Ghaghra at Chhappra in Saran district of Bihar continues to flow in above normal flood situation at 8:00 am today.",
+          "text": "River Ghaghra at Chhappra in Saran district of Bihar continues to flow in above normal flood situation at 8:00 am today..",
+          "bodyAvailable": false,
+          "publishedAt": "2026-09-03T05:18:09.000Z",
+          "url": "https://sachet.ndma.gov.in/cap_public_website/FetchXMLFile?identifier=1788412687064016",
+          "sha256": "c7547ed13c48df1b69be4cd9d19b4b095e8e01775411f7de4653191f45cbaaf3",
+          "fetchedAt": "2026-09-03T16:13:23.632Z"
+        },
+        {
+          "id": "corpus:1k9mevnfwalt",
+          "adapter": "corpus_official",
+          "tier": "primary_official",
+          "authority": "NDMA SACHET",
+          "title": "River Gandak at Hajipur in Vaishali district of Bihar continues to flow in above normal flood situation at 8:00 am today.",
+          "text": "River Gandak at Hajipur in Vaishali district of Bihar continues to flow in above normal flood situation at 8:00 am today..",
+          "bodyAvailable": false,
+          "publishedAt": "2026-09-03T05:18:09.000Z",
+          "url": "https://sachet.ndma.gov.in/cap_public_website/FetchXMLFile?identifier=1788412687369016",
+          "sha256": "dbf4da68f05de67be62558818b1d2ef418e811414068a82049cac8cad3607fc2",
+          "fetchedAt": "2026-09-03T16:13:23.632Z"
+        }
+      ],
+      "matches": [
+        {
+          "claimId": "yj26o21667r7:title",
+          "claimText": "Bihar Cabinet approves allocation of ₹9169 crore for ULBs",
+          "recordId": "corpus:1b7m7v394sa4",
+          "outcome": "not_found",
+          "reason": "NDMA SACHET release found but its headline does not confirm the specific claim"
+        },
+        {
+          "claimId": "yj26o21667r7:title",
+          "claimText": "Bihar Cabinet approves allocation of ₹9169 crore for ULBs",
+          "recordId": "corpus:1k9mevnfwalt",
+          "outcome": "not_found",
+          "reason": "NDMA SACHET release found but its headline does not confirm the specific claim"
+        }
+      ],
+      "exhausted": true
+    },
+    "35-1oqubf": {
+      "slug": "35-1oqubf",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "tn-assembly-4-minister-aadhav-1yxlgf": {
+      "slug": "tn-assembly-4-minister-aadhav-1yxlgf",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "ananya-panday-turns-heads-in-rahul-mishra-devi-couture-a-tr3qfw": {
+      "slug": "ananya-panday-turns-heads-in-rahul-mishra-devi-couture-a-tr3qfw",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "gujarati-music-composer-and-singer-gaurang-vyas-dies-at-1piy7w": {
+      "slug": "gujarati-music-composer-and-singer-gaurang-vyas-dies-at-1piy7w",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "indian-shares-eye-rebound-after-3-day-slide-oil-caps-gai-c27wcs": {
+      "slug": "indian-shares-eye-rebound-after-3-day-slide-oil-caps-gai-c27wcs",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "are-you-working-to-ruin-bengaluru-minister-raps-official-1ftr4p": {
+      "slug": "are-you-working-to-ruin-bengaluru-minister-raps-official-1ftr4p",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "new-york-city-schools-to-temporarily-ban-generative-ai-f-324tyo": {
+      "slug": "new-york-city-schools-to-temporarily-ban-generative-ai-f-324tyo",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "santosh-pandit-held-pune-police-detain-activist-days-aft-1fs3z7": {
+      "slug": "santosh-pandit-held-pune-police-detain-activist-days-aft-1fs3z7",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "intruder-alert-daniil-medvedev-nearly-hits-bird-during-b-6cgkm9": {
+      "slug": "intruder-alert-daniil-medvedev-nearly-hits-bird-during-b-6cgkm9",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "tvk-govt-100-1rqh6y": {
+      "slug": "tvk-govt-100-1rqh6y",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "minister-vignesh-12arpz": {
+      "slug": "minister-vignesh-12arpz",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "bhubaneswar-court-dismisses-petition-against-naveen-patn-8p1ttj": {
+      "slug": "bhubaneswar-court-dismisses-petition-against-naveen-patn-8p1ttj",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "csos-seek-resolution-to-key-civic-issues-in-ongole-13ht80": {
+      "slug": "csos-seek-resolution-to-key-civic-issues-in-ongole-13ht80",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "telangana-minister-surekha-refuses-to-quit-dares-congres-1xsbon": {
+      "slug": "telangana-minister-surekha-refuses-to-quit-dares-congres-1xsbon",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "activist-detained-over-remarks-against-maharashtra-minis-24377w": {
+      "slug": "activist-detained-over-remarks-against-maharashtra-minis-24377w",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "delhi-hc-rejects-petition-against-closure-of-vizag-airpo-1lk995": {
+      "slug": "delhi-hc-rejects-petition-against-closure-of-vizag-airpo-1lk995",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "Reserve Bank of India",
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [
+        {
+          "id": "corpus:i8m8oy3zbus",
+          "adapter": "corpus_official",
+          "tier": "primary_official",
+          "authority": "Reserve Bank of India",
+          "title": "Conference for Registrars of Cooperative Societies held at Reserve Bank of India, New Delhi on September 1, 2026",
+          "text": "Conference for Registrars of Cooperative Societies held at Reserve Bank of India, New Delhi on September 1, 2026. The Reserve Bank of India (RBI) hosted the Third Conference of Registrars of Cooperative Societies (RCSs) at its New Delhi office on September 1, 2026. Deputy Governors Shri Swaminathan J. and Shri Shirish Chandra Murmu, Shri Shiv Pal Singh, Central Registrar of Cooperative Societies (CRCS), Registrars of Cooperative Societies from various States, and senio…",
+          "bodyAvailable": true,
+          "publishedAt": "2026-09-02T06:00:00.000Z",
+          "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63499",
+          "sha256": "9a86562c0ec126420fd0d699fe70052198a7ba025c4ceb18e1a2bfd189a49695",
+          "fetchedAt": "2026-09-03T16:13:23.632Z"
+        }
+      ],
+      "matches": [
+        {
+          "claimId": "1lk995q50ddq:title",
+          "claimText": "Delhi HC rejects petition against closure of Vizag airport",
+          "recordId": "corpus:i8m8oy3zbus",
+          "outcome": "not_found",
+          "reason": "Reserve Bank of India's record is not the right kind of source for this claim"
+        }
+      ],
+      "exhausted": true
+    },
+    "karnataka-s-28-5-crore-cloud-seeding-plan-runs-into-weat-16jndi": {
+      "slug": "karnataka-s-28-5-crore-cloud-seeding-plan-runs-into-weat-16jndi",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "a-case-of-no-probe-says-supreme-court-junks-25-yr-old-mu-1seo9n": {
+      "slug": "a-case-of-no-probe-says-supreme-court-junks-25-yr-old-mu-1seo9n",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "solatium-will-be-given-for-fishing-boats-held-captive-in-6l7t23": {
+      "slug": "solatium-will-be-given-for-fishing-boats-held-captive-in-6l7t23",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "tn-rain-alert-yzzw94": {
+      "slug": "tn-rain-alert-yzzw94",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "cbi-names-6-ias-officers-in-504-crore-idfc-bank-fraud-ca-oyd8fd": {
+      "slug": "cbi-names-6-ias-officers-in-504-crore-idfc-bank-fraud-ca-oyd8fd",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "subhash-chandra-questions-validity-of-faulty-wrong-nclt-mcqowv": {
+      "slug": "subhash-chandra-questions-validity-of-faulty-wrong-nclt-mcqowv",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "government-bodies-differ-centre-to-test-green-crackers-a-1e3x12": {
+      "slug": "government-bodies-differ-centre-to-test-green-crackers-a-1e3x12",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "gold-worth-1-crore-hidden-in-eight-month-old-s-diaper-se-1vp1cc": {
+      "slug": "gold-worth-1-crore-hidden-in-eight-month-old-s-diaper-se-1vp1cc",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "sc-bci-chair-s-tenure-is-for-2-years-can-t-be-made-5-yea-1x4i7j": {
+      "slug": "sc-bci-chair-s-tenure-is-for-2-years-can-t-be-made-5-yea-1x4i7j",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "keralam-chief-minister-v-d-satheesan-seeks-support-of-ce-ldk70w": {
+      "slug": "keralam-chief-minister-v-d-satheesan-seeks-support-of-ce-ldk70w",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official",
+        "tn_dipr_listing"
+      ],
+      "checkedSources": [
+        "Tamil Nadu DIPR",
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)",
+        "Tamil Nadu DIPR (press-release index)"
+      ],
+      "records": [
+        {
+          "id": "tndipr:pr030926b",
+          "adapter": "tn_dipr_listing",
+          "tier": "primary_official",
+          "authority": "Tamil Nadu DIPR",
+          "title": "Tamil Nadu DIPR press release, 2026-09-03",
+          "text": "Tamil Nadu DIPR press release, 2026-09-03",
+          "bodyAvailable": false,
+          "publishedAt": "2026-09-03T00:00:00.000Z",
+          "url": "https://cms.tn.gov.in/cms_migrated/document/press_release/pr030926b.jpg",
+          "sha256": "5ad37eb08048c44da02926c529a860c0f298cd7a33447d5f5b7e127aafaa3ff8",
+          "fetchedAt": "2026-09-03T16:13:23.632Z",
+          "requiresOcr": true,
+          "ocrConfidence": null
+        },
+        {
+          "id": "tndipr:pr030926a",
+          "adapter": "tn_dipr_listing",
+          "tier": "primary_official",
+          "authority": "Tamil Nadu DIPR",
+          "title": "Tamil Nadu DIPR press release, 2026-09-03",
+          "text": "Tamil Nadu DIPR press release, 2026-09-03",
+          "bodyAvailable": false,
+          "publishedAt": "2026-09-03T00:00:00.000Z",
+          "url": "https://cms.tn.gov.in/cms_migrated/document/press_release/pr030926a.jpg",
+          "sha256": "406fd9ca91682026c719837f0da83e280e4cb000d5db84f504ad11a8e40eb9cb",
+          "fetchedAt": "2026-09-03T16:13:23.632Z",
+          "requiresOcr": true,
+          "ocrConfidence": null
+        }
+      ],
+      "matches": [
+        {
+          "claimId": "isplwsuhyrv2",
+          "claimText": "Satheesan stated: the State government is bound to follow Central protocol in events where the President, Vice-President or the Prime Minister are present",
+          "recordId": "tndipr:pr030926b",
+          "outcome": "not_found",
+          "reason": "record is a scan we have not verified"
+        },
+        {
+          "claimId": "isplwsuhyrv2",
+          "claimText": "Satheesan stated: the State government is bound to follow Central protocol in events where the President, Vice-President or the Prime Minister are present",
+          "recordId": "tndipr:pr030926a",
+          "outcome": "not_found",
+          "reason": "record is a scan we have not verified"
+        },
+        {
+          "claimId": "eoucypgok2ir",
+          "claimText": "Keralam Chief Minister V.D. Satheesan seeks support of Centre for establishing coconut value-addition park",
+          "recordId": "tndipr:pr030926b",
+          "outcome": "not_found",
+          "reason": "record is a scan we have not verified"
+        },
+        {
+          "claimId": "eoucypgok2ir",
+          "claimText": "Keralam Chief Minister V.D. Satheesan seeks support of Centre for establishing coconut value-addition park",
+          "recordId": "tndipr:pr030926a",
+          "outcome": "not_found",
+          "reason": "record is a scan we have not verified"
+        }
+      ],
+      "exhausted": true
+    },
+    "pink-line-elevated-stretch-in-bengaluru-nears-launch-two-1mroa8": {
+      "slug": "pink-line-elevated-stretch-in-bengaluru-nears-launch-two-1mroa8",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "four-lakh-students-to-become-karnataka-s-potential-blood-jf3lx3": {
+      "slug": "four-lakh-students-to-become-karnataka-s-potential-blood-jf3lx3",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "ind-v-hk-asia-cup-preview-indian-middle-order-in-focus-a-r3sfuu": {
+      "slug": "ind-v-hk-asia-cup-preview-indian-middle-order-in-focus-a-r3sfuu",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "karnataka-clears-rs-30-000-crore-projects-to-create-66-0-zmeatr": {
+      "slug": "karnataka-clears-rs-30-000-crore-projects-to-create-66-0-zmeatr",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "in-eye-of-storm-acting-chief-justice-of-rajasthan-high-c-wpvf5h": {
+      "slug": "in-eye-of-storm-acting-chief-justice-of-rajasthan-high-c-wpvf5h",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "indian-wheat-prices-gain-150-quintal-as-government-lifts-1bwtk0": {
+      "slug": "indian-wheat-prices-gain-150-quintal-as-government-lifts-1bwtk0",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "guv-s-office-challenges-kpsc-chief-s-reinstatement-karna-1pfok9": {
+      "slug": "guv-s-office-challenges-kpsc-chief-s-reinstatement-karna-1pfok9",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "state-sanctions-10-crore-for-rectification-of-uneven-sur-qpc15t": {
+      "slug": "state-sanctions-10-crore-for-rectification-of-uneven-sur-qpc15t",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "cashew-import-scam-kerala-high-court-directs-vacb-to-cla-g5vujy": {
+      "slug": "cashew-import-scam-kerala-high-court-directs-vacb-to-cla-g5vujy",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "india-faces-tough-uzbekistan-test-in-afc-u-20-asian-cup-4ctvqq": {
+      "slug": "india-faces-tough-uzbekistan-test-in-afc-u-20-asian-cup-4ctvqq",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "eviction-of-woman-passenger-in-kerala-shrc-orders-railwa-1o5pzs": {
+      "slug": "eviction-of-woman-passenger-in-kerala-shrc-orders-railwa-1o5pzs",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "final-report-filed-in-the-death-of-18-month-old-child-in-n6qztb": {
+      "slug": "final-report-filed-in-the-death-of-18-month-old-child-in-n6qztb",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "express-impact-jharkhand-poll-authorities-order-probe-in-1msgy3": {
+      "slug": "express-impact-jharkhand-poll-authorities-order-probe-in-1msgy3",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "scientific-development-should-be-guided-by-ethics-empath-p5htcz": {
+      "slug": "scientific-development-should-be-guided-by-ethics-empath-p5htcz",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "thrissur-vigilance-court-orders-case-against-chalakudy-m-u8ryap": {
+      "slug": "thrissur-vigilance-court-orders-case-against-chalakudy-m-u8ryap",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "irctc-imposes-rs-5-lakh-fine-on-food-service-provider-af-1kyxwz": {
+      "slug": "irctc-imposes-rs-5-lakh-fine-on-food-service-provider-af-1kyxwz",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "ccpa-imposes-rs-10-lakh-penalty-for-online-sale-of-explo-1pn06w": {
+      "slug": "ccpa-imposes-rs-10-lakh-penalty-for-online-sale-of-explo-1pn06w",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "four-arrested-for-assaulting-man-robbing-him-of-10-lakh-rm5ly1": {
+      "slug": "four-arrested-for-assaulting-man-robbing-him-of-10-lakh-rm5ly1",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "centre-agrees-to-provide-67-crore-for-development-of-fis-1dokpp": {
+      "slug": "centre-agrees-to-provide-67-crore-for-development-of-fis-1dokpp",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "why-nia-court-rejected-bail-plea-of-j-k-man-accused-of-b-1u4urh": {
+      "slug": "why-nia-court-rejected-bail-plea-of-j-k-man-accused-of-b-1u4urh",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "to-counter-protest-against-j-k-government-omar-abdullah-1s1qma": {
+      "slug": "to-counter-protest-against-j-k-government-omar-abdullah-1s1qma",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "e-waste-collection-faces-gaps-as-government-sets-sights-hyz55g": {
+      "slug": "e-waste-collection-faces-gaps-as-government-sets-sights-hyz55g",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "five-held-for-abducting-man-extorting-25-000-through-gpa-186l98": {
+      "slug": "five-held-for-abducting-man-extorting-25-000-through-gpa-186l98",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "minister-announces-welfare-measures-for-drivers-gig-and-shanbb": {
+      "slug": "minister-announces-welfare-measures-for-drivers-gig-and-shanbb",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "delhi-hc-issues-notice-on-plea-seeking-policy-for-women-1m1qp0": {
+      "slug": "delhi-hc-issues-notice-on-plea-seeking-policy-for-women-1m1qp0",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "Reserve Bank of India",
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [
+        {
+          "id": "corpus:i8m8oy3zbus",
+          "adapter": "corpus_official",
+          "tier": "primary_official",
+          "authority": "Reserve Bank of India",
+          "title": "Conference for Registrars of Cooperative Societies held at Reserve Bank of India, New Delhi on September 1, 2026",
+          "text": "Conference for Registrars of Cooperative Societies held at Reserve Bank of India, New Delhi on September 1, 2026. The Reserve Bank of India (RBI) hosted the Third Conference of Registrars of Cooperative Societies (RCSs) at its New Delhi office on September 1, 2026. Deputy Governors Shri Swaminathan J. and Shri Shirish Chandra Murmu, Shri Shiv Pal Singh, Central Registrar of Cooperative Societies (CRCS), Registrars of Cooperative Societies from various States, and senio…",
+          "bodyAvailable": true,
+          "publishedAt": "2026-09-02T06:00:00.000Z",
+          "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63499",
+          "sha256": "9a86562c0ec126420fd0d699fe70052198a7ba025c4ceb18e1a2bfd189a49695",
+          "fetchedAt": "2026-09-03T16:13:23.632Z"
+        }
+      ],
+      "matches": [
+        {
+          "claimId": "1m1qp0y8rymn:title",
+          "claimText": "Delhi HC issues notice on plea seeking policy for women athletes returning after maternity",
+          "recordId": "corpus:i8m8oy3zbus",
+          "outcome": "not_found",
+          "reason": "Reserve Bank of India's record is not the right kind of source for this claim"
+        }
+      ],
+      "exhausted": true
+    },
+    "new-industrial-parks-to-spur-msme-growth-minister-tells-mm3aex": {
+      "slug": "new-industrial-parks-to-spur-msme-growth-minister-tells-mm3aex",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "cag-report-flags-lapses-in-execution-of-government-schem-3h6juv": {
+      "slug": "cag-report-flags-lapses-in-execution-of-government-schem-3h6juv",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "watch-looking-back-at-lionel-messi-s-international-caree-qj7640": {
+      "slug": "watch-looking-back-at-lionel-messi-s-international-caree-qj7640",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "subsidised-rice-meant-for-labourers-sold-to-traders-cbi-egmarg": {
+      "slug": "subsidised-rice-meant-for-labourers-sold-to-traders-cbi-egmarg",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "rahul-gandhi-s-vote-theft-jab-after-2-07-crore-maharasht-jhdd1j": {
+      "slug": "rahul-gandhi-s-vote-theft-jab-after-2-07-crore-maharasht-jhdd1j",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [],
+      "matches": [],
+      "exhausted": true
+    },
+    "indian-railways-approves-projects-worth-rs-675-crore-acr-t43plz": {
+      "slug": "indian-railways-approves-projects-worth-rs-675-crore-acr-t43plz",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET",
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [
+        {
+          "id": "corpus:1n2yqie1woy3",
+          "adapter": "corpus_official",
+          "tier": "primary_official",
+          "authority": "NDMA SACHET",
+          "title": "River Tista at Mekhliganj in Coochbehar district of West Bengal continues to flow in above normal flood situation at 12:00 pm today.",
+          "text": "River Tista at Mekhliganj in Coochbehar district of West Bengal continues to flow in above normal flood situation at 12:00 pm today.. Flood — Tista, Mekhliganj, Coochbehar, West Bengal",
+          "bodyAvailable": true,
+          "publishedAt": "2026-09-03T06:30:00.000Z",
+          "url": "https://sachet.ndma.gov.in/cap_public_website/FetchXMLFile?identifier=1788418535971017",
+          "sha256": "6b26a8f529fc8f84bd3e3ffe814a7fae71eee75ddd4b04f7762d8f511e94be8d",
+          "fetchedAt": "2026-09-03T16:13:23.632Z"
+        },
+        {
+          "id": "corpus:z8p7jj13j7q1",
+          "adapter": "corpus_official",
+          "tier": "primary_official",
+          "authority": "NDMA SACHET",
+          "title": "River Ganga at Farakka in Murshidabad district of West Bengal continues to flow in severe flood situation at 6:00 am today.",
+          "text": "River Ganga at Farakka in Murshidabad district of West Bengal continues to flow in severe flood situation at 6:00 am today..",
+          "bodyAvailable": false,
+          "publishedAt": "2026-09-03T05:19:35.000Z",
+          "url": "https://sachet.ndma.gov.in/cap_public_website/FetchXMLFile?identifier=1788412684096017",
+          "sha256": "500b24367418334174e883bdaa81c6f88b91a2507d89b50922c4de605eac3b45",
+          "fetchedAt": "2026-09-03T16:13:23.632Z"
+        }
+      ],
+      "matches": [
+        {
+          "claimId": "t43plz1ycnvt:title",
+          "claimText": "Indian Railways approves projects worth Rs 675-crore across West Bengal, Bihar and UP",
+          "recordId": "corpus:1n2yqie1woy3",
+          "outcome": "not_found",
+          "reason": "NDMA SACHET's record is silent on this specific claim"
+        },
+        {
+          "claimId": "t43plz1ycnvt:title",
+          "claimText": "Indian Railways approves projects worth Rs 675-crore across West Bengal, Bihar and UP",
+          "recordId": "corpus:z8p7jj13j7q1",
+          "outcome": "not_found",
+          "reason": "NDMA SACHET release found but its headline does not confirm the specific claim"
+        }
+      ],
+      "exhausted": true
+    },
+    "bihar-on-alert-as-major-rivers-swell-following-heavy-rai-18l9mq": {
+      "slug": "bihar-on-alert-as-major-rivers-swell-following-heavy-rai-18l9mq",
+      "generatedAt": "2026-09-03T16:13:23.632Z",
+      "checkedAdapters": [
+        "corpus_official"
+      ],
+      "checkedSources": [
+        "NDMA SACHET",
+        "NDMA SACHET (releases held in IFFA's corpus)",
+        "Reserve Bank of India (releases held in IFFA's corpus)"
+      ],
+      "records": [
+        {
+          "id": "corpus:1tdmssz7vrjg",
+          "adapter": "corpus_official",
+          "tier": "primary_official",
+          "authority": "NDMA SACHET",
+          "title": "River Sone at Maner in Patna district of Bihar continues to flow in severe flood situation at 8:00 am today.",
+          "text": "River Sone at Maner in Patna district of Bihar continues to flow in severe flood situation at 8:00 am today.. Flood — Sone, Maner, Patna, Bihar",
+          "bodyAvailable": false,
+          "publishedAt": "2026-09-03T02:30:00.000Z",
+          "url": "https://sachet.ndma.gov.in/cap_public_website/FetchXMLFile?identifier=1788412685723016",
+          "sha256": "c536fb572024fc7370b1e6b94375665ddb294a055ce6670628dcfee6479f5ae2",
+          "fetchedAt": "2026-09-03T16:13:23.632Z"
+        },
+        {
+          "id": "corpus:1bw0tbi81uuy",
+          "adapter": "corpus_official",
+          "tier": "primary_official",
+          "authority": "NDMA SACHET",
+          "title": "River Sone at Koelwar in Patna district of Bihar continues to flow in above normal flood situation at 8:00 am today.",
+          "text": "River Sone at Koelwar in Patna district of Bihar continues to flow in above normal flood situation at 8:00 am today.. Flood — Sone, Koelwar, Patna, Bihar",
+          "bodyAvailable": false,
+          "publishedAt": "2026-09-03T02:30:00.000Z",
+          "url": "https://sachet.ndma.gov.in/cap_public_website/FetchXMLFile?identifier=1788412687878016",
+          "sha256": "ff6acb7ee14a964d85b25d87360ecb5c5c55821654084830f2f95aac560c0b21",
+          "fetchedAt": "2026-09-03T16:13:23.632Z"
+        }
+      ],
+      "matches": [
+        {
+          "claimId": "njm1kq1ddq4k",
+          "claimText": "Bihar on alert as major rivers swell following heavy rains, all 69 gates of Sone Barrage opened",
+          "recordId": "corpus:1tdmssz7vrjg",
+          "outcome": "not_found",
+          "reason": "NDMA SACHET release found but its headline does not confirm the specific claim"
+        },
+        {
+          "claimId": "njm1kq1ddq4k",
+          "claimText": "Bihar on alert as major rivers swell following heavy rains, all 69 gates of Sone Barrage opened",
+          "recordId": "corpus:1bw0tbi81uuy",
+          "outcome": "not_found",
+          "reason": "NDMA SACHET release found but its headline does not confirm the specific claim"
+        }
+      ],
+      "exhausted": true
+    }
+  }
+}

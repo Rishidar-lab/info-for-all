@@ -42,6 +42,19 @@ test.describe("@prod live production smoke", () => {
     await expect(page.getByRole("tab", { name: /References/i })).toBeVisible();
   });
 
+  test("@prod a withheld story names what was checked, not just 'one source' (§B.2.5)", async ({ page }) => {
+    // the diagnostics page links withheld stories; a broader check: at least one
+    // story page in the site carries the research-trail phrasing.
+    const res = await page.request.get(BASE + "/data/index/latest.json");
+    expect(res.status()).toBe(200);
+    const { clusters } = (await res.json()) as { clusters: { slug: string; brief?: { withheld?: boolean } }[] };
+    const withheld = clusters.find((c) => c.brief?.withheld);
+    expect(withheld, "a withheld cluster exists in the index shard").toBeTruthy();
+    await page.goto(`${BASE}/story/${withheld!.slug}/`);
+    await expect(page.getByRole("region", { name: "IFFA Brief" })).toBeVisible();
+    await expect(page.getByText(/A brief is written only when a genuinely independent/i)).toBeVisible();
+  });
+
   test("@prod search ships a shell and loads its index shard", async ({ page }) => {
     const shard = await page.request.get(BASE + "/data/search/index.json");
     expect(shard.status()).toBe(200);

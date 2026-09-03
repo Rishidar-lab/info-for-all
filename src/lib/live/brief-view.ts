@@ -11,8 +11,18 @@ import type { LiveCluster } from "./types";
 import { buildBriefs, microBrief as microBriefFor, type BuiltBriefs } from "@/lib/brief/build";
 import { buildPerspectiveCompare } from "@/lib/brief/perspective";
 import type { MicroBrief, PerspectiveCompare } from "@/lib/brief/types";
+import type { ClusterResearch } from "@/lib/research/types";
+import researchData from "@/data/generated/research.json";
 
 const artById = new Map(dataset.articles.map((a) => [a.id, a]));
+
+/** §B.2 — the committed research pass output (see scripts/research-pass.ts). */
+const researchBySlug: Record<string, ClusterResearch> =
+  (researchData as { bySlug?: Record<string, ClusterResearch> }).bySlug ?? {};
+
+function researchFor(cluster: LiveCluster): ClusterResearch | null {
+  return researchBySlug[cluster.slug] ?? null;
+}
 
 function articlesOf(cluster: LiveCluster) {
   return cluster.articleIds.map((id) => artById.get(id)).filter((a): a is NonNullable<typeof a> => !!a);
@@ -26,7 +36,7 @@ const perspectiveCache = new Map<string, PerspectiveCompare>();
 export function briefsForCluster(cluster: LiveCluster): BuiltBriefs {
   const hit = briefCache.get(cluster.slug);
   if (hit) return hit;
-  const b = buildBriefs(cluster, articlesOf(cluster));
+  const b = buildBriefs(cluster, articlesOf(cluster), { research: researchFor(cluster) });
   briefCache.set(cluster.slug, b);
   return b;
 }
@@ -35,7 +45,7 @@ export function briefsForCluster(cluster: LiveCluster): BuiltBriefs {
 export function microBriefForCluster(cluster: LiveCluster): MicroBrief {
   const hit = microCache.get(cluster.slug);
   if (hit) return hit;
-  const m = microBriefFor(cluster, articlesOf(cluster));
+  const m = microBriefFor(cluster, articlesOf(cluster), { research: researchFor(cluster) });
   microCache.set(cluster.slug, m);
   return m;
 }

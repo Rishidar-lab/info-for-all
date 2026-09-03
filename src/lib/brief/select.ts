@@ -11,7 +11,9 @@ import type { Claim, EventClaims, Evidence } from "@/lib/claims/types";
 import type { MediaLandscape } from "@/lib/media-landscape/types";
 import { primaryEntity, type PoliticalEntity } from "@/lib/media-landscape/entities";
 import { resolveSourceFamilies, type SourceFamilyResolution } from "@/lib/research/independence";
-import type { BriefWithholdReason, BriefCoverage, BriefFamilyMerge } from "./types";
+import { applyEchoCollapse, type GateOutcome } from "@/lib/research/echo";
+import type { ClusterResearch, PrimaryRecord } from "@/lib/research/types";
+import type { BriefWithholdReason, BriefCoverage, BriefFamilyMerge, BriefResearchTrail } from "./types";
 
 const OFFICIAL_ROLES = new Set(["official-alert", "primary-document", "government-statement"]);
 
@@ -26,8 +28,14 @@ export interface BriefInputs {
   /** Claims worth putting in a brief, ranked (corroborated → attributed → single). */
   usableClaims: Claim[];
   primaryEvidence: Evidence[];
-  /** Milestone B §B.1 — the hardened family resolution. */
+  /** Milestone B §B.1 — the hardened family resolution (after §B.2.1 echo collapse). */
   independence: SourceFamilyResolution;
+  /** §B.2.1 gate outcome, when research ran for this cluster. */
+  gateOutcome?: GateOutcome;
+  researchTrail?: BriefResearchTrail;
+  officialRecordOnly?: boolean;
+  /** Articles reclassified as press-release echoes by §B.2.1. */
+  echoCollapsedArticleIds: string[];
   coverage: BriefCoverage;
   withhold?: { reason: BriefWithholdReason; detail: string; familyMerges?: BriefFamilyMerge[] };
 }
@@ -73,7 +81,11 @@ function usable(c: Claim): boolean {
   return true;
 }
 
-export function selectBriefInputs(cluster: LiveCluster, articles: LiveArticle[]): BriefInputs {
+export function selectBriefInputs(
+  cluster: LiveCluster,
+  articles: LiveArticle[],
+  research?: ClusterResearch | null,
+): BriefInputs {
   const claims = cluster.claims;
   const ml = cluster.trendData?.mediaLandscape;
   const entity = primaryEntity(articles.map((a) => a.title));
@@ -83,7 +95,30 @@ export function selectBriefInputs(cluster: LiveCluster, articles: LiveArticle[])
 
   const primaryEvidence = claims?.evidence ?? [];
   // Milestone B §B.1 — the authoritative family picture the withholding gate uses.
-  const independence = resolveSourceFamilies(articles, { evidence: primaryEvidence });
+  const baseIndependence = resolveSourceFamilies(articles, { evidence: primaryEvidence });
+
+  // ── Milestone B §B.2.1 — echo-collapse gate ────────────────────────────
+  // A record that requires OCR and has no confirmed confidence can never anchor.
+  const usableRecords: PrimaryRecord[] = (research?.records ?? []).filter((r) => !(r.requiresOcr && r.ocrConfidence == null));
+  const contradictMatch = (research?.matches ?? []).find((m) => m.outcome === "contradicted");
+  const corroboratingRecordIds = new Set((research?.matches ?? []).filter((m) => m.outcome === "corroborated").map((m) => m.recordId));
+  const anchorRecords = usableRecords.filter((r) => corroboratingRecordIds.has(r.id));
+
+  const echo = applyEchoCollapse(articles, anchorRecords.length ? anchorRecords : usableRecords, baseIndependence, {
+    hasContradiction: !!contradictMatch,
+  });
+  const independence = echo.resolution;
+  const gateOutcome = research ? echo.outcome : undefined;
+
+  const researchTrail: BriefResearchTrail | undefined = research
+    ? {
+        checkedSources: research.checkedSources,
+        recordsFound: research.records.length,
+        contradiction: contradictMatch?.conflict
+          ? { ...contradictMatch.conflict, authority: usableRecords.find((r) => r.id === contradictMatch.recordId)?.authority ?? "an official record" }
+          : undefined,
+      }
+    : undefined;
 
   const coverage: BriefCoverage = {
     sources: ml?.coverage.uniquePublishers ?? cluster.distinctPublishers,
@@ -100,6 +135,8 @@ export function selectBriefInputs(cluster: LiveCluster, articles: LiveArticle[])
     .filter(usable)
     .sort((a, b) => claimRank(a) - claimRank(b) || b.confidence - a.confidence);
 
+  const officialRecordOnly = gateOutcome === "deliver_official_record_only";
+
   const base: BriefInputs = {
     cluster,
     articles,
@@ -111,10 +148,14 @@ export function selectBriefInputs(cluster: LiveCluster, articles: LiveArticle[])
     usableClaims,
     primaryEvidence,
     independence,
+    gateOutcome,
+    researchTrail,
+    officialRecordOnly,
+    echoCollapsedArticleIds: echo.collapsedArticleIds,
     coverage,
   };
 
-  // ── the withholding gate (Milestone B §B.1 — I1: withhold is a success state) ──
+  // ── the withholding gate (§B.1 + §B.2.1 — I1: withhold is a success state) ──
   if (articles.length === 0) {
     return { ...base, withhold: { reason: "COLLECTING", detail: "Research is still collecting reports for this event." } };
   }
@@ -123,17 +164,43 @@ export function selectBriefInputs(cluster: LiveCluster, articles: LiveArticle[])
     independence.primaryRecordCount >= 1 ||
     officialArticles.length > 0 ||
     primaryEvidence.length > 0 ||
-    !!cluster.cap;
+    !!cluster.cap ||
+    anchorRecords.length > 0;
   const genuineOk = independence.genuineIndependentFamilies >= 2;
 
+  const merges: BriefFamilyMerge[] = independence.downgrades
+    .filter((d) => d.publishers.length > 1)
+    .map((d) => ({ publishers: d.publishers, reason: d.reason }));
+  const collapsedLine = merges.length ? ` Collapsed: ${merges.map((m) => `${m.publishers.join(" + ")} — ${m.reason}`).join("; ")}.` : "";
+
+  // §B.2.1 — the only report restates a government release: one source counted twice.
+  if (gateOutcome === "withhold_sole_report_echoes_record") {
+    const auth = researchTrail?.checkedSources[0] ?? "a government release";
+    return {
+      ...base,
+      withhold: {
+        reason: "SOLE_REPORT_ECHOES_OFFICIAL_RECORD",
+        detail: `The only report we have restates ${auth}. That is one source, not two — ${echo.collapseReasons[0] ?? "the report adds nothing the record does not already state"}.`,
+        familyMerges: merges.length ? merges : undefined,
+      },
+    };
+  }
+
   if (!genuineOk && !anchorOk) {
-    // One newsroom (or one dispatch reprinted), and no primary record. A single
-    // outlet quoting a minister is NOT a primary record — this closes the
-    // "has an attributed claim" loophole. Show the reader what was collapsed.
     const g = independence.genuineIndependentFamilies;
-    const merges: BriefFamilyMerge[] = independence.downgrades
-      .filter((d) => d.publishers.length > 1)
-      .map((d) => ({ publishers: d.publishers, reason: d.reason }));
+    // §B.2.5 — name the sources we checked, so the reader learns something.
+    if (research && researchTrail && researchTrail.checkedSources.length > 0 && research.exhausted) {
+      return {
+        ...base,
+        withhold: {
+          reason: "SINGLE_SOURCE_NO_RECORD",
+          detail:
+            `${g === 0 ? "No independent newsroom" : "One newsroom"} reported this. We checked ${researchTrail.checkedSources.length} official source${researchTrail.checkedSources.length === 1 ? "" : "s"} — ${researchTrail.checkedSources.join("; ")} — and none carry it.` +
+            collapsedLine,
+          familyMerges: merges.length ? merges : undefined,
+        },
+      };
+    }
     return {
       ...base,
       withhold: {
@@ -141,7 +208,7 @@ export function selectBriefInputs(cluster: LiveCluster, articles: LiveArticle[])
         detail:
           `${g === 0 ? "No independent newsroom" : "Only one independent newsroom"} has this — ` +
           `${independence.label.toLowerCase()} (${coverage.sources} publisher${coverage.sources === 1 ? "" : "s"} across ${independence.familyCount} source famil${independence.familyCount === 1 ? "y" : "ies"}).` +
-          (merges.length ? ` Collapsed: ${merges.map((m) => `${m.publishers.join(" + ")} — ${m.reason}`).join("; ")}.` : ""),
+          collapsedLine,
         familyMerges: merges.length ? merges : undefined,
       },
     };
