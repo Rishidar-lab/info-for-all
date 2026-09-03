@@ -27,7 +27,8 @@
     "eval:misses": "tsx scripts/analyze-misses.ts",
     "quality-gate": "tsx scripts/quality-gate.ts",
     "audit:identity": "tsx scripts/identity-live-audit.ts",
-    "verify": "npm run lint && npm run typecheck && npm run test && npm run build"
+    "verify": "npm run lint && npm run typecheck && npm run test && npm run build",
+    "ingest:discourse": "tsx scripts/ingest-discourse.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.8",

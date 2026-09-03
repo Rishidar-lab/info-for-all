@@ -460,6 +460,13 @@ export interface LiveDataset {
   /** v0.7 — the Current Situation bar. */
   situation?: SituationSnapshot;
   /**
+   * v0.10 — claims seen repeatedly in public discourse but NOT in news / primary
+   * sources. Surfaced as EMERGING / UNVERIFIED — never promoted.
+   */
+  emergingClaims?: import("../media-landscape/types").EmergingClaim[];
+  /** v0.10 — public-discourse ingestion status (Reddit etc.). */
+  discourseSources?: { platform: string; channel: string; url: string; status: string; itemsSeen: number }[];
+  /**
    * v0.9 — editorial surfaces (which events deserve prominence). The home page
    * reads these, not raw trend order.
    */

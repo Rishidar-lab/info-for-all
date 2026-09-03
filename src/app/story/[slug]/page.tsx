@@ -24,6 +24,7 @@ import { BlindspotPanel, BlindspotBadge } from "@/components/media/blindspot-pan
 import { HeadlineComparison } from "@/components/media/headline-comparison";
 import { EvidenceMatrix, EvidenceProfilePanel } from "@/components/media/evidence-matrix";
 import { FullCoverage, type FullCoverageRow } from "@/components/media/full-coverage";
+import { DiscoursePanel } from "@/components/media/discourse-panel";
 import { AlignmentBar } from "@/components/media/alignment-bar";
 import { publisherByName, publisherSlug } from "@/data/publishers";
 import { readStance } from "@/lib/media-landscape/stance";
@@ -270,6 +271,14 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
     label: "Timeline",
     content: <StoryTimeline cluster={cluster} articles={articles} />,
   });
+  if (ml && ml.discourse.length > 0) {
+    tabs.push({
+      id: "discourse",
+      label: "Public discourse",
+      count: ml.discourse.length,
+      content: <DiscoursePanel mentions={ml.discourse} />,
+    });
+  }
 
   return (
     <article className="min-w-0 pb-6 [overflow-wrap:anywhere]">

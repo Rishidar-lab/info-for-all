@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { dataset } from "@/lib/live/dataset";
 import { buildLandscapeSummary } from "@/lib/media-landscape/dashboard";
 import { LandscapeDashboard } from "@/components/media/landscape-dashboard";
+import { EmergingClaimsPanel } from "@/components/media/discourse-panel";
 
 export const metadata: Metadata = {
   title: "Today's media landscape",
@@ -10,6 +11,8 @@ export const metadata: Metadata = {
 
 export default function LandscapePage() {
   const s = buildLandscapeSummary(dataset);
+  const emerging = dataset.emergingClaims ?? [];
+  const discourseSources = dataset.discourseSources ?? [];
   return (
     <div className="min-w-0 pb-8">
       <header className="border-b-2 border-ink/80 pb-4">
@@ -25,6 +28,20 @@ export default function LandscapePage() {
       <div className="mt-6">
         <LandscapeDashboard s={s} scope="India / Tamil Nadu" />
       </div>
+
+      {emerging.length > 0 && (
+        <div className="mt-8">
+          <EmergingClaimsPanel claims={emerging} />
+        </div>
+      )}
+
+      {discourseSources.length > 0 && (
+        <p className="ui mt-6 text-[11px] text-ink-3">
+          Public discourse pulled from {discourseSources.filter((d) => d.itemsSeen > 0).length} of{" "}
+          {discourseSources.length} sources ({discourseSources.map((d) => d.channel).join(", ")}). Discourse is a
+          separate signal and never counts as factual corroboration.
+        </p>
+      )}
     </div>
   );
 }

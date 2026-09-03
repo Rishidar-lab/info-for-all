@@ -33,6 +33,7 @@ import { detectFixture } from "@/lib/domain/sports";
 import { assessSeverity } from "@/lib/domain/severity";
 import { computeEditorialPriority, buildSurfaces } from "@/lib/editorial";
 import { buildMediaLandscape, buildLandscapeContext } from "@/lib/media-landscape";
+import { matchDiscourse, detectEmergingClaims } from "@/lib/discourse";
 
 const OFFICIAL_PRIMARY = new Set(["official-alert", "primary-document"]);
 
@@ -40,6 +41,8 @@ export interface EnrichOptions {
   now?: number;
   /** The previous snapshot, for first-seen tracking and novelty. */
   previous?: Pick<LiveDataset, "clusters"> | null;
+  /** v0.10 — public-discourse mentions (Reddit etc.), matched to clusters. */
+  discourse?: import("@/lib/media-landscape/types").DiscourseMention[];
 }
 
 function articlesOf(cluster: LiveCluster, byId: Map<string, LiveArticle>): LiveArticle[] {
@@ -322,6 +325,19 @@ export function enrichDataset(dataset: LiveDataset, opts: EnrichOptions = {}): E
     const arts = articlesOf(c, byId);
     if (arts.length === 0) continue;
     c.trendData.mediaLandscape = buildMediaLandscape(c, arts, landscapeCtx);
+  }
+
+  // ── v0.10: public discourse — a SEPARATE input, matched to clusters, NEVER
+  //    counted as factual corroboration. ──
+  if (opts.discourse && opts.discourse.length > 0) {
+    const byCluster = matchDiscourse(dataset.clusters, opts.discourse);
+    const matchedIds = new Set(opts.discourse.filter((m) => m.matchedEventSlug).map((m) => m.id));
+    for (const c of dataset.clusters) {
+      const ml = c.trendData?.mediaLandscape;
+      if (!ml) continue;
+      ml.discourse = (byCluster.get(c.slug) ?? []).slice(0, 12);
+    }
+    dataset.emergingClaims = detectEmergingClaims(opts.discourse, matchedIds);
   }
 
   const { trending, watching } = rankTrendingWatching(dataset.clusters);

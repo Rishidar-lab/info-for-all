@@ -47,6 +47,12 @@ jobs:
           restore-keys: |
             live-feed-
 
+      # v0.10 — public-discourse pull (Reddit RSS). Best-effort and non-fatal:
+      # the script exits 0 on failure and the news pipeline does not depend on it.
+      - name: Ingest public discourse
+        run: npm run ingest:discourse
+        continue-on-error: true
+
       - name: Ingest feeds
         run: npm run ingest
 
