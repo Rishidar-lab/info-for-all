@@ -140,7 +140,7 @@ export function EventCard({
 
       {mb.withheld ? (
         <p className="mt-1.5 ui text-[11.5px] italic leading-snug text-ink-3">
-          IFFA Brief: collecting evidence — {mb.coverage.sources} publisher{mb.coverage.sources === 1 ? "" : "s"}, {mb.coverage.families} independent famil{mb.coverage.families === 1 ? "y" : "ies"}.
+          IFFA Brief: {mb.coverage.familyLabel.toLowerCase()} — {mb.coverage.sources} publisher{mb.coverage.sources === 1 ? "" : "s"}, {mb.coverage.genuineFamilies} independent famil{mb.coverage.genuineFamilies === 1 ? "y" : "ies"}. Evidence still being gathered.
         </p>
       ) : (
         <p className="mt-1.5 ui text-[12px] leading-relaxed text-ink-2">{mb.text}</p>

@@ -82,6 +82,20 @@ A brief is withheld — with a specific reason shown to the reader — when:
 A single **official** announcement still supports a brief — "Authority X
 announced Y" is directly evidenced.
 
+### Independence (Milestone B §B.1)
+
+The withhold gate asks `resolveSourceFamilies` (`src/lib/research/independence.ts`,
+outside the frozen engine) how many **genuinely independent newsrooms** have the
+story. Families collapse to one on: a shared corporate parent (full publisher
+registry), the same wire-agency credit (every pickup of one dispatch is one
+family), ≥85% verbatim overlap, or echoing the same press release. A family that
+is only a wire pickup, a press-release echo, or an official record does **not**
+count toward the "two independent newsrooms" bar — an official record is a
+separate *primary anchor*. A withheld brief shows the reader which copies were
+collapsed and why. IFFA does not ingest bylines or full article bodies, so
+wire/press-release collapse fires only on the short text available — see
+`IFFA_MILESTONE_B_REPORT.md` §B.1.
+
 ## English + Tamil
 
 IFFA has no fluent machine translation. The Tamil brief is **not** a translation

@@ -543,6 +543,7 @@ export function synthesizeBrief(cluster: LiveCluster, articles: LiveArticle[], o
   if (inp.withhold) {
     base.withheldReason = inp.withhold.reason;
     base.withheldDetail = inp.withhold.detail;
+    base.familyMerges = inp.withhold.familyMerges;
     // still surface disagreements + references so the page is not empty
     base.disagreements = disagreements(inp);
     return base;
