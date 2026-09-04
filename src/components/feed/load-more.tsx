@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { track } from "@/lib/analytics";
 import type { FeedItem } from "@/lib/live/feed-item";
 import { FeedCard } from "./feed-card";
 
@@ -71,6 +72,11 @@ export function LoadMore({
       const next = Math.min(shown + pageSize, list.length);
       setShown(next);
       setState(next >= list.length ? "done" : "ready");
+      track("load_more", {
+        path: typeof location === "undefined" ? "" : location.pathname,
+        section: filter.category ?? filter.tier ?? (filter.rising ? "rising" : "all"),
+        pageIndex: Math.floor(next / pageSize),
+      });
     } catch {
       setState("error");
     }

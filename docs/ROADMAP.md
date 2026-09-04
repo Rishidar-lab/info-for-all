@@ -1,12 +1,14 @@
 # IFFA Roadmap
 
-**Status:** current as of **v0.8 — Live Signal Intelligence**. (Product renamed
-from *Info For All / IFA* to **IFFA — Info Free For All** in v0.7; repository,
-GitHub Pages base path and every route unchanged.)
+**Status:** current as of **v0.12 — Productization Release Candidate**. (Product
+renamed from *Info For All / IFA* to **IFFA — Info Free For All** in v0.7;
+repository, GitHub Pages base path and every route unchanged.)
 
 IFA shipped as an MVP service (Drizzle / SQLite / Next.js API routes / Docker),
 then **pivoted to a fully static Next.js 16 site** on GitHub Pages before launch.
 Everything below reflects that static architecture — see `docs/ARCHITECTURE.md`.
+Per-release detail is in [`docs/releases/`](releases/) and
+[`docs/releases/archive/`](releases/archive/).
 
 ## Current architecture (what is built and deployed)
 
@@ -56,9 +58,37 @@ Everything below reflects that static architecture — see `docs/ARCHITECTURE.md
 | v0.5 | semantic recall & multilingual event identity (structured signature, candidate/decision split, Tamil + cross-language) |
 | v0.6 | recall hardening & production-truth pass: 10/10 known false negatives resolved, precision and 0-false-corroboration held, docs/dependency drift removed |
 | v0.7 | Trend Intelligence + rebrand to IFFA: news-domain taxonomy, geo tiers, first-class TN districts, typed source registry, interpretable trend/velocity/novelty engine, event-first UI, timelines, coverage comparison. |
-| **v0.8** | Live Signal Intelligence: multi-signal category classifier (OTHER_RELEVANT 77%→~51%, Tamil headlines classified, 114-case gold corpus + `eval:category` gate), +8 live finance/sports feeds, 5-state source health, claim-aware novelty v2, evidence-aware event severity, domain specialists wired into event clustering (split-only guard), real browser E2E (Playwright), PWA offline shell. v0.6 claim/identity engine byte-unchanged. |
+| v0.8 | Live Signal Intelligence: multi-signal category classifier, +8 live finance/sports feeds, 5-state source health, claim-aware novelty v2, evidence-aware event severity, domain specialists in clustering, Playwright E2E, PWA offline shell. |
+| v0.9 | Editorial Intelligence: interpretable editorial-priority ranking (8 factors + penalties + bands, "why prominent" on every card), consequence model, speech-act political identity, temporal + local-impact models. |
+| v0.10 | Media Landscape: provenance-backed ownership registry, coverage landscape, headline/framing comparison, 5-type blindspot engine, claim-evidence matrix, compliant Reddit-RSS discourse. Story page rebuilt around 7 tabs. |
+| v0.11 | Data Depth & Calibration: Tamil share 4.5%→16%, first calibration benchmarks (stance 54.7%, framing 75%/41%, evidence 94% — all indicative), blindspot confidence gating, search-index de-inlined to a served shard. |
+| Ground-Parity A | Native IFFA Brief: `DeterministicBriefSynthesizer` + `verifyBrief` hallucination firewall, Tamil brief from the same claim ids, inline citations. "IFFA does not write its own prose account" removed. |
+| Milestone B §B.1–B.2 | Hardened source-family resolver (`genuineIndependentFamilies` gates the brief); primary-record research adapters behind an echo-collapse gate; claim-domain-scoped "sources checked" trail. |
+| **v0.12** | **Productization RC: one unified feed card, progressive loading (`/india` HTML −90%), real mobile navigation, full server-render (removed a JS-only loading shell), every story deep-linkable, dead-dep + dead-component removal, analytics foundation (no provider), case study + commercial-readiness docs.** |
 
-## Near-term (candidate, not committed) — v0.9
+## Next major track — Coverage Discovery
+
+The measured bottleneck: **96% of routable clusters have exactly one genuine
+independent newsroom** — not because clustering misses merges (0 missed on a
+frozen re-search), but because IFFA ingests only ~36 feeds. The next track finds
+*the other newsrooms reporting the same event* (Tamil, Indian English, regional,
+official, fact-checkers) and feeds those candidates through the **existing**
+identity / independence / claim / brief engines — never replacing them.
+
+- A `CoverageDiscoveryAdapter` abstraction (EVENT → possible related URLs), with
+  every candidate passing URL canonicalisation → publisher resolution → event
+  identity → time/entity compatibility → dedupe → source-family resolution before
+  it joins a story.
+- GDELT DOC 2.0 as a *discovery origin only* (never represented as
+  corroboration); first-party RSS search; existing-corpus re-search first.
+- Verification-only fetching, tightly scoped: never bypass 403 / CAPTCHA /
+  paywall / robots; never rotate identities; never republish full text.
+- Real metric: top-20 native-comprehension before → after; no threshold tuning.
+
+Work in progress on branch `feat/milestone-b3-discovery` (Phase 0 baseline +
+query generation done).
+
+## Near-term (candidate, not committed)
 
 - **Secondary-category detection** — v0.8 classifies the PRIMARY domain at ~99%
   on the gold corpus but secondary recall is ~15%. A budget story is finance +

@@ -178,7 +178,7 @@ An earlier revision of this file (and `docs/ROADMAP.md` Phase 0) described:
 That service was built as an MVP and then **abandoned**: its uncommitted pglite
 DB layer failed during `next build`, and the project was refocused onto the
 comparison UI as a fully static site. The code was removed (recoverable at commit
-`e99ae64`). `package.json` still lists `@electric-sql/pglite`, `postgres`,
-`drizzle-orm`, `drizzle-kit` — retained only to avoid a risky `npm install` in
-the constrained build environment; nothing imports them (see
-`evaluation/reports/v0.6-dependency-audit.md`).
+`e99ae64`). The `@electric-sql/pglite`, `postgres`, `drizzle-orm` and
+`drizzle-kit` packages — which nothing imported — were **removed from
+`package.json` in v0.12**. There is no database in IFFA; the pipeline is a pure
+function from feeds to static JSON.

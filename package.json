@@ -38,12 +38,9 @@
     "shard": "tsx scripts/shard-dataset.ts"
   },
   "dependencies": {
-    "@electric-sql/pglite": "^0.5.8",
     "clsx": "^2.1.1",
-    "drizzle-orm": "^0.45.2",
     "fast-xml-parser": "^5.11.1",
     "next": "16.3.4",
-    "postgres": "^3.4.9",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "zod": "^4.5.4"
@@ -55,7 +52,6 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitest/coverage-v8": "^4.1.11",
-    "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
     "tailwindcss": "^4",

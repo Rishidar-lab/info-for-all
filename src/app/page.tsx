@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BRAND } from "@/lib/brand";
+import { AnalyticsBeacon } from "@/components/analytics-beacon";
 import { StatusBanner } from "@/components/live/status-banner";
 import { SituationBar } from "@/components/iffa/situation-bar";
 import { CategoryNav } from "@/components/iffa/category-nav";
@@ -31,6 +32,7 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col gap-8">
+      <AnalyticsBeacon event="home_view" payload={{}} />
       <section className="border-b border-rule-strong pb-5">
         <p className="label">{BRAND.name} · {BRAND.full}</p>
         <h1 className="mt-2 max-w-3xl font-serif text-[26px] leading-[1.12] tracking-tight sm:text-[36px]">

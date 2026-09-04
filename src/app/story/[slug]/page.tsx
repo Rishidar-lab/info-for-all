@@ -15,6 +15,7 @@ import {
 import { briefsForCluster, perspectiveForCluster } from "@/lib/live/brief-view";
 import { CRISIS_TYPE_LABEL } from "@/lib/live/crisis";
 import { trendRoutableSlugs } from "@/lib/live/trends-view";
+import { AnalyticsBeacon } from "@/components/analytics-beacon";
 import { StoryTimeline } from "@/components/iffa/story-timeline";
 import { TrendWhy } from "@/components/iffa/trend-why";
 import { VerificationBadge, LifecycleBadge } from "@/components/live/badges";
@@ -248,8 +249,18 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
 
   return (
     <article className="min-w-0 pb-6 [overflow-wrap:anywhere]">
+      <AnalyticsBeacon
+        event="story_open"
+        payload={{
+          slug: cluster.slug,
+          category: cluster.trendData?.category ?? null,
+          scope: cluster.scope,
+          briefState: brief.withheldReason ? "withheld" : "delivered",
+          genuineFamilies: ml?.coverage.independentSourceFamilies ?? 0,
+        }}
+      />
       <nav className="ui mb-4 flex flex-wrap items-center gap-2 text-[12px] text-ink-3">
-        <Link href="/" className="link-quiet hover:text-accent">Top stories</Link>
+        <Link href="/" className="link-quiet hover:text-accent">Home</Link>
         <span aria-hidden>/</span>
         <span className="text-ink-2">{scopeLabel}</span>
         <span aria-hidden>/</span>

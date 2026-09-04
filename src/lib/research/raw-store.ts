@@ -53,7 +53,7 @@ export class FixtureStore {
  * Fetch a URL as text, honouring the offline flag and caching to the fixture
  * store. Identifying User-Agent with a contact URL (§B.2.2). No retry loop, no
  * evasion — if a host blocks this UA, the adapter degrades (see the §9 note in
- * IFFA_MILESTONE_B2_REPORT.md).
+ * docs/releases/archive/IFFA_MILESTONE_B2_REPORT.md).
  */
 export async function fetchText(
   url: string,

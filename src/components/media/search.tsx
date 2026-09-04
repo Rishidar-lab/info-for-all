@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { track, queryLengthBucket } from "@/lib/analytics";
 
 export interface SearchEntry {
   slug: string;
@@ -52,6 +53,8 @@ export function Search({ src }: { src: string }) {
     };
   }, [src]);
 
+  const trackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const results = useMemo(() => {
     const query = q.trim();
     if (query.length < 2 || index.length === 0) return [];
@@ -73,6 +76,24 @@ export function Search({ src }: { src: string }) {
       .slice(0, 40)
       .map((x) => x.e);
   }, [q, index]);
+
+  // Debounced, content-free: query LENGTH bucket + url-ness + result count only.
+  useEffect(() => {
+    const query = q.trim();
+    if (query.length < 2) return;
+    if (trackTimer.current) clearTimeout(trackTimer.current);
+    trackTimer.current = setTimeout(() => {
+      track("search_used", {
+        path: typeof location === "undefined" ? "/search/" : location.pathname,
+        queryLength: queryLengthBucket(query),
+        looksLikeUrl: /^https?:\/\//i.test(query) || query.includes(".com/") || query.includes(".in/"),
+        resultCount: results.length,
+      });
+    }, 900);
+    return () => {
+      if (trackTimer.current) clearTimeout(trackTimer.current);
+    };
+  }, [q, results.length]);
 
   return (
     <div className="min-w-0">

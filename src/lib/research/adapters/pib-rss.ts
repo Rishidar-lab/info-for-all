@@ -14,7 +14,7 @@
  *   - never collapses an article on body text (see ../echo.ts)
  *
  * Full-body fetch (browser UA) is deliberately NOT shipped — see §9 of
- * IFFA_MILESTONE_B2_REPORT.md. That is a UA-policy decision for the maintainer.
+ * docs/releases/archive/IFFA_MILESTONE_B2_REPORT.md. That is a UA-policy decision for the maintainer.
  *
  * Run only by scripts/research-pass.ts (Node). Never bundled.
  */
