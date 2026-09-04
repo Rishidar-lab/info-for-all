@@ -55,7 +55,7 @@ test.describe("IFFA branding + version", () => {
     await page.goto("/");
     await expect(page.getByRole("banner")).toContainText("IFFA");
     await expect(page.getByRole("contentinfo")).toContainText(/Info Free For All/i);
-    await expect(page.getByRole("contentinfo")).toContainText(/v0\.(9|10|11)/);
+    await expect(page.getByRole("contentinfo")).toContainText(/v0\.(9|10|11|12)/);
   });
 });
 
@@ -127,6 +127,7 @@ test.describe("IFFA v0.10 — media landscape", () => {
   test("a story page has the media-landscape tabs and the no-truth-score framing", async ({ page }) => {
     await page.goto("/");
     await page.locator("#top-stories article a[href^='/story/']").first().click();
+    await expect(page).toHaveURL(/\/story\//);
     await expect(page.getByRole("tab", { name: /Full coverage/i })).toBeVisible();
     await expect(page.getByRole("tab", { name: /Media landscape/i })).toBeVisible();
     await expect(page.getByRole("tab", { name: /Headlines/i })).toBeVisible();

@@ -24,8 +24,8 @@ export const BRAND = {
     "story IFFA shows who is reporting it, who is not, who owns those sources, how their framing " +
     "differs, which claims agree, which are disputed, and which have primary-document evidence.",
   region: "Tamil Nadu & India",
-  version: "0.11",
-  versionLabel: "v0.11 — Data Depth & Calibration · Ground-Parity Milestone A",
+  version: "0.12",
+  versionLabel: "v0.12 — Productization Release Candidate",
   repoUrl: "https://github.com/Rishidar-lab/info-for-all",
   siteUrl: "https://rishidar-lab.github.io/info-for-all",
 } as const;

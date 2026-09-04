@@ -1,6 +1,6 @@
 {
   "name": "iffa",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "private": true,
   "description": "IFFA — Info Free For All. A Tamil Nadu-first, India-aware real-time news and current-trend intelligence platform: reporting grouped into events, ranked by what is actually changing, with source independence, claim provenance and Tamil↔English semantics made visible.",
   "scripts": {
