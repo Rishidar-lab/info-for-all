@@ -9,7 +9,7 @@
  * record adapter would unlock how many withheld clusters.
  *
  * Output: reports/withheld-claim-profile.json + a console table.
- * The adapter build order in IFFA_MILESTONE_B2_REPORT.md is justified by this.
+ * The adapter build order in docs/releases/archive/IFFA_MILESTONE_B2_REPORT.md is justified by this.
  */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";

@@ -25,6 +25,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildLandscapeSummary } from "../src/lib/media-landscape/dashboard";
 import { microBrief } from "../src/lib/brief/build";
+import { toFeedItem } from "../src/lib/live/feed-item";
 import { PUBLISHERS } from "../src/data/publishers";
 import type { LiveCluster, LiveDataset } from "../src/lib/live/types";
 
@@ -82,40 +83,15 @@ const searchRows = dataset.clusters
 const searchBytes = write("search/index.json", { generatedAt: dataset.generatedAt, entries: searchRows });
 
 // ── compact cluster index ─────────────────────────────────────────────────
-// List/card views need a coverage SUMMARY, not the framing-observation arrays
-// or the per-claim evidence matrix. Keep the three fields <StoryCard> reads.
-const compactClusters = dataset.clusters.map((c) => {
-  const td = c.trendData;
-  const ml = td?.mediaLandscape;
-  const mb = microBrief(c, clusterArts(c));
-  return {
-    slug: c.slug,
-    title: c.title,
-    scope: c.scope,
-    districts: c.districts,
-    lifecycle: c.lifecycle,
-    isCrisis: c.isCrisis,
-    isVerifiedComparison: c.isVerifiedComparison,
-    distinctPublishers: c.distinctPublishers,
-    updatedAt: c.updatedAt,
-    category: td?.category ?? null,
-    editorialBand: td?.editorial?.band ?? null,
-    severity: td?.severity?.level ?? null,
-    brief: mb.withheld ? { withheld: true, reason: mb.withheldReason } : { withheld: false, text: mb.text, citations: mb.citationCount },
-    coverage: ml
-      ? {
-          uniquePublishers: ml.coverage.uniquePublishers,
-          independentSourceFamilies: ml.coverage.independentSourceFamilies,
-          tamilCount: ml.coverage.tamilCount,
-          englishCount: ml.coverage.englishCount,
-          alignment: ml.coverage.alignment,
-          alignmentUnavailableReason: ml.coverage.alignmentUnavailableReason ?? null,
-        }
-      : null,
-    evidenceProfile: ml?.evidenceProfile ?? null,
-    blindspots: ml?.blindspots ?? [],
-  };
-});
+// v0.12: the served list index is exactly the FeedItem shape one <FeedCard>
+// renders — nothing more. `<LoadMore>` fetches this once and reproduces each
+// list filter client-side, so list pages ship ~18 cards, not 60.
+const compactClusters = dataset.clusters
+  .filter((c) => c.slug)
+  .map((c) => {
+    const arts = clusterArts(c);
+    return toFeedItem(c, arts, microBrief(c, arts));
+  });
 const indexBytes = write("index/latest.json", { generatedAt: dataset.generatedAt, clusters: compactClusters });
 
 // ── landscape summary ─────────────────────────────────────────────────────

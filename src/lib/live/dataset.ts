@@ -189,6 +189,18 @@ export function singleReportClusters(limit = 30): LiveCluster[] {
     .slice(0, limit);
 }
 
+/**
+ * Every in-scope cluster (has a slug, geo tier is not "out"). This is the true
+ * routable set for a static site: any surface that can link a `/story/<slug>`
+ * must find a page. `routableClusters()` (below) is the narrower "featured on a
+ * feed" set used for ordering, not for `generateStaticParams`.
+ */
+export function allRoutableClusters(): LiveCluster[] {
+  return dataset.clusters.filter(
+    (c) => c.slug && (c.trendData?.geoTier ?? (c.scope === "excluded" ? "out" : "in")) !== "out",
+  );
+}
+
 /** All clusters that get their own static page. */
 export function routableClusters(): LiveCluster[] {
   const wanted = new Set<string>();

@@ -40,7 +40,7 @@ Plus a manual re-run: `npm run research` / `RESEARCH_ONLINE=1 npm run research`.
 layer 403s any User-Agent containing "IFFA" or "bot", on every path including the
 RSS. The only way through is a bare browser UA, which reads as evasion and is
 against I2 / §B.2.2. Left as a maintainer UA-policy / partnership decision (see §9
-of `IFFA_MILESTONE_B2_REPORT.md`).
+of `docs/releases/archive/IFFA_MILESTONE_B2_REPORT.md`).
 
 **Deferred for cause** — `tn_gazette` (G.O. PDFs, low applicability), `ecourts`
 (CAPTCHA + needs a case number news rarely prints), `district_collectorate` (27

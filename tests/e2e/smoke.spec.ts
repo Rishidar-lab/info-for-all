@@ -55,7 +55,7 @@ test.describe("IFFA branding + version", () => {
     await page.goto("/");
     await expect(page.getByRole("banner")).toContainText("IFFA");
     await expect(page.getByRole("contentinfo")).toContainText(/Info Free For All/i);
-    await expect(page.getByRole("contentinfo")).toContainText(/v0\.(9|10|11)/);
+    await expect(page.getByRole("contentinfo")).toContainText(/v0\.(9|10|11|12)/);
   });
 });
 
@@ -94,7 +94,7 @@ test.describe("IFFA event-first UI", () => {
 
   test("category nav works", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("link", { name: "Crisis", exact: true }).first().click();
+    await page.getByRole("link", { name: /^Crisis\b/ }).first().click();
     await expect(page).toHaveURL(/\/crisis\//);
     await expect(page.getByRole("heading", { name: "Crisis", level: 1 })).toBeVisible();
   });
@@ -119,14 +119,15 @@ test.describe("IFFA v0.10 — media landscape", () => {
     await expect(page.getByRole("heading", { name: /See the coverage, not just the headline/i })).toBeVisible();
     await expect(page.getByText(/who is reporting it, who isn.t, who owns those sources/i)).toBeVisible();
     await expect(page.getByRole("heading", { name: /most-covered stories right now/i })).toBeVisible();
-    // a story card shows a source count + coverage alignment
-    await expect(page.getByText(/SOURCES/).first()).toBeVisible();
-    await expect(page.getByText(/Coverage alignment/i).first()).toBeVisible();
+    // a story card carries the coverage + evidence summary, not just a headline
+    await expect(page.locator("#top-stories article.card").first()).toContainText(/independent famil(y|ies)|not independently confirmed/i);
+    await expect(page.locator("#top-stories article.card").first()).toContainText(/Open story/i);
   });
 
   test("a story page has the media-landscape tabs and the no-truth-score framing", async ({ page }) => {
     await page.goto("/");
     await page.locator("#top-stories article a[href^='/story/']").first().click();
+    await expect(page).toHaveURL(/\/story\//);
     await expect(page.getByRole("tab", { name: /Full coverage/i })).toBeVisible();
     await expect(page.getByRole("tab", { name: /Media landscape/i })).toBeVisible();
     await expect(page.getByRole("tab", { name: /Headlines/i })).toBeVisible();
@@ -201,10 +202,100 @@ test.describe("IFFA v0.10 — media landscape", () => {
   test("mobile home hierarchy fits 390px without horizontal scroll", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: /Right now/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /most-covered stories right now/i })).toBeVisible();
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
     expect(overflow).toBeLessThanOrEqual(1);
+  });
+});
+
+test.describe("IFFA v0.12 — productization", () => {
+  test("mobile navigation: menu opens, links every primary destination, closes on choice", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/");
+    // primary links are behind the menu on mobile
+    const menuBtn = page.getByRole("button", { name: /^menu$/i });
+    await expect(menuBtn).toBeVisible();
+    await menuBtn.click();
+    const dialog = page.getByRole("dialog", { name: /site menu/i });
+    await expect(dialog).toBeVisible();
+    for (const label of ["Home", "Tamil Nadu", "India", "Crisis", "Politics", "Finance", "Sports", "Trends", "Search"]) {
+      await expect(dialog.getByRole("link", { name: label, exact: true })).toBeVisible();
+    }
+    await dialog.getByRole("link", { name: "Tamil Nadu", exact: true }).click();
+    await expect(page).toHaveURL(/\/tamil-nadu\//);
+    await expect(page.getByRole("dialog", { name: /site menu/i })).toHaveCount(0); // closed after nav
+  });
+
+  test("desktop navigation marks the current section", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto("/india/");
+    const current = page
+      .getByRole("navigation", { name: "Primary" })
+      .getByRole("link", { name: "India", exact: true });
+    await expect(current).toHaveAttribute("aria-current", "page");
+  });
+
+  test("progressive loading: a list page ships a first page, then loads more", async ({ page }) => {
+    await page.goto("/india/");
+    const cards = page.locator("article.card");
+    const before = await cards.count();
+    expect(before).toBeGreaterThan(6);
+    expect(before).toBeLessThanOrEqual(20); // not the whole corpus
+    const loadMore = page.getByRole("button", { name: /load .*more/i }).first();
+    await expect(loadMore).toBeVisible();
+    await loadMore.click();
+    await expect.poll(() => cards.count()).toBeGreaterThan(before);
+  });
+
+  test("a withheld-brief story is useful, not a dead end", async ({ page }) => {
+    const res = await page.request.get("/data/index/latest.json");
+    const { clusters } = (await res.json()) as { clusters: { slug: string; brief?: { withheld?: boolean } }[] };
+    const withheld = clusters.find((c) => c.brief?.withheld);
+    expect(withheld, "a withheld cluster exists").toBeTruthy();
+    await page.goto(`/story/${withheld!.slug}/`);
+    await expect(page.getByRole("region", { name: "IFFA Brief" })).toBeVisible();
+    await expect(page.getByText(/A brief is written only when a genuinely independent/i)).toBeVisible();
+    await expect(page.getByRole("tab", { name: /Full coverage/i })).toBeVisible();
+  });
+
+  test("search shows event context and a URL-paste hint", async ({ page }) => {
+    await page.goto("/search/");
+    const box = page.getByRole("searchbox");
+    await expect(box).toBeVisible();
+    await box.fill("stalin");
+    await expect(page.locator("li.card").first()).toContainText(/independent families|sources/i);
+  });
+
+  test("no horizontal overflow at 320px on the core routes", async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 640 });
+    for (const route of ["/", "/tamil-nadu/", "/india/", "/search/", "/story/very-heavy-rain-1ggdoj/"]) {
+      await page.goto(route);
+      const overflow = await page.evaluate(
+        () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      );
+      expect(overflow, `overflow on ${route} @320`).toBeLessThanOrEqual(1);
+    }
+  });
+
+  test("every primary + utility nav link resolves", async ({ page }) => {
+    await page.goto("/");
+    const hrefs = await page.evaluate(() =>
+      [...document.querySelectorAll("header a[href^='/']")].map((a) => (a as HTMLAnchorElement).getAttribute("href")!),
+    );
+    const unique = [...new Set(hrefs)];
+    expect(unique.length).toBeGreaterThan(8);
+    for (const href of unique) {
+      const res = await page.request.get(href);
+      expect(res.status(), `${href} should resolve`).toBeLessThan(400);
+    }
+  });
+
+  test("list pages fully server-render (no JS-only loading shell)", async ({ page }) => {
+    await page.context().route("**/*.js", (r) => r.abort());
+    await page.goto("/tamil-nadu/", { waitUntil: "domcontentloaded" });
+    await expect(page.getByRole("heading", { name: /Tamil Nadu . trend-ranked/i })).toBeVisible();
+    await expect(page.locator("article.card").first()).toBeVisible();
   });
 });

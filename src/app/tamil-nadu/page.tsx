@@ -1,17 +1,20 @@
 import type { Metadata } from "next";
 import { CategoryNav } from "@/components/iffa/category-nav";
-import { EventList } from "@/components/iffa/event-list";
+import { FeedSection } from "@/components/feed/feed-section";
 import { clustersByTier } from "@/lib/live/trends-view";
-import { dataset } from "@/lib/live/dataset";
-import { allDistricts } from "@/lib/live/dataset";
+import { toFeedItems, tierCount } from "@/lib/live/feed-view";
+import { dataset, allDistricts } from "@/lib/live/dataset";
 
 export const metadata: Metadata = {
   title: "Tamil Nadu",
   description: "IFFA — every Tamil Nadu event in the latest refresh, grouped and trend-ranked, with district-level detail.",
 };
 
+const INITIAL = 18;
+
 export default function TamilNaduPage() {
-  const clusters = clustersByTier("P0", 60);
+  const items = toFeedItems(clustersByTier("P0", INITIAL));
+  const total = tierCount("P0");
   const districts = allDistricts();
 
   return (
@@ -27,10 +30,11 @@ export default function TamilNaduPage() {
 
       <CategoryNav />
 
-      <EventList
+      <FeedSection
         title="Tamil Nadu — trend-ranked"
-        clusters={clusters}
-        showWhy
+        items={items}
+        totalHint={total}
+        more={{ tier: "P0" }}
         ranked
         columns={2}
         emptyText="No Tamil Nadu event in the latest refresh."

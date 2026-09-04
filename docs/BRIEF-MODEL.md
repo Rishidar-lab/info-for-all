@@ -94,7 +94,7 @@ count toward the "two independent newsrooms" bar — an official record is a
 separate *primary anchor*. A withheld brief shows the reader which copies were
 collapsed and why. IFFA does not ingest bylines or full article bodies, so
 wire/press-release collapse fires only on the short text available — see
-`IFFA_MILESTONE_B_REPORT.md` §B.1.
+`docs/releases/archive/IFFA_MILESTONE_B_REPORT.md` §B.1.
 
 ## English + Tamil
 

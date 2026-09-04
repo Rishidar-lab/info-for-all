@@ -17,9 +17,15 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: BRAND.name,
     description: BRAND.blurb,
     start_url: "./",
+    scope: "./",
     display: "standalone",
     background_color: "#f6f4ef",
     theme_color: "#234b6e",
-    icons: [{ src: "favicon.ico", sizes: "48x48", type: "image/x-icon" }],
+    icons: [
+      { src: "favicon.ico", sizes: "48x48", type: "image/x-icon" },
+      // A scalable maskable icon — Chrome/Android accept SVG for installability.
+      { src: "icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" },
+      { src: "icon.svg", sizes: "any", type: "image/svg+xml", purpose: "maskable" },
+    ],
   };
 }

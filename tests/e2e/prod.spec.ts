@@ -25,7 +25,7 @@ test.describe("@prod live production smoke", () => {
 
   test("@prod home: version label, situation bar, event cards, basePath assets", async ({ page }) => {
     await page.goto(BASE + "/");
-    await expect(page.getByRole("contentinfo")).toContainText(/v0\.(9|10|11)/);
+    await expect(page.getByRole("contentinfo")).toContainText(/v0\.(9|10|11|12)/);
     await expect(page.getByText("Current situation")).toBeVisible();
     expect(await page.locator("article.card").count()).toBeGreaterThan(3);
     const src = await page.locator('script[src*="_next/static"]').first().getAttribute("src");

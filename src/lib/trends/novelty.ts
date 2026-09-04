@@ -278,7 +278,13 @@ function assessNoveltyCore(
   if (newFigs.length > 0) {
     kind = kind === "new-source-only" ? "new-number" : kind;
     score = Math.max(score, 0.7);
-    changes.push(`new figure(s): ${newFigs.slice(0, 3).join(", ")}`);
+    // Keep the normalised `q:*` clustering tokens out of reader-facing copy.
+    const humanFigs = newFigs.filter((f) => !/^q:/.test(f));
+    changes.push(
+      humanFigs.length > 0
+        ? `new figure(s): ${humanFigs.slice(0, 3).join(", ")}`
+        : "a new figure was reported",
+    );
   }
   if (newDistricts.length > 0) {
     kind = kind === "new-source-only" ? "new-location" : kind;

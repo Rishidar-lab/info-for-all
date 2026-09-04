@@ -1,7 +1,8 @@
 import { CategoryNav } from "./category-nav";
-import { EventList } from "./event-list";
+import { FeedSection } from "@/components/feed/feed-section";
 import { CATEGORY_LABEL, type CategoryId } from "@/lib/domain/categories";
 import { clustersByCategory } from "@/lib/live/trends-view";
+import { toFeedItems, categoryCount } from "@/lib/live/feed-view";
 import { dataset } from "@/lib/live/dataset";
 
 const BLURB: Record<string, string> = {
@@ -15,9 +16,12 @@ const BLURB: Record<string, string> = {
     "Results, fixtures, tournaments, selection and official disciplinary action. Different dates, competitions, and men's / women's / junior matches are kept as distinct events.",
 };
 
+const INITIAL = 18;
+
 export function CategoryView({ category }: { category: CategoryId }) {
-  const clusters = clustersByCategory(category, 40);
   const label = CATEGORY_LABEL[category];
+  const items = toFeedItems(clustersByCategory(category, INITIAL));
+  const total = categoryCount(category);
 
   return (
     <div className="flex flex-col gap-7">
@@ -29,11 +33,12 @@ export function CategoryView({ category }: { category: CategoryId }) {
 
       <CategoryNav active={category} />
 
-      <EventList
+      <FeedSection
         title={`${label} — trend-ranked`}
-        note="Ordered by trend score. Expand “why” on a card to see every factor."
-        clusters={clusters}
-        showWhy
+        note="Ordered by editorial priority. Open a story for the full ranking breakdown and every source."
+        items={items}
+        totalHint={total}
+        more={{ category }}
         ranked
         columns={2}
         emptyText={`No ${label.toLowerCase()} event in the latest refresh. This edition's feeds are weighted toward Tamil Nadu crisis and governance reporting; finance and sports coverage grows as more official feeds are added (see /sources).`}

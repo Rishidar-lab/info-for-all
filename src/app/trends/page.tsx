@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CategoryNav } from "@/components/iffa/category-nav";
-import { EventList } from "@/components/iffa/event-list";
+import { FeedSection } from "@/components/feed/feed-section";
 import { trendingClusters, watchingClusters } from "@/lib/live/trends-view";
+import { toFeedItems, trendingCount } from "@/lib/live/feed-view";
 import { TREND_WEIGHTS } from "@/lib/trends/weights";
 import { dataset } from "@/lib/live/dataset";
 
@@ -23,8 +24,9 @@ const WEIGHT_ROWS: [string, number, string][] = [
 ];
 
 export default function TrendsPage() {
-  const trending = trendingClusters(40);
-  const watching = watchingClusters(20);
+  const trending = toFeedItems(trendingClusters(18));
+  const trendingTotal = trendingCount();
+  const watching = toFeedItems(watchingClusters(12));
 
   return (
     <div className="flex flex-col gap-7">
@@ -75,21 +77,21 @@ export default function TrendsPage() {
         </p>
       </section>
 
-      <EventList
+      <FeedSection
         title="Trending"
         note="Cleared the trend bar and has at least two independent source families (or an official primary source)."
-        clusters={trending}
-        showWhy
+        items={trending}
+        totalHint={trendingTotal}
+        more={{ all: true }}
         ranked
         columns={2}
         emptyText="No event is trending in the latest refresh."
       />
 
-      <EventList
+      <FeedSection
         title="Watching"
         note="Enough consequence or momentum to track, but not yet the independent evidence to be called trending."
-        clusters={watching}
-        showWhy
+        items={watching}
         columns={2}
         emptyText="Nothing on the watch list."
       />

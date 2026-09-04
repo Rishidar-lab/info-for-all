@@ -1,6 +1,6 @@
 /**
  * §B.2 record adapters — by the §B.2.0 profile + a 2026-09-03 fetchability probe
- * (see IFFA_MILESTONE_B2_REPORT.md §B.2.2).
+ * (see docs/releases/archive/IFFA_MILESTONE_B2_REPORT.md §B.2.2).
  *
  * SHIPPED:
  *   corpus_official   — links an official article ALREADY in IFFA's corpus
