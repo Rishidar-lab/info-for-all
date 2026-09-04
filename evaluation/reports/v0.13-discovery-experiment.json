@@ -1,0 +1,79 @@
+{
+  "generatedAt": "2026-09-04T14:27:47.710Z",
+  "snapshot": "2026-09-03T07:59:03.528Z",
+  "mode": "offline corpus-rescan (no network, deterministic)",
+  "sample": {
+    "target": 50,
+    "attempted": 50,
+    "queueDepth": 729,
+    "rule": "important single-family, Tamil Nadu first, crisis/politics/finance/sports first, slug-stable order",
+    "perStratum": {
+      "TN:crisis": {
+        "attempted": 8,
+        "rescued": 0
+      },
+      "TN:politics": {
+        "attempted": 42,
+        "rescued": 0
+      }
+    }
+  },
+  "queriesIssued": 194,
+  "candidatesFound": 178,
+  "verdicts": {
+    "MATCH": 0,
+    "UNCERTAIN": 88,
+    "NO_MATCH": 90
+  },
+  "gates": {
+    "duplicatesRejected": 0,
+    "echoesRejected": 0,
+    "uncertainRejected": 88,
+    "falseMatchesRejected": 90,
+    "uncertainCandidatesRejected": 88
+  },
+  "coverage": {
+    "newPublishers": [],
+    "newPublishersCount": 0,
+    "newIndependentFamilies": [],
+    "newIndependentFamiliesCount": 0,
+    "rescuedClusters": 0,
+    "coverageRescueRate": 0
+  },
+  "crossLanguage": {
+    "ta->ta": 0,
+    "ta->en": 0,
+    "en->ta": 0,
+    "en->en": 0
+  },
+  "safety": {
+    "falseCorroborations": 0,
+    "target": 0,
+    "probes": [
+      {
+        "name": "same politician / different speech",
+        "verdict": "NO_MATCH"
+      },
+      {
+        "name": "same city / old disaster",
+        "verdict": "UNCERTAIN"
+      },
+      {
+        "name": "same Tamil district, unrelated incident",
+        "verdict": "NO_MATCH"
+      }
+    ]
+  },
+  "gates_separate": {
+    "candidateRecallNote": "recall vs the ingested pool is bounded by design: corpus-rescan can only surface what IFFA already holds; external recall is a GDELT-online question for the scheduled workflow, not CI.",
+    "sameEventPrecision": "3/3 adversarial probes correctly non-MATCH",
+    "sameEventRecallNote": "recall probe: genuine paraphrases MATCH (covered by tests/unit/discovery-match.test.ts control).",
+    "independentFamilyRescue": "0/50",
+    "falseCorroboration": "0 (target 0)"
+  },
+  "goldSet": {
+    "total": 25,
+    "humanVerified": 0,
+    "note": "machine first pass until Rishi reviews; never present machine labels as human-verified"
+  }
+}
