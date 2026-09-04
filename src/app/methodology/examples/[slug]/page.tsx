@@ -4,8 +4,8 @@ import type { Metadata } from "next";
 import { STORIES, storyForSlug, sourceFor } from "@/data/demo";
 import { PERSPECTIVE_NOTE, RELIABILITY_NOTE } from "@/data/demo";
 import { coverageSegments, fmtDateTime, hostname, publicationCount, PERSPECTIVE_LABEL } from "@/lib/ifa";
-import { CoverageBar } from "@/components/ifa/coverage-bar";
-import { PerspectiveBadge, ReliabilityBadge } from "@/components/ifa/badges";
+import { CoverageBar } from "@/components/iffa/coverage-bar";
+import { PerspectiveBadge, ReliabilityBadge } from "@/components/iffa/badges";
 
 export const dynamicParams = false;
 

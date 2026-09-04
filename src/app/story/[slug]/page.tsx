@@ -5,6 +5,7 @@ import {
   clusterBySlug,
   clusterArticles,
   routableClusters,
+  allRoutableClusters,
   istTimestamp,
   clusterLabel,
   EVIDENCE_ROLE_LABEL,
@@ -38,8 +39,15 @@ import { familyIndex } from "@/lib/media-landscape/publishers";
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  const slugs = new Set(routableClusters().map((c) => c.slug));
+  // Every in-scope cluster gets a page. On a static site any surface that links
+  // a `/story/<slug>` — the media-landscape "most disputed" list, the quality
+  // dashboard's top-events table, the situation bar — must resolve, so the
+  // routable set is simply "has a slug and is not out-of-scope" rather than a
+  // hand-maintained union of the feed queries.
+  const slugs = new Set<string>();
+  for (const c of routableClusters()) slugs.add(c.slug);
   for (const s of trendRoutableSlugs()) slugs.add(s);
+  for (const c of allRoutableClusters()) slugs.add(c.slug);
   return [...slugs].map((slug) => ({ slug }));
 }
 

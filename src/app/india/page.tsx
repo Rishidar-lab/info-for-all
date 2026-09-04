@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { CategoryNav } from "@/components/iffa/category-nav";
-import { EventList } from "@/components/iffa/event-list";
+import { FeedSection } from "@/components/feed/feed-section";
 import { clustersByTier } from "@/lib/live/trends-view";
+import { toFeedItems, tierCount } from "@/lib/live/feed-view";
 import { dataset } from "@/lib/live/dataset";
 
 export const metadata: Metadata = {
@@ -9,9 +10,11 @@ export const metadata: Metadata = {
   description: "IFFA — national events, and events abroad that materially affect India or Tamil Nadu, grouped and trend-ranked.",
 };
 
+const INITIAL = 18;
+
 export default function IndiaPage() {
-  const p0 = new Set(clustersByTier("P0", 200).map((c) => c.slug));
-  const clusters = clustersByTier("P1", 60).filter((c) => !p0.has(c.slug));
+  const items = toFeedItems(clustersByTier("P1", INITIAL));
+  const total = tierCount("P1");
 
   return (
     <div className="flex flex-col gap-7">
@@ -27,10 +30,11 @@ export default function IndiaPage() {
 
       <CategoryNav />
 
-      <EventList
+      <FeedSection
         title="India — trend-ranked"
-        clusters={clusters}
-        showWhy
+        items={items}
+        totalHint={total}
+        more={{ tier: "P1" }}
         ranked
         columns={2}
         emptyText="No national event in the latest refresh."

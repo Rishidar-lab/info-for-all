@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { STORIES } from "@/data/demo";
-import { CoverageBar } from "@/components/ifa/coverage-bar";
+import { CoverageBar } from "@/components/iffa/coverage-bar";
 import { publicationCount } from "@/lib/ifa";
 
 export const metadata: Metadata = {
