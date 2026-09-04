@@ -28,6 +28,8 @@ import { BlindspotPanel, BlindspotBadge } from "@/components/media/blindspot-pan
 import { HeadlineComparison } from "@/components/media/headline-comparison";
 import { EvidenceMatrix, EvidenceProfilePanel } from "@/components/media/evidence-matrix";
 import { FullCoverage, type FullCoverageRow } from "@/components/media/full-coverage";
+import { DiscoveredCoverage } from "@/components/media/discovered-coverage";
+import { discoveredCoverageFor } from "@/lib/live/discovery-view";
 import { DiscoursePanel } from "@/components/media/discourse-panel";
 import { PerspectivePanel } from "@/components/media/perspective";
 import { ReferencesPanel } from "@/components/media/references-panel";
@@ -130,6 +132,10 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
       url: a.url,
     };
   });
+
+  // ── v0.13 discovery surface (minimal): only renders when discovery found
+  // same-event coverage beyond the ingested reports. No provider internals.
+  const discovered = discoveredCoverageFor(cluster.slug, articles.length);
 
   // ── coverage-at-a-glance (always visible, under the brief) ────────────
   const coverageGlance = ml ? (
@@ -310,6 +316,7 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
       <div className="mt-5 flex flex-col gap-5">
         <Brief brief={brief} tamil={tamilBrief ?? null} />
         {coverageGlance}
+        {discovered && <DiscoveredCoverage view={discovered} />}
         {capBox}
 
         {cluster.trendData?.trend && (
