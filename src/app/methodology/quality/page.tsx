@@ -627,11 +627,54 @@ export default function QualityDashboard() {
           </div>
         </div>
         <p className="ui mt-3 text-[11.5px] leading-relaxed text-ink-3">
-          <strong>Still open:</strong> the India / Tamil&nbsp;Nadu list pages are ~1&nbsp;MB of rendered markup for
-          60 information-dense cards each. Cutting that is a card-density / pagination decision deferred past this
-          &ldquo;no-redesign&rdquo; release — and Tamil&nbsp;Nadu story visibility is deliberately <em>not</em> reduced
-          in the release that widens Tamil coverage.
+          <strong>Resolved in v0.12:</strong> the India / Tamil&nbsp;Nadu list pages were ~1&nbsp;MB of rendered
+          markup for 60 dense cards. They now server-render ~18 cards and load the rest progressively from the
+          index shard — <code>/india</code> HTML <span className="mono">1,054,627&nbsp;B → 106,091&nbsp;B</span>.
+          Tamil&nbsp;Nadu story visibility is unchanged (the full list is one &ldquo;Load more&rdquo; away).
         </p>
+      </section>
+
+      {/* ── v0.12 · Productization ──────────────────────────────────── */}
+      <section>
+        <div className="mb-3 border-b border-rule-strong pb-2">
+          <div className="label mb-1">v0.12 · Productization Release Candidate</div>
+          <h2 className="font-serif text-[20px] font-semibold text-ink">The engine kept, the surface rebuilt</h2>
+          <p className="ui mt-1 text-[12px] leading-relaxed text-ink-3">
+            v0.12 changed no evidence logic. It replaced two card components with one (model reasoning and raw
+            clustering tokens moved off the card onto the story page), added progressive loading, a real mobile
+            navigation menu, a global focus ring, and full server-rendering of every page (a route-level loading
+            shell that required JavaScript was removed). Every in-scope story now has its own page — fixing a
+            dead internal link and making every story deep-linkable. 4 unused npm packages and 9 dead components
+            were removed. Full write-up:{" "}
+            <a
+              href="https://github.com/Rishidar-lab/info-for-all/blob/main/docs/releases/v0.12-productization.md"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent hover:underline"
+            >
+              docs/releases/v0.12-productization.md
+            </a>
+            .
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+          <div className="card p-3">
+            <div className="mono text-[16px] font-semibold text-agree">−90%</div>
+            <div className="ui text-[10px] text-ink-3">India / Tamil&nbsp;Nadu list-page HTML</div>
+          </div>
+          <div className="card p-3">
+            <div className="mono text-[16px] font-semibold text-agree">745K → 699K</div>
+            <div className="ui text-[10px] text-ink-3">Total client JS (menu + load-more + analytics added)</div>
+          </div>
+          <div className="card p-3">
+            <div className="mono text-[16px] font-semibold text-ink">156 → 763</div>
+            <div className="ui text-[10px] text-ink-3">Story pages — every in-scope cluster is now deep-linkable</div>
+          </div>
+          <div className="card p-3">
+            <div className="mono text-[16px] font-semibold text-ink">478 · 84</div>
+            <div className="ui text-[10px] text-ink-3">Unit · E2E tests (+9 v0.12 regression tests)</div>
+          </div>
+        </div>
       </section>
 
       {/* ── Ground-Parity Milestone A · Native comprehension ────────── */}
