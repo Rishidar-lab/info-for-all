@@ -1,0 +1,118 @@
+{
+  "generatedAt": "2026-09-04T14:22:56.664Z",
+  "snapshot": "2026-09-03T07:59:03.528Z",
+  "corpus": {
+    "articles": 913,
+    "articleUrls": 913,
+    "publishers": 24,
+    "ownershipGroups": 18,
+    "genuineIndependentFamilyInstances": 776,
+    "clusters": 763,
+    "routableClusters": 763,
+    "tamilArticles": 154,
+    "englishArticles": 756
+  },
+  "familyDistribution": {
+    "1": 735,
+    "2": 20,
+    "3": 4,
+    "4+": 4,
+    "detail": {
+      "exactly0": 31,
+      "exactly1": 704,
+      "exactly2": 20,
+      "exactly3": 4,
+      "gte4": 4
+    }
+  },
+  "important": {
+    "total": 757,
+    "tamilNadu": 117,
+    "india": 640,
+    "singleSourceImportantClusters": 729,
+    "multiSourceImportantClusters": 28,
+    "byCategory": {
+      "crisis": {
+        "clusters": 74,
+        "singleFamily": 72,
+        "multiFamily": 2,
+        "briefsDelivered": 25
+      },
+      "politics": {
+        "clusters": 222,
+        "singleFamily": 210,
+        "multiFamily": 12,
+        "briefsDelivered": 13
+      },
+      "other-relevant": {
+        "clusters": 380,
+        "singleFamily": 373,
+        "multiFamily": 7,
+        "briefsDelivered": 12
+      },
+      "finance": {
+        "clusters": 43,
+        "singleFamily": 39,
+        "multiFamily": 4,
+        "briefsDelivered": 6
+      },
+      "sports": {
+        "clusters": 38,
+        "singleFamily": 35,
+        "multiFamily": 3,
+        "briefsDelivered": 3
+      }
+    },
+    "tamilNaduByCategory": {
+      "crisis": {
+        "clusters": 8,
+        "singleFamily": 8
+      },
+      "politics": {
+        "clusters": 62,
+        "singleFamily": 55
+      },
+      "finance": {
+        "clusters": 2,
+        "singleFamily": 2
+      },
+      "sports": {
+        "clusters": 4,
+        "singleFamily": 4
+      }
+    },
+    "indiaByCategory": {
+      "crisis": {
+        "clusters": 66,
+        "singleFamily": 64
+      },
+      "politics": {
+        "clusters": 160,
+        "singleFamily": 155
+      },
+      "finance": {
+        "clusters": 41,
+        "singleFamily": 37
+      },
+      "sports": {
+        "clusters": 34,
+        "singleFamily": 31
+      }
+    }
+  },
+  "briefs": {
+    "delivered": 59,
+    "withheld": 704,
+    "deliveredImportant": 59,
+    "withheldForCoverageImportant": 698
+  },
+  "urlVsCoverage": {
+    "note": "URL count != independent coverage: many URLs collapse to one family via wire / corporate / syndication / echo gates.",
+    "articleUrls": 913,
+    "publishers": 24,
+    "ownershipGroups": 18,
+    "routableClusters": 763,
+    "singleFamilyClusters": 735,
+    "singleFamilyShare": 96.3
+  }
+}
