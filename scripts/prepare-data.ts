@@ -50,3 +50,11 @@ if (existsSync(RESEARCH_SEED) && (!existsSync(RESEARCH_ACTIVE) || force)) {
   copyFileSync(RESEARCH_SEED, RESEARCH_ACTIVE);
   console.log(`prepare-data: seeded ${RESEARCH_ACTIVE} from the version-controlled fixture`);
 }
+
+// v0.13 — the coverage-discovery pass output follows the same seed pattern.
+const DISCOVERY_SEED = resolve(ROOT, "src/data/fixtures/discovery.seed.json");
+const DISCOVERY_ACTIVE = resolve(ROOT, "src/data/generated/discovery.json");
+if (existsSync(DISCOVERY_SEED) && (!existsSync(DISCOVERY_ACTIVE) || force)) {
+  copyFileSync(DISCOVERY_SEED, DISCOVERY_ACTIVE);
+  console.log(`prepare-data: seeded ${DISCOVERY_ACTIVE} from the version-controlled fixture`);
+}

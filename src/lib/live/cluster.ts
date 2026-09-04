@@ -113,16 +113,16 @@ const OTHER_STATE_TOKENS = [
   "puducherry",
 ];
 
-function statesMentioned(text: string): Set<string> {
+export function statesMentioned(text: string): Set<string> {
   const t = " " + text.toLowerCase() + " ";
   const out = new Set<string>();
   for (const s of OTHER_STATE_TOKENS) if (t.includes(" " + s)) out.add(s);
   return out;
 }
 
-const CLUSTER_WINDOW_MS = 30 * 3600 * 1000;
+export const CLUSTER_WINDOW_MS = 30 * 3600 * 1000;
 
-interface Sig {
+export interface Sig {
   tokens: Set<string>;
   entities: Set<string>;
   /** Entities that appear in fewer than ~6% of this batch's articles — the ones that carry signal. */
@@ -131,7 +131,25 @@ interface Sig {
   states: Set<string>;
 }
 
-interface Edge {
+/**
+ * Build the lexical signature `scorePair` needs for one article. `df` is the
+ * document-frequency map over the batch (entity → count); `batchSize` scales the
+ * "rare entity" cutoff. Exported for the discovery matcher, which anchors on a
+ * story's existing articles rather than a full ingest batch.
+ */
+export function buildLexSig(a: LiveArticle, df: Map<string, number>, batchSize: number): Sig {
+  const ents = extractEntities(stripHeadlinePrefix(a.title) + " " + (a.excerpt ?? ""));
+  const rareCutoff = Math.max(3, Math.ceil(batchSize * 0.05));
+  return {
+    tokens: new Set(titleTokens(stripHeadlinePrefix(a.title))),
+    entities: ents,
+    rareEntities: new Set([...ents].filter((e) => (df.get(e) ?? 1) <= rareCutoff)),
+    figures: extractFigures(a.title + " " + (a.excerpt ?? "")),
+    states: statesMentioned(a.title + " " + (a.excerpt ?? "") + " " + (a.cap?.areaDescription ?? "")),
+  };
+}
+
+export interface Edge {
   confidence: ClusterConfidence;
   reason: string;
 }
@@ -146,7 +164,7 @@ interface Edge {
  * headline tokens within a tight time window. A detected geographic
  * contradiction blocks the join outright.
  */
-function scorePair(a: LiveArticle, b: LiveArticle, sa: Sig, sb: Sig, sameWindowMs: number): Edge | null {
+export function scorePair(a: LiveArticle, b: LiveArticle, sa: Sig, sb: Sig, sameWindowMs: number): Edge | null {
   if (Math.abs(Date.parse(a.publishedAt) - Date.parse(b.publishedAt)) > sameWindowMs) return null;
   // Block only a genuine hazard contradiction (flood vs cyclone). One report
   // naming the hazard and the other not ("Chennai floods: schools shut" vs
